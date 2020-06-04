@@ -7,9 +7,9 @@
  * Wrapper class for validating and installing the Airtime database during the installation process
  */
 class DatabaseSetup extends Setup {
-
+    
     // airtime.conf section header
-    protected static $_settings = "[database]";
+    protected static $_section = "[database]";
 
     // Constant form field names for passing errors back to the front-end
     const DB_USER = "dbUser",
@@ -51,6 +51,7 @@ class DatabaseSetup extends Setup {
      * @throws AirtimeDatabaseException
      */
     public function runSetup() {
+        $this->writeToTemp();
         try {
             $this->setNewDatabaseConnection("postgres");
             if ($this->checkDatabaseExists()) {
@@ -61,14 +62,11 @@ class DatabaseSetup extends Setup {
                 $this->installDatabaseTables();
             }
         } catch (PDOException $e) {
-            throw new AirtimeDatabaseException("Couldn't establish a connection to the database! "
-                                               . "Please check your credentials and try again. "
+            throw new AirtimeDatabaseException("Couldn't establish a connection to the database! ".
+                                                "Please check your credentials and try again. "
                                                . "PDO Exception: " .  $e->getMessage(),
                                                array(self::DB_NAME, self::DB_USER, self::DB_PASS));
         }
-
-        $this->writeToTemp();
-
         self::$dbh = null;
         return array(
             "message" => "Airtime database was created successfully!",
@@ -81,6 +79,7 @@ class DatabaseSetup extends Setup {
         $this->setNewDatabaseConnection(self::$_properties["dbname"]);
         $this->checkSchemaExists();
         $this->createDatabaseTables();
+        $this->updateIcecastPassword();
     }
 
     /**
@@ -129,7 +128,7 @@ class DatabaseSetup extends Setup {
      */
     private function createDatabase() {
         $statement = self::$dbh->prepare("CREATE DATABASE " . pg_escape_string(self::$_properties["dbname"])
-                                         . " WITH ENCODING 'UTF8' TEMPLATE template0"
+                                         . " WITH ENCODING 'UNICODE' TEMPLATE template0"
                                          . " OWNER " . pg_escape_string(self::$_properties["dbuser"]));
         if (!$statement->execute()) {
             throw new AirtimeDatabaseException("There was an error creating the database!",
@@ -176,6 +175,83 @@ class DatabaseSetup extends Setup {
             throw new AirtimeDatabaseException("The database was installed with an incorrect encoding type!",
                                                array(self::DB_NAME,));
         }
+    }
+    /**
+    * Updates the icecast password in the database based upon the temp file created during install
+    * @throws AirtimeDatabaseException
+    */
+    private function updateIcecastPassword() {
+       if (!file_exists(LIBRETIME_CONF_DIR . '/icecast_pass')) {
+            throw new AirtimeDatabaseException("The Icecast Password file was not accessible", array());
+       };
+       $icecast_pass_txt = file(LIBRETIME_CONF_DIR . '/icecast_pass');
+       $icecast_pass = $icecast_pass_txt[0];
+       $icecast_pass = str_replace(PHP_EOL, '', $icecast_pass);
+       $statement =  self::$dbh->prepare("UPDATE cc_stream_setting SET value = :icecastpass WHERE keyname = 's1_pass'");
+       $statement->bindValue(':icecastpass', $icecast_pass, PDO::PARAM_STR);
+       try {
+           $statement->execute(); 
+           }
+       catch (PDOException $ex) {
+           print "Error!: " . $ex->getMessage() . "<br />";
+           }
+       $statement =  self::$dbh->prepare("UPDATE cc_stream_setting SET value = :icecastpass WHERE keyname = 's1_admin_pass'");
+       $statement->bindValue(':icecastpass', $icecast_pass, PDO::PARAM_STR);
+       try {
+           $statement->execute(); 
+           }
+       catch (PDOException $ex) {
+           print "Error!: " . $ex->getMessage() . "<br />";
+           }
+       $statement =  self::$dbh->prepare("UPDATE cc_stream_setting SET value = :icecastpass WHERE keyname = 's2_pass'");
+       $statement->bindValue(':icecastpass', $icecast_pass, PDO::PARAM_STR);
+       try {
+           $statement->execute(); 
+           }
+       catch (PDOException $ex) {
+           print "Error!: " . $ex->getMessage() . "<br />";
+           }
+       $statement =  self::$dbh->prepare("UPDATE cc_stream_setting SET value = :icecastpass WHERE keyname = 's2_admin_pass'");
+       $statement->bindValue(':icecastpass', $icecast_pass, PDO::PARAM_STR);
+       try {
+           $statement->execute(); 
+           }
+       catch (PDOException $ex) {
+           print "Error!: " . $ex->getMessage() . "<br />";
+           }
+
+       $statement =  self::$dbh->prepare("UPDATE cc_stream_setting SET value = :icecastpass WHERE keyname = 's3_pass'");
+       $statement->bindValue(':icecastpass', $icecast_pass, PDO::PARAM_STR);
+       try {
+           $statement->execute(); 
+           }
+       catch (PDOException $ex) {
+           print "Error!: " . $ex->getMessage() . "<br />";
+           }
+       $statement =  self::$dbh->prepare("UPDATE cc_stream_setting SET value = :icecastpass WHERE keyname = 's3_admin_pass'");
+       $statement->bindValue(':icecastpass', $icecast_pass, PDO::PARAM_STR);
+       try {
+           $statement->execute(); 
+           }
+       catch (PDOException $ex) {
+           print "Error!: " . $ex->getMessage() . "<br />";
+           }
+       $statement =  self::$dbh->prepare("UPDATE cc_stream_setting SET value = :icecastpass WHERE keyname = 's1_admin_pass'");
+       $statement->bindValue(':icecastpass', $icecast_pass, PDO::PARAM_STR);
+       try {
+           $statement->execute(); 
+           }
+       catch (PDOException $ex) {
+           print "Error!: " . $ex->getMessage() . "<br />";
+           }
+       $statement =  self::$dbh->prepare("INSERT INTO cc_pref (keystr, valstr) VALUES ('default_icecast_password', :icecastpass )");
+       $statement->bindValue(':icecastpass', $icecast_pass, PDO::PARAM_STR);
+       try {
+           $statement->execute(); 
+           }
+       catch (PDOException $ex) {
+           print "Error!: " . $ex->getMessage() . "<br />";
+           }
     }
 
 }

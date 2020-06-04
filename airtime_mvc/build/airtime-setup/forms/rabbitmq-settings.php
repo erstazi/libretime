@@ -10,13 +10,15 @@
     <h3 class="form-title">RabbitMQ Settings</h3>
     <span id="helpBlock" class="help-block help-message"></span>
     <p>
-        RabbitMQ is an AMQP-based messaging system used by Airtime. You should only edit these settings
+        RabbitMQ is an AMQP-based messaging system used by Libretime. You should only edit these settings
         if you have changed the defaults since running the installer, or if you've opted to install RabbitMQ manually.
     </p>
     <p>
         In either case, we recommend that you change at least the default password provided -
         you can do this by running the following line from the command line:<br/>
-        <code>sudo rabbitmqctl change_password &lt;username&gt; &lt;newpassword&gt;</code>
+        <code>sudo rabbitmqctl change_password &lt;username&gt; &lt;newpassword&gt;</code><br/>
+        <strong>Notice:</strong> using special characters such as ! in your rabbitmq password will cause LibreTime to fail
+            to load properly after setup. Please use alphanumerical characters only.
     </p>
     <div id="rmqSlideToggle">
         <span><strong>Advanced </strong></span><span id="advCaret" class="caret"></span><hr/>

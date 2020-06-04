@@ -14,3 +14,5 @@ composer.phar
 VERSION
 airtime_mvc/tests/log/*.log
 .vagrant/
+.DS_Store
+.idea/

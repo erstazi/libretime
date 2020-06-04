@@ -20,7 +20,7 @@ $(document).ready(function () {
         acceptedFiles: acceptedMimeTypes.join(),
         addRemoveLinks: true,
         dictRemoveFile: $.i18n._("Remove"),
-        maxFilesize: 500, //Megabytes
+        maxFilesize:LIBRETIME_PLUPLOAD_MAX_FILE_SIZE, //Megabytes
         init: function () {
             this.on("sending", function (file, xhr, data) {
                 data.append("csrf_token", $("#csrf").val());
@@ -203,4 +203,17 @@ $(document).ready(function () {
     self.recentUploadsTable = self.setupRecentUploadsTable();
 
     //$("#recent_uploads_table.div.fg-toolbar").prepend('<b>Custom tool bar! Text/images etc.</b>');
+
+    $("#select_type").on("change",function(){
+        var ttValue = $("#select_type").val();
+        var ttText = $('#select_type option[value="'+ttValue+'"]').text();
+        if (ttValue != ""){
+            $("#upload_type").text(" " + ttText);
+            $("#upload_type").css("color", "#ff611f");
+        } else {
+            $("#upload_type").text(" Tracks");
+            $("#upload_type").css("color", "#ffffff");
+        }
+        Cookies.set('tt_upload', ttValue);
+    });
 });

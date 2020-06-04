@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from threading import Thread
-from Queue import Empty
+from queue import Empty
+from configparser import NoOptionError
 
 import logging
 import shutil
@@ -11,7 +12,7 @@ import os
 import sys
 import stat
 import requests
-import ConfigParser
+import configparser
 import json
 import hashlib
 from requests.exceptions import ConnectionError, HTTPError, Timeout
@@ -43,15 +44,18 @@ class PypoFile(Thread):
         dst_exists = True
         try:
             dst_size = os.path.getsize(dst)
-        except Exception, e:
+        except Exception as e:
             dst_exists = False
 
         do_copy = False
         if dst_exists:
-            if src_size != dst_size:
-                do_copy = True
-            else:
-                self.logger.debug("file %s already exists in local cache as %s, skipping copying..." % (src, dst))
+            # TODO: Check if the locally cached variant of the file is sane.
+            # This used to be a filesize check that didn't end up working.
+            # Once we have watched folders updated files from them might
+            # become an issue here... This needs proper cache management.
+            # https://github.com/LibreTime/libretime/issues/756#issuecomment-477853018
+            # https://github.com/LibreTime/libretime/pull/845
+            self.logger.debug("file %s already exists in local cache as %s, skipping copying..." % (src, dst))
         else:
             do_copy = True
 
@@ -59,17 +63,25 @@ class PypoFile(Thread):
 
         if do_copy:
             self.logger.info("copying from %s to local cache %s" % (src, dst))
-            try:
-                CONFIG_SECTION = "general"
-                username = self._config.get(CONFIG_SECTION, 'api_key')
-                host = self._config.get(CONFIG_SECTION, 'base_url')
-                port = self._config.get(CONFIG_SECTION, 'base_port', 80)
 
-                url = "%s://%s:%s/rest/media/%s/download" % (str(("http", "https")[int(port) == 443]),
-                                                             host,
-                                                             port,
+            CONFIG_SECTION = "general"
+            username = self._config.get(CONFIG_SECTION, 'api_key')
+            baseurl = self._config.get(CONFIG_SECTION, 'base_url')
+            try:
+                port = self._config.get(CONFIG_SECTION, 'base_port')
+            except NoOptionError as e:
+                port = 80
+            try:
+                protocol = self._config.get(CONFIG_SECTION, 'protocol')
+            except NoOptionError as e:
+                protocol = str(("http", "https")[int(port) == 443])
+
+            try:
+                host = [protocol, baseurl, port]
+                url = "%s://%s:%s/rest/media/%s/download" % (host[0],
+                                                             host[1],
+                                                             host[2],
                                                              media_item["id"])
-                self.logger.info(url)
                 with open(dst, "wb") as handle:
                     response = requests.get(url, auth=requests.auth.HTTPBasicAuth(username, ''), stream=True, verify=False)
                     
@@ -83,19 +95,19 @@ class PypoFile(Thread):
                         
                         handle.write(chunk)
 
-                #make file world readable
-                os.chmod(dst, stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
+                #make file world readable and owner writable
+                os.chmod(dst, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
 
                 if media_item['filesize'] == 0:
                     file_size = self.report_file_size_and_md5_to_airtime(dst, media_item["id"], host, username)
                     media_item["filesize"] = file_size
 
                 media_item['file_ready'] = True
-            except Exception, e:
+            except Exception as e:
                 self.logger.error("Could not copy from %s to %s" % (src, dst))
                 self.logger.error(e)
 
-    def report_file_size_and_md5_to_airtime(self, file_path, file_id, host_name, api_key):
+    def report_file_size_and_md5_to_airtime(self, file_path, file_id, host, api_key):
         try:
             file_size = os.path.getsize(file_path)
 
@@ -115,7 +127,7 @@ class PypoFile(Thread):
         # Make PUT request to Airtime to update the file size and hash
         error_msg = "Could not update media file %s with file size and md5 hash" % file_id
         try:
-            put_url = "http://%s/rest/media/%s" % (host_name, file_id)
+            put_url = "%s://%s:%s/rest/media/%s" % (host[0], host[1], host[2], file_id)
             payload = json.dumps({'filesize': file_size, 'md5': md5_hash})
             response = requests.put(put_url, data=payload, auth=requests.auth.HTTPBasicAuth(api_key, ''))
             if not response.ok:
@@ -160,7 +172,7 @@ class PypoFile(Thread):
 
     def read_config_file(self, config_path):
         """Parse the application's config file located at config_path."""
-        config = ConfigParser.SafeConfigParser()
+        config = configparser.SafeConfigParser(allow_no_value=True)
         try:
             config.readfp(open(config_path))
         except IOError as e:
@@ -190,14 +202,14 @@ class PypoFile(Thread):
                     """
                     try:
                         self.media = self.media_queue.get_nowait()
-                    except Empty, e:
+                    except Empty as e:
                         pass
 
 
                 media_item = self.get_highest_priority_media_item(self.media)
                 if media_item is not None:
                     self.copy_file(media_item)
-            except Exception, e:
+            except Exception as e:
                 import traceback
                 top = traceback.format_exc()
                 self.logger.error(str(e))
@@ -209,9 +221,8 @@ class PypoFile(Thread):
         Entry point of the thread
         """
         try: self.main()
-        except Exception, e:
+        except Exception as e:
             top = traceback.format_exc()
             self.logger.error('PypoFile Exception: %s', top)
             time.sleep(5)
         self.logger.info('PypoFile thread exiting')
-

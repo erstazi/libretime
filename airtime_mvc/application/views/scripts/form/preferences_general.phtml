@@ -25,13 +25,21 @@
 
         <?php echo $this->element->getElement('weekStartDay')->render() ?>
 
+        <?php echo $this->element->getElement('tracktypeDefault')->render() ?>
+
         <?php echo $this->element->getElement('stationDefaultFadeIn')->render() ?>
 
         <?php echo $this->element->getElement('stationDefaultFadeOut')->render() ?>
 
         <?php echo $this->element->getElement('stationDefaultCrossfadeDuration')->render() ?>
 
+        <?php echo $this->element->getElement('introPlaylistSelect')->render() ?>
+
+        <?php echo $this->element->getElement('outroPlaylistSelect')->render() ?>
+
         <?php echo $this->element->getElement('podcastAlbumOverride')->render() ?>
+
+        <?php echo $this->element->getElement('podcastAutoSmartblock')->render() ?>
 
         <?php echo $this->element->getElement('thirdPartyApi')->render() ?>
         <?php echo $this->element->getElement('allowedCorsUrls')->render() ?>
