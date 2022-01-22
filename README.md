@@ -1,6 +1,6 @@
-![](https://github.com/LibreTime/libretime/raw/master/logo/logotype.png)
+![](https://github.com/LibreTime/libretime/raw/main/logo/logotype.png)
 
-[![Build Status](https://travis-ci.org/LibreTime/libretime.svg?branch=master)](https://travis-ci.org/LibreTime/libretime)
+[![Tests](https://github.com/LibreTime/libretime/actions/workflows/test.yml/badge.svg)](https://github.com/LibreTime/libretime/actions/workflows/test.yml)
 [![Financial Contributors on Open Collective](https://opencollective.com/libretime/all/badge.svg?label=financial+contributors)](https://opencollective.com/libretime)
 
 LibreTime makes it easy to run your own online or terrestrial radio station. It
@@ -15,20 +15,20 @@ We are currently ramping up development on this repository.
 Check out the [documentation](http://libretime.org) for more information and
 start broadcasting!
 
-Please note that LibreTime is released with a [Contributor Code 
-of Conduct](https://github.com/LibreTime/code-of-conduct/blob/master/CODE_OF_CONDUCT.md).
+Please note that LibreTime is released with a [Contributor Code
+of Conduct](https://github.com/LibreTime/code-of-conduct/blob/main/CODE_OF_CONDUCT.md).
 By participating in this project you agree to abide by its terms.
 
 Please submit enhancements, bugfixes or comments via GitHub.
 
 ## Development Process
 
-The LibreTime follows the standardized [Collective Code Construction 
+The LibreTime follows the standardized [Collective Code Construction
 Contract (C4)](https://rfc.zeromq.org/spec:42/C4/). Its abstract is
 provided here.
 
 > C4 provides a standard process for contributing, evaluating and
-> discussing improvements on software projects. It defines specific 
+> discussing improvements on software projects. It defines specific
 > technical requirements for projects like a style guide, unit tests,
 > git and similar platforms. It also establishes different personas
 > for projects, with clear and distinct duties. C4 specifies a process
@@ -100,15 +100,13 @@ your organization. Your logo will show up here with a link to your website.
 
 LibreTime is free software: you can redistribute it and/or
 modify it under the terms of the GNU Affero General Public
-License as published by the Free Software Foundation, 
+License as published by the Free Software Foundation,
 version 3 of the License.
 
 ## Copyright
 
 Copyright (c) 2011-2017 Sourcefabric z.ú.
 
-Copyright (c) 2017 LibreTime Community
+Copyright (c) 2017-2021 LibreTime Community
 
-Please refer to the original [README](README), 
-[CREDITS](CREDITS) and [LICENSE_3RD_PARTY](LICENSE_3RD_PARTY) 
-for more information.
+Please refer to the [LEGACY](./LEGACY.md) file for more information.
