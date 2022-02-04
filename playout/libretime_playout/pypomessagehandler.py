@@ -1,17 +1,13 @@
 import json
-import os
-import sys
 import time
 import traceback
 from threading import Thread
-
-from amqp.exceptions import AMQPError
 
 # For RabbitMQ
 from kombu.connection import Connection
 from kombu.messaging import Exchange, Queue
 from kombu.mixins import ConsumerMixin
-from kombu.simple import SimpleQueue
+from libretime_shared.config import RabbitMQConfig
 from loguru import logger
 
 
@@ -32,7 +28,7 @@ class RabbitConsumer(ConsumerMixin):
 
 
 class PypoMessageHandler(Thread):
-    def __init__(self, pq, rq, config):
+    def __init__(self, pq, rq, config: RabbitMQConfig):
         Thread.__init__(self)
         self.pypo_queue = pq
         self.recorder_queue = rq
@@ -46,10 +42,9 @@ class PypoMessageHandler(Thread):
             )
             schedule_queue = Queue("pypo-fetch", exchange=schedule_exchange, key="foo")
             with Connection(
-                self.config["host"],
-                self.config["user"],
-                self.config["password"],
-                self.config["vhost"],
+                f"amqp://{self.config.user}:{self.config.password}"
+                f"@{self.config.host}:{self.config.port}"
+                f"/{self.config.vhost}",
                 heartbeat=5,
             ) as connection:
                 rabbit = RabbitConsumer(connection, [schedule_queue], self)

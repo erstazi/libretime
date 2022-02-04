@@ -3,7 +3,8 @@ from pathlib import Path
 
 from setuptools import setup
 
-here = Path(__file__).parent
+# Change directory since setuptools uses relative paths
+here = Path(__file__).parent.resolve()
 chdir(here)
 
 setup(
@@ -17,7 +18,7 @@ setup(
     package_data={"": ["py.typed"]},
     install_requires=[
         "click>=8.0.3",
-        "loguru",
+        "loguru==0.6.0",
         "pydantic",
         "pyyaml",
     ],

@@ -53,27 +53,28 @@ class AirtimeApiClient:
         str_end = end_time.isoformat(timespec="seconds")
         data = self.services.schedule_url(
             params={
-                "ends__range": ("{}Z,{}Z".format(str_current, str_end)),
+                "ends__range": (f"{str_current}Z,{str_end}Z"),
                 "is_valid": True,
                 "playout_status__gt": 0,
             }
         )
-        result = {"media": {}}
+        result = {}
         for item in data:
             start = isoparse(item["starts"])
-            key = start.strftime("%Y-%m-%d-%H-%M-%S")
+            start_key = start.strftime("%Y-%m-%d-%H-%M-%S")
             end = isoparse(item["ends"])
+            end_key = end.strftime("%Y-%m-%d-%H-%M-%S")
 
             show_instance = self.services.show_instance_url(id=item["instance_id"])
             show = self.services.show_url(id=show_instance["show_id"])
 
-            result["media"][key] = {
-                "start": start.strftime("%Y-%m-%d-%H-%M-%S"),
-                "end": end.strftime("%Y-%m-%d-%H-%M-%S"),
+            result[start_key] = {
+                "start": start_key,
+                "end": end_key,
                 "row_id": item["id"],
                 "show_name": show["name"],
             }
-            current = result["media"][key]
+            current = result[start_key]
             if item["file"]:
                 current["independent_event"] = False
                 current["type"] = "file"
@@ -104,7 +105,7 @@ class AirtimeApiClient:
                 # Stream events are instantaneous
                 current["end"] = current["start"]
 
-                result["{}_0".format(key)] = {
+                result[f"{start_key}_0"] = {
                     "id": current["id"],
                     "type": "stream_output_start",
                     "start": current["start"],
@@ -114,7 +115,7 @@ class AirtimeApiClient:
                     "independent_event": current["independent_event"],
                 }
 
-                result[end.isoformat()] = {
+                result[end_key] = {
                     "type": "stream_buffer_end",
                     "start": current["end"],
                     "end": current["end"],
@@ -123,7 +124,7 @@ class AirtimeApiClient:
                     "independent_event": current["independent_event"],
                 }
 
-                result["{}_0".format(end.isoformat())] = {
+                result[f"{end_key}_0"] = {
                     "type": "stream_output_end",
                     "start": current["end"],
                     "end": current["end"],
@@ -131,7 +132,8 @@ class AirtimeApiClient:
                     "row_id": current["row_id"],
                     "independent_event": current["independent_event"],
                 }
-        return result
+
+        return {"media": result}
 
     def update_file(self, file_id, payload):
         data = self.services.file_url(id=file_id)

@@ -1,28 +1,17 @@
 <?php
-/* THIS FILE IS NOT MEANT FOR CUSTOMIZING.
- * PLEASE EDIT THE FOLLOWING TO CHANGE YOUR CONFIG:
- * LIBRETIME_CONF_DIR/airtime.conf
- */
 
-require_once __DIR__ . '/constants.php';
+// THIS FILE IS NOT MEANT FOR CUSTOMIZING.
 
 class Config
 {
     private static $CC_CONFIG;
-    private static $rootDir;
 
     public static function loadConfig()
     {
-        self::$rootDir = __DIR__ . '/../..';
-        $CC_CONFIG = [
-            // ================================================ storage configuration
-            'rootDir' => self::$rootDir,
-        ];
-
-        //In the unit testing environment, LIBRETIME_CONF_DIR will our local airtime.conf in legacy/application/test/conf:
-        $filename = isset($_SERVER['AIRTIME_CONF']) ? $_SERVER['AIRTIME_CONF'] : LIBRETIME_CONF_DIR . '/airtime.conf';
-
+        $filename = $_SERVER['LIBRETIME_CONFIG_FILEPATH'] ?? LIBRETIME_CONFIG_FILEPATH;
         $values = parse_ini_file($filename, true);
+
+        $CC_CONFIG = [];
 
         // Name of the web server user
         $CC_CONFIG['webServerUser'] = $values['general']['web_server_user'];
@@ -60,11 +49,12 @@ class Config
         $CC_CONFIG['cache_ahead_hours'] = $values['general']['cache_ahead_hours'];
 
         // Database config
-        $CC_CONFIG['dsn']['username'] = $values['database']['dbuser'];
-        $CC_CONFIG['dsn']['password'] = $values['database']['dbpass'];
-        $CC_CONFIG['dsn']['hostspec'] = $values['database']['host'];
         $CC_CONFIG['dsn']['phptype'] = 'pgsql';
-        $CC_CONFIG['dsn']['database'] = $values['database']['dbname'];
+        $CC_CONFIG['dsn']['host'] = $values['database']['host'] ?? 'localhost';
+        $CC_CONFIG['dsn']['port'] = $values['database']['port'] ?? 5432;
+        $CC_CONFIG['dsn']['database'] = $values['database']['name'] ?? 'libretime';
+        $CC_CONFIG['dsn']['username'] = $values['database']['user'] ?? 'libretime';
+        $CC_CONFIG['dsn']['password'] = $values['database']['password'] ?? 'libretime';
 
         $CC_CONFIG['apiKey'] = [$values['general']['api_key']];
 
@@ -97,7 +87,7 @@ class Config
 
     public static function setAirtimeVersion()
     {
-        $version = @file_get_contents(self::$rootDir . '/../VERSION');
+        $version = @file_get_contents(dirname(ROOT_PATH) . '/VERSION');
         if (!$version) {
             // fallback to constant from constants.php if no other info is available
             $version = LIBRETIME_MAJOR_VERSION;

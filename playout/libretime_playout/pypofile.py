@@ -1,31 +1,21 @@
-import configparser
 import hashlib
-import json
 import os
-import shutil
 import stat
-import sys
 import time
 import traceback
-from configparser import NoOptionError
 from queue import Empty
 from threading import Thread
 
-import requests
 from libretime_api_client import version2 as api_client
 from loguru import logger
-from requests.exceptions import ConnectionError, HTTPError, Timeout
-
-CONFIG_PATH = "/etc/airtime/airtime.conf"
+from requests.exceptions import ConnectionError, Timeout
 
 
 class PypoFile(Thread):
-    def __init__(self, schedule_queue, config):
+    def __init__(self, schedule_queue):
         Thread.__init__(self)
         self.media_queue = schedule_queue
         self.media = None
-        self.cache_dir = os.path.join(config["cache_dir"], "scheduler")
-        self._config = self.read_config_file(CONFIG_PATH)
         self.api_client = api_client.AirtimeApiClient()
 
     def copy_file(self, media_item):
@@ -63,7 +53,7 @@ class PypoFile(Thread):
         media_item["file_ready"] = not do_copy
 
         if do_copy:
-            logger.info("copying from %s to local cache %s" % (src, dst))
+            logger.info(f"copying from {src} to local cache {dst}")
             try:
                 with open(dst, "wb") as handle:
                     logger.info(media_item)
@@ -92,7 +82,7 @@ class PypoFile(Thread):
 
                 media_item["file_ready"] = True
             except Exception as e:
-                logger.error("Could not copy from %s to %s" % (src, dst))
+                logger.error(f"Could not copy from {src} to {dst}")
                 logger.error(e)
 
     def report_file_size_and_md5_to_api(self, file_path, file_id):
@@ -107,7 +97,7 @@ class PypoFile(Thread):
                         break
                     m.update(data)
                 md5_hash = m.hexdigest()
-        except (OSError, IOError) as e:
+        except OSError as e:
             file_size = 0
             logger.error(
                 "Error getting file size and md5 hash for file id %s" % file_id
@@ -158,19 +148,6 @@ class PypoFile(Thread):
         del schedule[highest_priority]
 
         return media_item
-
-    def read_config_file(self, config_path):
-        """Parse the application's config file located at config_path."""
-        config = configparser.SafeConfigParser(allow_no_value=True)
-        try:
-            config.readfp(open(config_path))
-        except IOError as e:
-            logger.debug(
-                "Failed to open config file at %s: %s" % (config_path, e.strerror)
-            )
-            sys.exit()
-
-        return config
 
     def main(self):
         while True:

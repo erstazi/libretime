@@ -85,6 +85,7 @@ class BaseConfig(BaseModel):
         if filepath is None:
             return {}
 
+        # pylint: disable=fixme
         # TODO: Remove ability to load ini files once yaml if fully supported.
         if filepath.suffix == ".conf":
             config = ConfigParser()
@@ -106,6 +107,13 @@ class DatabaseConfig(BaseModel):
     user: str = "libretime"
     password: str = "libretime"
 
+    @property
+    def url(self) -> str:
+        return (
+            f"postgresql://{self.user}:{self.password}"
+            f"@{self.host}:{self.port}/{self.name}"
+        )
+
 
 # pylint: disable=too-few-public-methods
 class RabbitMQConfig(BaseModel):
@@ -115,3 +123,10 @@ class RabbitMQConfig(BaseModel):
     user: str = "libretime"
     password: str = "libretime"
     vhost: str = "/libretime"
+
+    @property
+    def url(self) -> str:
+        return (
+            f"amqp://{self.user}:{self.password}"
+            f"@{self.host}:{self.port}/{self.vhost.lstrip('/')}"
+        )

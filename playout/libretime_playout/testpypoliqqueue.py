@@ -8,7 +8,7 @@ from libretime_shared.logging import TRACE, setup_logger
 from loguru import logger
 
 from .pypoliqqueue import PypoLiqQueue
-from .telnetliquidsoap import DummyTelnetLiquidsoap, TelnetLiquidsoap
+from .telnetliquidsoap import TelnetLiquidsoap
 
 
 def keyboardInterruptHandler(signum, frame):
@@ -46,7 +46,7 @@ plq.daemon = True
 plq.start()
 
 
-print("Time now: {:s}".format(datetime.utcnow()))
+print(f"Time now: {datetime.utcnow():s}")
 
 media_schedule = {}
 

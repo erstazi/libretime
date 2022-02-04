@@ -26,7 +26,8 @@ $(VENV):
 install: $(VENV)
 	source $(VENV)/bin/activate
 	pip install --upgrade pip setuptools wheel
-	pip install $(SHARED_DEV_REQUIREMENTS) $(PIP_INSTALL)
+	pip install $(SHARED_DEV_REQUIREMENTS)
+	[[ -z "$(PIP_INSTALL)" ]] || pip install $(PIP_INSTALL)
 
 .PHONY: .format
 .format: $(VENV)
@@ -43,12 +44,12 @@ install: $(VENV)
 .PHONY: .pylint
 .pylint: $(VENV)
 	source $(VENV)/bin/activate
-	pylint --jobs=$(CPU_CORES) --output-format=colorized $(PYLINT_ARG) || true
+	pylint --jobs=$(CPU_CORES) --output-format=colorized $(PYLINT_ARG)
 
 .PHONY: .mypy
 .mypy: $(VENV)
 	source $(VENV)/bin/activate
-	mypy $(MYPY_ARG) || true
+	mypy $(MYPY_ARG)
 
 .PHONY: .pytest
 .pytest: $(VENV)

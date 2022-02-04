@@ -1,23 +1,17 @@
-import calendar
 import math
-import os
-import sys
 import telnetlib
 import time
 import traceback
-from datetime import datetime, timedelta
-from queue import Empty, Queue
+from datetime import datetime
+from queue import Queue
 from threading import Thread
 
-from configobj import ConfigObj
 from libretime_api_client import version1 as api_client
 from loguru import logger
 
-from .pypofetch import PypoFetch
+from .config import PUSH_INTERVAL, Config
 from .pypoliqqueue import PypoLiqQueue
 from .timeout import ls_timeout
-
-PUSH_INTERVAL = 2
 
 
 def is_stream(media_item):
@@ -29,7 +23,7 @@ def is_file(media_item):
 
 
 class PypoPush(Thread):
-    def __init__(self, q, telnet_lock, pypo_liquidsoap, config):
+    def __init__(self, q, telnet_lock, pypo_liquidsoap, config: Config):
         Thread.__init__(self)
         self.api_client = api_client.AirtimeApiClient()
         self.queue = q
@@ -87,7 +81,7 @@ class PypoPush(Thread):
             media_item = media_schedule[mkey]
 
             # Ignore track that already ended
-            if media_item["end"] < tnow:
+            if media_item["type"] == "file" and media_item["end"] < tnow:
                 logger.debug(f"ignoring ended media_item: {media_item}")
                 continue
 
@@ -119,7 +113,10 @@ class PypoPush(Thread):
     def stop_web_stream_all(self):
         try:
             self.telnet_lock.acquire()
-            tn = telnetlib.Telnet(self.config["LS_HOST"], self.config["LS_PORT"])
+            tn = telnetlib.Telnet(
+                self.config.playout.liquidsoap_host,
+                self.config.playout.liquidsoap_port,
+            )
 
             # msg = 'dynamic_source.read_stop_all xxx\n'
             msg = "http.stop\n"

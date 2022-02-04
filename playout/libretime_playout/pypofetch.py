@@ -17,6 +17,7 @@ from libretime_api_client import version2 as api_client
 from loguru import logger
 
 from . import pure
+from .config import CACHE_DIR, POLL_INTERVAL, Config
 from .timeout import ls_timeout
 
 
@@ -27,12 +28,16 @@ def keyboardInterruptHandler(signum, frame):
 
 signal.signal(signal.SIGINT, keyboardInterruptHandler)
 
-POLL_INTERVAL = 400
-
 
 class PypoFetch(Thread):
     def __init__(
-        self, pypoFetch_q, pypoPush_q, media_q, telnet_lock, pypo_liquidsoap, config
+        self,
+        pypoFetch_q,
+        pypoPush_q,
+        media_q,
+        telnet_lock,
+        pypo_liquidsoap,
+        config: Config,
     ):
         Thread.__init__(self)
 
@@ -52,20 +57,8 @@ class PypoFetch(Thread):
 
         self.pypo_liquidsoap = pypo_liquidsoap
 
-        self.cache_dir = os.path.join(config["cache_dir"], "scheduler")
+        self.cache_dir = CACHE_DIR
         logger.debug("Cache dir %s", self.cache_dir)
-
-        try:
-            if not os.path.isdir(dir):
-                """
-                We get here if path does not exist, or path does exist but
-                is a file. We are not handling the second case, but don't
-                think we actually care about handling it.
-                """
-                logger.debug("Cache dir does not exist. Creating...")
-                os.makedirs(dir)
-        except Exception as e:
-            pass
 
         self.schedule_data = []
         logger.info("PypoFetch: init complete")
@@ -196,9 +189,10 @@ class PypoFetch(Thread):
             while True:
                 try:
                     tn = telnetlib.Telnet(
-                        self.config["ls_host"], self.config["ls_port"]
+                        self.config.playout.liquidsoap_host,
+                        self.config.playout.liquidsoap_port,
                     )
-                    tn.write("exit\n".encode("utf-8"))
+                    tn.write(b"exit\n")
                     tn.read_all()
                     logger.info("Liquidsoap is up and running")
                     break
@@ -229,7 +223,10 @@ class PypoFetch(Thread):
 
         try:
             self.telnet_lock.acquire()
-            tn = telnetlib.Telnet(self.config["ls_host"], self.config["ls_port"])
+            tn = telnetlib.Telnet(
+                self.config.playout.liquidsoap_host,
+                self.config.playout.liquidsoap_port,
+            )
             # update the boot up time of Liquidsoap. Since Liquidsoap is not restarting,
             # we are manually adjusting the bootup time variable so the status msg will get
             # updated.
@@ -240,11 +237,11 @@ class PypoFetch(Thread):
             logger.info(boot_up_time_command)
             tn.write(boot_up_time_command)
 
-            connection_status = ("streams.connection_status\n").encode("utf-8")
+            connection_status = b"streams.connection_status\n"
             logger.info(connection_status)
             tn.write(connection_status)
 
-            tn.write("exit\n".encode("utf-8"))
+            tn.write(b"exit\n")
 
             output = tn.read_all()
         except Exception as e:
@@ -276,11 +273,14 @@ class PypoFetch(Thread):
         # TODO: THIS LIQUIDSOAP STUFF NEEDS TO BE MOVED TO PYPO-PUSH!!!
         try:
             self.telnet_lock.acquire()
-            tn = telnetlib.Telnet(self.config["ls_host"], self.config["ls_port"])
+            tn = telnetlib.Telnet(
+                self.config.playout.liquidsoap_host,
+                self.config.playout.liquidsoap_port,
+            )
             command = ("vars.stream_metadata_type %s\n" % stream_format).encode("utf-8")
             logger.info(command)
             tn.write(command)
-            tn.write("exit\n".encode("utf-8"))
+            tn.write(b"exit\n")
             tn.read_all()
         except Exception as e:
             logger.exception(e)
@@ -293,11 +293,14 @@ class PypoFetch(Thread):
         # TODO: THIS LIQUIDSOAP STUFF NEEDS TO BE MOVED TO PYPO-PUSH!!!
         try:
             self.telnet_lock.acquire()
-            tn = telnetlib.Telnet(self.config["ls_host"], self.config["ls_port"])
+            tn = telnetlib.Telnet(
+                self.config.playout.liquidsoap_host,
+                self.config.playout.liquidsoap_port,
+            )
             command = ("vars.default_dj_fade %s\n" % fade).encode("utf-8")
             logger.info(command)
             tn.write(command)
-            tn.write("exit\n".encode("utf-8"))
+            tn.write(b"exit\n")
             tn.read_all()
         except Exception as e:
             logger.exception(e)
@@ -311,11 +314,14 @@ class PypoFetch(Thread):
         try:
             try:
                 self.telnet_lock.acquire()
-                tn = telnetlib.Telnet(self.config["ls_host"], self.config["ls_port"])
+                tn = telnetlib.Telnet(
+                    self.config.playout.liquidsoap_host,
+                    self.config.playout.liquidsoap_port,
+                )
                 command = ("vars.station_name %s\n" % station_name).encode("utf-8")
                 logger.info(command)
                 tn.write(command)
-                tn.write("exit\n".encode("utf-8"))
+                tn.write(b"exit\n")
                 tn.read_all()
             except Exception as e:
                 logger.exception(e)
@@ -498,7 +504,7 @@ class PypoFetch(Thread):
 
         loops = 1
         while True:
-            logger.info("Loop #%s", loops)
+            logger.info(f"Loop #{loops}")
             manual_fetch_needed = False
             try:
                 """

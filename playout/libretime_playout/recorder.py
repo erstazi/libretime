@@ -4,7 +4,6 @@ import math
 import os
 import re
 import signal
-import sys
 import time
 import traceback
 from subprocess import PIPE, Popen
@@ -12,9 +11,10 @@ from threading import Thread
 
 import mutagen
 import pytz
-from configobj import ConfigObj
 from libretime_api_client.version1 import AirtimeApiClient as AirtimeApiClientV1
 from loguru import logger
+
+from libretime_playout.config import PUSH_INTERVAL, RECORD_DIR, Config
 
 
 def api_client():
@@ -24,13 +24,6 @@ def api_client():
     """
     return AirtimeApiClientV1()
 
-
-# loading config file
-try:
-    config = ConfigObj("/etc/airtime/airtime.conf")
-except Exception as e:
-    print("Error loading config file: {}".format(e))
-    sys.exit()
 
 # TODO : add docstrings everywhere in this module
 
@@ -51,13 +44,18 @@ def getDateTimeObj(time):
     )
 
 
-PUSH_INTERVAL = 2
-
-
 class ShowRecorder(Thread):
-    def __init__(self, show_instance, show_name, filelength, start_time):
+    def __init__(
+        self,
+        show_instance,
+        show_name,
+        filelength,
+        start_time,
+        config: Config,
+    ):
         Thread.__init__(self)
         self.api_client = api_client()
+        self.config = config
         self.filelength = filelength
         self.start_time = start_time
         self.show_instance = show_instance
@@ -69,22 +67,17 @@ class ShowRecorder(Thread):
         filename = self.start_time
         filename = filename.replace(" ", "-")
 
-        if config["pypo"]["record_file_type"] in ["mp3", "ogg"]:
-            filetype = config["pypo"]["record_file_type"]
-        else:
-            filetype = "ogg"
+        joined_path = os.path.join(RECORD_DIR, filename)
+        filepath = f"{joined_path}.{self.config.playout.record_file_format}"
 
-        joined_path = os.path.join(config["pypo"]["base_recorded_files"], filename)
-        filepath = "%s.%s" % (joined_path, filetype)
-
-        br = config["pypo"]["record_bitrate"]
-        sr = config["pypo"]["record_samplerate"]
-        c = config["pypo"]["record_channels"]
-        ss = config["pypo"]["record_sample_size"]
+        br = self.config.playout.record_bitrate
+        sr = self.config.playout.record_samplerate
+        c = self.config.playout.record_channels
+        ss = self.config.playout.record_sample_size
 
         # -f:16,2,44100
         # -b:256
-        command = "ecasound -f:%s,%s,%s -i alsa -o %s,%s000 -t:%s" % (
+        command = "ecasound -f:{},{},{} -i alsa -o {},{}000 -t:{}".format(
             ss,
             c,
             sr,
@@ -152,7 +145,9 @@ class ShowRecorder(Thread):
             recorded_file = mutagen.File(filepath, easy=True)
             recorded_file["artist"] = artist
             recorded_file["date"] = full_date
-            recorded_file["title"] = "%s-%s-%s" % (self.show_name, full_date, full_time)
+            recorded_file["title"] = "{}-{}-{}".format(
+                self.show_name, full_date, full_time
+            )
             # You cannot pass ints into the metadata of a file. Even tracknumber needs to be a string
             recorded_file["tracknumber"] = self.show_instance
             recorded_file.save()
@@ -181,9 +176,10 @@ class ShowRecorder(Thread):
 
 
 class Recorder(Thread):
-    def __init__(self, q):
+    def __init__(self, q, config: Config):
         Thread.__init__(self)
         self.api_client = api_client()
+        self.config = config
         self.sr = None
         self.shows_to_record = {}
         self.server_timezone = ""
@@ -246,7 +242,7 @@ class Recorder(Thread):
             next_show = getDateTimeObj(start_time)
 
             delta = next_show - tnow
-            s = "%s.%s" % (delta.seconds, delta.microseconds)
+            s = f"{delta.seconds}.{delta.microseconds}"
             out = float(s)
 
             if out < 5:
@@ -314,6 +310,7 @@ class Recorder(Thread):
                             show_name,
                             show_length_seconds,
                             start_time_formatted,
+                            self.config,
                         )
                         self.sr.start()
                         break
