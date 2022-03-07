@@ -677,6 +677,7 @@ case "${dist}-${code}" in
     ;;
   ubuntu-18.04)
     code="bionic"
+    # shellcheck disable=SC2034
     is_ubuntu_dist=true
     is_ubuntu_bionic=true
     ;;
@@ -768,10 +769,6 @@ if [ "$ignore_dependencies" = "f" ]; then
   loud "\n-----------------------------------------------------"
   loud "         * Installing External Dependencies *        "
   loud "-----------------------------------------------------"
-
-  if $is_ubuntu_dist; then
-    loudCmd "add-apt-repository -y ppa:libretime/libretime"
-  fi
 
   if [ -x /usr/bin/apt-get ]; then
     verbose "\n * Reading packages.ini files..."
@@ -1058,6 +1055,7 @@ verbose "...Done"
 
 verbose "\n * Installing celery..."
 loudCmd "$pip_cmd install ${AIRTIMEROOT}/worker"
+mkdir_and_chown "${web_user}:${web_user}" "${LIBRETIME_WORKING_DIR}/worker"
 # Create the Celery user
 if $is_centos_dist; then
   loudCmd "id celery 2>/dev/null || adduser --no-create-home -c 'LibreTime Celery' -r celery || true"
@@ -1069,7 +1067,7 @@ loudCmd "usermod -G ${web_user} -a celery"
 # CentOS installs celery in /usr/bin which differs from other distros. Make
 # available in /usr/local/bin as systemd requires an absolute path.
 [[ ! -e /usr/local/bin/celery ]] && ln -s /usr/bin/celery /usr/local/bin/celery
-systemInitInstall libretime-celery
+systemInitInstall libretime-celery celery
 verbose "...Done"
 
 verbose "\n * Installing libretime-analyzer..."
@@ -1085,7 +1083,6 @@ mkdir -p /etc/airtime
 sed -e "s@WEB_USER@${web_user}@g" \
   -e "s@WEB_ROOT@${web_root}@g" \
   "${AIRTIMEROOT}/installer/uwsgi/libretime-api.ini" > /etc/airtime/libretime-api.ini
-loudCmd "libretime-api collectstatic --clear --noinput"
 verbose "...Done"
 
 verbose "\n * Setting permissions on /var/log/airtime..."

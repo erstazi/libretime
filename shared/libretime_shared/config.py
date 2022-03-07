@@ -2,13 +2,15 @@ import sys
 from configparser import ConfigParser
 from os import environ
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
+from urllib.parse import urlunsplit
 
 from loguru import logger
 
 # pylint: disable=no-name-in-module
 from pydantic import BaseModel, ValidationError
 from pydantic.fields import ModelField
+from pydantic.utils import deep_update
 from yaml import YAMLError, safe_load
 
 DEFAULT_ENV_PREFIX = "LIBRETIME"
@@ -21,6 +23,7 @@ class BaseConfig(BaseModel):
 
     :param filepath: yaml configuration file to read from
     :param env_prefix: prefix for the environment variable names
+    :param env_delimiter: delimiter for the environment variable names
     :returns: configuration class
     """
 
@@ -29,18 +32,16 @@ class BaseConfig(BaseModel):
         *,
         env_prefix: str = DEFAULT_ENV_PREFIX,
         env_delimiter: str = "_",
-        filepath: Optional[Path] = None,
+        filepath: Optional[Union[Path, str]] = None,
     ) -> None:
+        if filepath is not None:
+            filepath = Path(filepath)
+
         file_values = self._load_file_values(filepath)
         env_values = self._load_env_values(env_prefix, env_delimiter)
 
         try:
-            super().__init__(
-                **{
-                    **file_values,
-                    **env_values,
-                },
-            )
+            super().__init__(**deep_update(file_values, env_values))
         except ValidationError as error:
             logger.critical(error)
             sys.exit(1)
@@ -83,6 +84,11 @@ class BaseConfig(BaseModel):
         filepath: Optional[Path] = None,
     ) -> Dict[str, Any]:
         if filepath is None:
+            logger.debug("no config filepath is provided")
+            return {}
+
+        if not filepath.is_file():
+            logger.warning(f"provided config filepath '{filepath}' is not a file")
             return {}
 
         # pylint: disable=fixme
@@ -95,8 +101,32 @@ class BaseConfig(BaseModel):
         try:
             return safe_load(filepath.read_text(encoding="utf-8"))
         except YAMLError as error:
-            logger.critical(error)
-            sys.exit(1)
+            logger.error(f"config file '{filepath}' is not a valid yaml file: {error}")
+
+        return {}
+
+
+# pylint: disable=too-few-public-methods
+class GeneralConfig(BaseModel):
+    api_key: str
+
+    protocol: str = "http"
+    base_url: str = "localhost"
+    base_port: Optional[int]
+    base_dir: str = "/"
+    force_ssl: bool = False
+
+    @property
+    def public_url(self) -> str:
+        scheme = "https" if self.force_ssl else self.protocol
+
+        location = self.base_url
+        if self.base_port is not None:
+            location += f":{self.base_port}"
+
+        path = self.base_dir.rstrip("/")
+
+        return urlunsplit((scheme, location, path, None, None))
 
 
 # pylint: disable=too-few-public-methods
@@ -128,5 +158,5 @@ class RabbitMQConfig(BaseModel):
     def url(self) -> str:
         return (
             f"amqp://{self.user}:{self.password}"
-            f"@{self.host}:{self.port}/{self.vhost.lstrip('/')}"
+            f"@{self.host}:{self.port}/{self.vhost}"
         )

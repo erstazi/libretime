@@ -32,7 +32,8 @@ repos:
     rev: v2.5.1
     hooks:
       - id: prettier
-        files: \.(md|yml|yaml|json)$
+        files: \.(md|mdx|yml|yaml|js|jsx|ts|tsx|json|css)$
+        exclude: ^legacy/public
 
   - repo: https://github.com/asottile/pyupgrade
     rev: v2.31.0
@@ -41,7 +42,7 @@ repos:
         args: [--py3-plus, --py36-plus]
 
   - repo: https://github.com/psf/black
-    rev: 21.12b0
+    rev: 22.1.0
     hooks:
       - id: black
 
@@ -58,4 +59,14 @@ repos:
         args:
           - --ignore-words=.codespellignore
           - --builtin=clear,rare,informal
-        exclude: ^(legacy.*)$
+        exclude: (^legacy.*|yarn\.lock)$
+
+  - repo: local
+    hooks:
+      - id: requirements.txt
+        name: requirements.txt
+        description: Generate requirements.txt
+        entry: tools/extract-requirements.sh dev
+        pass_filenames: false
+        language: script
+        files: setup.py$

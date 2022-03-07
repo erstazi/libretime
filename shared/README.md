@@ -1,6 +1,6 @@
 # Shared
 
-The `libretime_shared` package contains reusable functions and classes for the Libretime project.
+The `libretime_shared` package contains reusable functions and classes for the LibreTime project.
 
 ## Usage
 
@@ -31,6 +31,8 @@ class Config(BaseConfig):
 
 config = Config(filepath="/etc/libretime/config.yml")
 ```
+
+> Don't instantiate a sub model if it has a required field, otherwise the `Config` class import will raise a `ValidationError`.
 
 ### App
 
