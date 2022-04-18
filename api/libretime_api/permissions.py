@@ -1,7 +1,9 @@
+from secrets import compare_digest
+
 from django.conf import settings
 from rest_framework.permissions import BasePermission
 
-from .models.user_constants import DJ
+from .core.models.role import DJ
 
 REQUEST_PERMISSION_TYPE_MAP = {
     "GET": "view",
@@ -41,9 +43,7 @@ def get_permission_for_view(request, view):
             return f"{permission_type}_apiroot"
         model = view.model_permission_name
         own_obj = get_own_obj(request, view)
-        return "{permission_type}_{own_obj}{model}".format(
-            permission_type=permission_type, own_obj=own_obj, model=model
-        )
+        return f"{permission_type}_{own_obj}{model}"
     except AttributeError:
         return None
 
@@ -55,8 +55,7 @@ def check_authorization_header(request):
 
     if auth_header.startswith("Api-Key"):
         token = auth_header.split()[1]
-        if token == settings.CONFIG.general.api_key:
-            return True
+        return compare_digest(token, settings.CONFIG.general.api_key)
     return False
 
 

@@ -60,16 +60,15 @@ jobs:
         working-directory: legacy
 
   test-legacy:
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         include:
-          - runs-on: ubuntu-18.04
-            php-version: "7.2"
-          - runs-on: ubuntu-20.04
-            php-version: "7.4"
+          - php-version: "7.2" # Bionic
+          - php-version: "7.3" # Buster
+          - php-version: "7.4" # Bullseye, Focal
 
-    runs-on: ${{ matrix.runs-on }}
     env:
       ENVIRONMENT: testing
     steps:
@@ -94,7 +93,7 @@ jobs:
         run: |
           echo "::set-output name=dir::$(composer config cache-files-dir)"
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -115,18 +114,15 @@ jobs:
         context:
           - analyzer
           - api
-          - api_client
+          - api-client
           - playout
           - shared
           - worker
 
-    container: ghcr.io/libretime/libretime-dev:buster
-    defaults:
-      run:
-        shell: bash
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/cache@v2
+      - uses: actions/setup-python@v3
+      - uses: actions/cache@v3
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.py') }}
@@ -148,13 +144,14 @@ jobs:
       matrix:
         context:
           - analyzer
-          - api_client
+          - api-client
           - shared
         release:
           - buster
           - bullseye
           - bionic
           - focal
+          - jammy
 
     container: ghcr.io/libretime/libretime-dev:${{ matrix.release }}
     defaults:
@@ -164,7 +161,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ matrix.context }}-${{ hashFiles('**/setup.py') }}
@@ -187,6 +184,7 @@ jobs:
           - bullseye
           - bionic
           - focal
+          - jammy
 
     services:
       postgres:
@@ -205,13 +203,12 @@ jobs:
       run:
         shell: bash
     env:
-      LIBRETIME_GENERAL_API_KEY: test_key
       LIBRETIME_DATABASE_HOST: postgres
 
     steps:
       - uses: actions/checkout@v3
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ matrix.context }}-${{ hashFiles('**/setup.py') }}

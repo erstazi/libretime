@@ -47,7 +47,7 @@ updates:
       - dependencies
 
   - package-ecosystem: "pip"
-    directory: "/api_client"
+    directory: "/api-client"
     schedule:
       interval: "daily"
     labels:
@@ -94,3 +94,7 @@ updates:
     labels:
       - javascript
       - dependencies
+    ignore:
+      # All @docusaurus/* packages should be updated with the @docusaurus/core package
+      - dependency-name: "@docusaurus/module-type-aliases"
+      - dependency-name: "@docusaurus/preset-classic"

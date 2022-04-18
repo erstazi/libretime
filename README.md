@@ -1,6 +1,6 @@
 ![](website/static/img/logo-512px.png)
 
-[![Tests](https://github.com/LibreTime/libretime/actions/workflows/test.yml/badge.svg)](https://github.com/LibreTime/libretime/actions/workflows/test.yml)
+[![Tests](https://github.com/libretime/libretime/actions/workflows/test.yml/badge.svg)](https://github.com/libretime/libretime/actions/workflows/test.yml)
 [![Financial Contributors on Open Collective](https://opencollective.com/libretime/all/badge.svg?label=financial+contributors)](https://opencollective.com/libretime)
 
 LibreTime makes it easy to run your own online or terrestrial radio station. It
@@ -16,10 +16,10 @@ Check out the [documentation](https://libretime.org) for more information and
 start broadcasting!
 
 Please note that LibreTime is released with a [Contributor Code
-of Conduct](https://github.com/LibreTime/code-of-conduct/blob/main/CODE_OF_CONDUCT.md).
+of Conduct](https://github.com/libretime/organization/blob/main/CODE_OF_CONDUCT.md).
 By participating in this project you agree to abide by its terms.
 
-Please submit enhancements, bugfixes or comments via GitHub.
+Please submit enhancements, bug-fixes or comments via GitHub.
 
 ## Development Process
 

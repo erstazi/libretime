@@ -7,8 +7,8 @@ const vars = require("./vars");
 const config = {
   title: vars.title,
   tagline: vars.description,
-  url: vars.website,
-  baseUrl: "/",
+  url: process.env.URL || vars.website,
+  baseUrl: process.env.BASE_URL || "/",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "throw",
   favicon: "img/icon.svg",
@@ -22,6 +22,12 @@ const config = {
       {
         indexBlog: false,
         indexPages: false,
+      },
+    ],
+    [
+      "@docusaurus/plugin-client-redirects",
+      {
+        redirects: require("./redirects"),
       },
     ],
   ],
@@ -56,6 +62,7 @@ const config = {
               return item;
             });
           },
+          remarkPlugins: [require("mdx-mermaid")],
         },
         blog: false,
         theme: {
@@ -87,6 +94,7 @@ const config = {
           { ...vars.repository, position: "right" },
           { ...vars.forum, position: "right" },
           { ...vars.channel, position: "right" },
+          { type: "docsVersionDropdown", position: "right" },
           // { type: "localeDropdown", position: "right" },
         ],
       },

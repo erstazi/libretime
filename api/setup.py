@@ -25,7 +25,7 @@ setup(
     python_requires=">=3.6",
     entry_points={
         "console_scripts": [
-            "libretime-api=libretime_api.cli:main",
+            "libretime-api=libretime_api.manage:main",
         ]
     },
     install_requires=[
@@ -41,8 +41,11 @@ setup(
             "psycopg2",
         ],
         "dev": [
+            "django-stubs",
+            "djangorestframework-stubs",
             "model_bakery",
             "psycopg2-binary",
+            "pylint-django",
             f"libretime-shared @ file://localhost/{here.parent / 'shared'}#egg=libretime_shared",
         ],
     },
