@@ -11,20 +11,10 @@ The `general` section configure anything related to the legacy and API services.
 
 ```ini
 [general]
-# The internal API authentication key, this field is required
+# The public url. This field is REQUIRED
+public_url = https://example.com
+# The internal API authentication key, this field is REQUIRED
 api_key = some_random_generated_secret!
-
-# The public url scheme
-# Mutually exclusive with force_ssl
-protocol =
-# The public url hostname, default is localhost
-base_url = localhost
-# The public url port
-base_port =
-# The public url base path, default is /
-base_dir = /
-# Force https for generated urls, default is false
-force_ssl = false
 
 # How many hours ahead Playout should cache scheduled media files, default is 1
 cache_ahead_hours = 1
@@ -121,7 +111,7 @@ liquidsoap_host = localhost
 # Liquidsoap connection port, default is 1234
 liquidsoap_port = 1234
 
-# The format for recordings, allowed values are ogg|mp3, default is ogg
+# The format for recordings, allowed values are ogg,mp3, default is ogg
 record_file_format = ogg
 # The bitrate for recordings, default is 256
 record_bitrate = 256
