@@ -46,6 +46,24 @@ sudo apt purge \
     uwsgi-plugin-python3
 ```
 
+### Logrotate config filepath
+
+The legacy logrotate config filepath was changed from `/etc/logrotate.d/airtime-php` to `/etc/logrotate.d/libretime-legacy`. The old configuration file must be removed:
+
+```bash
+# Remove the configuration file
+sudo rm -f /etc/logrotate.d/airtime-php
+```
+
+### Worker user
+
+The worker service no longer uses a dedicated `celery` user to run. The old `celery` user can be removed from the system:
+
+```bash
+# Remove the celery user
+sudo deluser celery
+```
+
 ### New configuration schema
 
 The configuration schema was updated.

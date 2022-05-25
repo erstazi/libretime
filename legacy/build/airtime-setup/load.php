@@ -1,7 +1,5 @@
 <?php
 
-define('RMQ_INI_SECTION', 'rabbitmq');
-
 function booleanReduce($a, $b)
 {
     return $a && $b;
@@ -102,19 +100,14 @@ function configureDatabase()
  */
 function checkRMQConnection()
 {
-    // Check for installed config file first, then check in the build directory,
-    if (file_exists(LIBRETIME_CONFIG_FILEPATH)) {
-        $ini = parse_ini_file(LIBRETIME_CONFIG_FILEPATH, true);
-    } else {
-        $ini = parse_ini_file(SAMPLE_CONFIG_FILEPATH, true);
-    }
+    $config = Config::getConfig();
 
     $conn = new \PhpAmqpLib\Connection\AMQPStreamConnection(
-        $ini[RMQ_INI_SECTION]['host'],
-        $ini[RMQ_INI_SECTION]['port'],
-        $ini[RMQ_INI_SECTION]['user'],
-        $ini[RMQ_INI_SECTION]['password'],
-        $ini[RMQ_INI_SECTION]['vhost']
+        $config['rabbitmq']['host'],
+        $config['rabbitmq']['port'],
+        $config['rabbitmq']['user'],
+        $config['rabbitmq']['password'],
+        $config['rabbitmq']['vhost']
     );
 
     return isset($conn);
@@ -127,10 +120,7 @@ function checkRMQConnection()
  */
 function checkAnalyzerService()
 {
-    exec('pgrep -f libretime-analyzer', $out, $status);
-    if (($out > 0) && $status == 0) {
-        return posix_kill(rtrim($out[0]), 0);
-    }
+    exec('systemctl is-active libretime-analyzer --quiet', $out, $status);
 
     return $status == 0;
 }
@@ -142,10 +132,7 @@ function checkAnalyzerService()
  */
 function checkPlayoutService()
 {
-    exec('pgrep -f libretime-playout', $out, $status);
-    if ($out > 0) {
-        return posix_kill(rtrim($out[0]), 0);
-    }
+    exec('systemctl is-active libretime-playout --quiet', $out, $status);
 
     return $status == 0;
 }
@@ -157,10 +144,7 @@ function checkPlayoutService()
  */
 function checkLiquidsoapService()
 {
-    exec('pgrep -f libretime-liquidsoap', $out, $status);
-    if ($out > 0) {
-        return posix_kill(rtrim($out[0]), 0);
-    }
+    exec('systemctl is-active libretime-liquidsoap --quiet', $out, $status);
 
     return $status == 0;
 }
@@ -172,10 +156,7 @@ function checkLiquidsoapService()
  */
 function checkCeleryService()
 {
-    exec('pgrep -f -u celery libretime_worker', $out, $status);
-    if (array_key_exists(0, $out) && $status == 0) {
-        return 1;
-    }
+    exec('systemctl is-active libretime-celery --quiet', $out, $status);
 
     return $status == 0;
 }
@@ -187,10 +168,7 @@ function checkCeleryService()
  */
 function checkApiService()
 {
-    exec('pgrep -f -u www-data uwsgi', $out, $status);
-    if (array_key_exists(0, $out) && $status == 0) {
-        return 1;
-    }
+    exec('systemctl status libretime-api --quiet', $out, $status);
 
     return $status == 0;
 }
