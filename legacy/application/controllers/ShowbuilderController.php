@@ -18,7 +18,7 @@ class ShowbuilderController extends Zend_Controller_Action
     public function indexAction()
     {
         $CC_CONFIG = Config::getConfig();
-        $baseUrl = Application_Common_OsPath::getBaseDir();
+        $baseUrl = Config::getBasePath();
         $userType = Application_Model_User::GetCurrentUser()->getType();
 
         // $this->_helper->layout->setLayout("showbuilder");
@@ -100,13 +100,13 @@ class ShowbuilderController extends Zend_Controller_Action
     public function checkAndShowSetupPopup($request)
     {
         $CC_CONFIG = Config::getConfig();
-        $baseUrl = Application_Common_OsPath::getBaseDir();
+        $baseUrl = Config::getBasePath();
         $setupComplete = Application_Model_Preference::getLangTimezoneSetupComplete();
         $previousPage = strtolower($request->getHeader('Referer'));
         $userService = new Application_Service_UserService();
         $currentUser = $userService->getCurrentUser();
         $previousPageWasLoginScreen = (strpos($previousPage, 'login') !== false)
-                                    || (strpos($previousPage, SAAS_LOGIN_REFERRER) !== false);
+            || (strpos($previousPage, SAAS_LOGIN_REFERRER) !== false);
 
         // If current user is Super Admin, and they came from the login page,
         // and they have not seen the setup popup before
@@ -119,7 +119,7 @@ class ShowbuilderController extends Zend_Controller_Action
 
     public function contextMenuAction()
     {
-        $baseUrl = Application_Common_OsPath::getBaseDir();
+        $baseUrl = Config::getBasePath();
 
         $id = $this->_getParam('id');
         $now = floatval(microtime(true));
@@ -218,9 +218,11 @@ class ShowbuilderController extends Zend_Controller_Action
 
         [$startsDT, $endsDT] = Application_Common_HTTPHelper::getStartEndFromRequest($request);
 
-        $opts = ['myShows' => $my_shows,
+        $opts = [
+            'myShows' => $my_shows,
             'showFilter' => $show_filter,
-            'showInstanceFilter' => $show_instance_filter, ];
+            'showInstanceFilter' => $show_instance_filter,
+        ];
         $showBuilder = new Application_Model_ShowBuilder($startsDT, $endsDT, $opts);
 
         $data = $showBuilder->getItems();

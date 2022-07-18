@@ -9,7 +9,7 @@ class IndexController extends Zend_Controller_Action
     public function indexAction()
     {
         $CC_CONFIG = Config::getConfig();
-        $baseUrl = Application_Common_OsPath::getBaseDir();
+        $baseUrl = Config::getBasePath();
         $this->view->headTitle(Application_Model_Preference::GetHeadTitle());
         $this->view->headScript()->appendFile($baseUrl . 'js/libs/jquery-1.8.3.min.js?' . $CC_CONFIG['airtime_version'], 'text/javascript');
 
@@ -46,7 +46,7 @@ class IndexController extends Zend_Controller_Action
         $stationDescription = Application_Model_Preference::GetStationDescription();
         $this->view->stationDescription = $stationDescription;
 
-        $this->view->stationUrl = Application_Common_HTTPHelper::getStationUrl();
+        $this->view->stationUrl = Config::getPublicUrl();
 
         $displayRadioPageLoginButtonValue = Application_Model_Preference::getRadioPageDisplayLoginButton();
         if ($displayRadioPageLoginButtonValue == '') {

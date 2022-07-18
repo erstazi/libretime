@@ -17,7 +17,7 @@ class Config
     public static function loadConfig()
     {
         $filename = $_SERVER['LIBRETIME_CONFIG_FILEPATH'] ?? LIBRETIME_CONFIG_FILEPATH;
-        $values = parse_ini_file($filename, true);
+        $values = yaml_parse_file($filename);
 
         $CC_CONFIG = [];
 
@@ -25,24 +25,13 @@ class Config
         // //////////////////////////////////////////////////////////////////////////////
         $CC_CONFIG['apiKey'] = [$values['general']['api_key']];
 
-        // Explode public_url into multiple component with possible defaults for required fields
-        try {
-            $public_url = Uri::createFromString($values['general']['public_url']);
-        } catch (UriException $e) {
-            echo 'could not parse configuration field general.public_url: ' . $e->getMessage();
+        $public_url = self::validateUrl('general.public_url', $values['general']['public_url']);
+        $CC_CONFIG['public_url_raw'] = $public_url;
+        $CC_CONFIG['public_url'] = strval($public_url);
 
-            exit;
-        }
-
-        $scheme = $public_url->getScheme() ?? 'http';
-        $host = $public_url->getHost() ?? 'localhost';
-        $port = $public_url->getPort() ?? ($scheme == 'https' ? 443 : 80);
-        $path = rtrim($public_url->getPath() ?? '', '/') . '/'; // Path requires a trailing slash
-
-        $CC_CONFIG['protocol'] = $scheme;
-        $CC_CONFIG['baseUrl'] = $host;
-        $CC_CONFIG['basePort'] = $port;
-        $CC_CONFIG['baseDir'] = $path;
+        // Allowed hosts
+        $CC_CONFIG['allowedCorsOrigins'] = $values['general']['allowed_cors_origins'] ?? [];
+        $CC_CONFIG['allowedCorsOrigins'][] = strval($public_url->withPath(''));
 
         $CC_CONFIG['dev_env'] = $values['general']['dev_env'] ?? 'production';
         $CC_CONFIG['auth'] = $values['general']['auth'] ?? 'local';
@@ -72,7 +61,17 @@ class Config
 
         // Storage
         // //////////////////////////////////////////////////////////////////////////////
-        $CC_CONFIG['current_backend'] = $values['current_backend']['storage_backend'] ?? 'file';
+        $CC_CONFIG['storagePath'] = $values['storage']['path'] ?? '/srv/libretime';
+        if (!is_dir($CC_CONFIG['storagePath'])) {
+            echo "the configured storage.path '{$CC_CONFIG['storagePath']}' does not exists!";
+
+            exit;
+        }
+        if (!is_writable($CC_CONFIG['storagePath'])) {
+            echo "the configured storage.path '{$CC_CONFIG['storagePath']}' is not writable!";
+
+            exit;
+        }
 
         // Facebook (DEPRECATED)
         // //////////////////////////////////////////////////////////////////////////////
@@ -141,5 +140,39 @@ class Config
         }
 
         return in_array(strtolower($value), ['yes', 'true']);
+    }
+
+    /**
+     * Validate and sanitize url.
+     *
+     * @param mixed $key
+     * @param mixed $value
+     */
+    public static function validateUrl($key, $value)
+    {
+        try {
+            $url = Uri::createFromString($value);
+
+            return $url->withPath(rtrim($url->getPath() ?? '', '/') . '/');
+        } catch (UriException|TypeError $e) {
+            echo "could not parse configuration field {$key}: " . $e->getMessage();
+
+            exit;
+        }
+    }
+
+    public static function getStoragePath()
+    {
+        return rtrim(self::getConfig()['storagePath'], '/') . '/';
+    }
+
+    public static function getPublicUrl()
+    {
+        return self::getConfig()['public_url'];
+    }
+
+    public static function getBasePath()
+    {
+        return self::getConfig()['public_url_raw']->getPath();
     }
 }

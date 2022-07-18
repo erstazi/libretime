@@ -1,19 +1,22 @@
 import sys
-from configparser import ConfigParser
 from os import environ
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 from loguru import logger
 
 # pylint: disable=no-name-in-module
-from pydantic import AnyHttpUrl, BaseModel, ValidationError
+from pydantic import AnyHttpUrl, BaseModel, ValidationError, validator
 from pydantic.fields import ModelField
 from pydantic.utils import deep_update
 from yaml import YAMLError, safe_load
 
+if TYPE_CHECKING:
+    from pydantic.typing import AnyClassMethod
+
 DEFAULT_ENV_PREFIX = "LIBRETIME"
 DEFAULT_CONFIG_FILEPATH = Path("/etc/libretime/config.yml")
+
 
 # pylint: disable=too-few-public-methods
 class BaseConfig(BaseModel):
@@ -84,7 +87,6 @@ class BaseConfig(BaseModel):
 
         return result
 
-    # pylint: disable=no-self-use
     def _load_file_values(
         self,
         filepath: Optional[Path] = None,
@@ -97,13 +99,6 @@ class BaseConfig(BaseModel):
             logger.warning(f"provided config filepath '{filepath}' is not a file")
             return {}
 
-        # pylint: disable=fixme
-        # TODO: Remove ability to load ini files once yaml if fully supported.
-        if filepath.suffix == ".conf":
-            config = ConfigParser()
-            config.read_string(filepath.read_text(encoding="utf-8"))
-            return {s: dict(config.items(s)) for s in config.sections()}
-
         try:
             return safe_load(filepath.read_text(encoding="utf-8"))
         except YAMLError as error:
@@ -112,10 +107,29 @@ class BaseConfig(BaseModel):
         return {}
 
 
+def no_trailing_slash_validator(key: str) -> "AnyClassMethod":
+    # pylint: disable=unused-argument
+    def strip_trailing_slash(cls: Any, value: str) -> str:
+        return value.rstrip("/")
+
+    return validator(key, pre=True, allow_reuse=True)(strip_trailing_slash)
+
+
 # pylint: disable=too-few-public-methods
 class GeneralConfig(BaseModel):
     public_url: AnyHttpUrl
     api_key: str
+
+    # Validators
+    _public_url_no_trailing_slash = no_trailing_slash_validator("public_url")
+
+
+# pylint: disable=too-few-public-methods
+class StorageConfig(BaseModel):
+    path: str = "/srv/libretime"
+
+    # Validators
+    _path_no_trailing_slash = no_trailing_slash_validator("path")
 
 
 # pylint: disable=too-few-public-methods

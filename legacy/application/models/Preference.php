@@ -157,7 +157,7 @@ class Application_Model_Preference
 
             // Check if key already exists
             $sql = 'SELECT COUNT(*) FROM cc_pref'
-            . ' WHERE keystr = :key';
+                . ' WHERE keystr = :key';
 
             $paramMap = [];
             $paramMap[':key'] = $key;
@@ -177,7 +177,7 @@ class Application_Model_Preference
                 $res = '';
             } else {
                 $sql = 'SELECT valstr FROM cc_pref'
-                . ' WHERE keystr = :key';
+                    . ' WHERE keystr = :key';
 
                 $paramMap = [];
                 $paramMap[':key'] = $key;
@@ -626,7 +626,7 @@ class Application_Model_Preference
         }
         // We return the Airtime logo if no logo is set in the database.
         // airtime_logo.png is stored under the public directory
-        $image = @file_get_contents(Application_Common_HTTPHelper::getStationUrl() . DEFAULT_LOGO_FILE);
+        $image = @file_get_contents(Config::getPublicUrl() . DEFAULT_LOGO_FILE);
 
         return base64_encode($image);
     }
@@ -667,10 +667,12 @@ class Application_Model_Preference
             if (isset($info[1])) {
                 $key = str_replace(' ', '_', trim($info[0]));
                 $key = strtoupper($key);
-                if ($key == 'WEB_SERVER' || $key == 'CPU' || $key == 'OS' || $key == 'TOTAL_RAM'
-                          || $key == 'FREE_RAM' || $key == 'AIRTIME_VERSION' || $key == 'KERNAL_VERSION'
-                          || $key == 'MACHINE_ARCHITECTURE' || $key == 'TOTAL_MEMORY_MBYTES' || $key == 'TOTAL_SWAP_MBYTES'
-                          || $key == 'PLAYOUT_ENGINE_CPU_PERC') {
+                if (
+                    $key == 'WEB_SERVER' || $key == 'CPU' || $key == 'OS' || $key == 'TOTAL_RAM'
+                    || $key == 'FREE_RAM' || $key == 'AIRTIME_VERSION' || $key == 'KERNAL_VERSION'
+                    || $key == 'MACHINE_ARCHITECTURE' || $key == 'TOTAL_MEMORY_MBYTES' || $key == 'TOTAL_SWAP_MBYTES'
+                    || $key == 'PLAYOUT_ENGINE_CPU_PERC'
+                ) {
                     if ($key == 'AIRTIME_VERSION') {
                         // remove hash tag on the version string
                         $version = explode('+', $info[1]);
@@ -1206,7 +1208,9 @@ class Application_Model_Preference
     {
         $v = self::getValue($pref_param, true);
 
-        $id = function ($x) { return $x; };
+        $id = function ($x) {
+            return $x;
+        };
 
         if ($v === '') {
             return $id;
@@ -1450,6 +1454,16 @@ class Application_Model_Preference
     public static function setDefaultIcecastPassword($value)
     {
         self::setValue('default_icecast_password', $value);
+    }
+
+    public static function getDefaultStreamMountPoint()
+    {
+        return self::getValue('default_stream_mount_point');
+    }
+
+    public static function setDefaultStreamMountPoint($value)
+    {
+        self::setValue('default_stream_mount_point', $value);
     }
 
     public static function getRadioPageDisplayLoginButton()

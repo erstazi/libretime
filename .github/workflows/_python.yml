@@ -26,7 +26,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
       - uses: actions/cache@v3
         with:
           path: ~/.cache/pip
@@ -55,7 +57,9 @@ jobs:
           - focal
           - jammy
 
-    container: ghcr.io/libretime/libretime-dev:${{ matrix.release }}
+    container:
+      image: ghcr.io/libretime/libretime-dev:${{ matrix.release }}
+      options: --user 1001
     defaults:
       run:
         shell: bash
@@ -66,10 +70,17 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ inputs.context }}-${{ hashFiles(format('{0}/{1}', inputs.context, '**/setup.py')) }}
+          key: ${{ matrix.release }}-pip-${{ inputs.context }}-${{ hashFiles(format('{0}/{1}', inputs.context, '**/setup.py')) }}
           restore-keys: |
-            ${{ runner.os }}-pip-${{ inputs.context }}
+            ${{ matrix.release }}-pip-${{ inputs.context }}
 
       - name: Test
         run: make test
         working-directory: ${{ inputs.context }}
+
+      - name: Report coverage
+        uses: codecov/codecov-action@v3
+        with:
+          files: ${{ inputs.context }}/coverage.xml
+          flags: ${{ inputs.context }}
+          name: ${{ inputs.context }}

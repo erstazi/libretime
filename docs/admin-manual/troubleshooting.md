@@ -13,6 +13,12 @@ In the web interface, go to **Settings** > **Status** to see the state of the se
 
 ![](./troubleshooting-status-page.png)
 
+Or directly from a terminal:
+
+```bash
+sudo systemctl --all --plain | egrep 'libretime|nginx|php.*-fpm'
+```
+
 If a service isn't running, you should search for details using the tool running those services.
 On a common setup, you should use the systemd service status:
 
@@ -35,7 +41,7 @@ The `/var/log/syslog` file contains most of the system logs combined. This log f
 ```bash
 sudo tail -n 100 -f "/var/log/syslog"
 # Filter the logs
-sudo tail -n 100 -f "/var/log/syslog" | grep "libretime-"
+sudo tail -n 100 -f "/var/log/syslog" | egrep 'libretime|nginx|php.*-fpm'
 ```
 
 On a common setup, to access LibreTime specific logs you should search for the following files:
@@ -49,7 +55,7 @@ On a common setup, to access LibreTime specific logs you should search for the f
 For some LibreTime services, you can set a higher log level using the `LIBRETIME_LOG_LEVEL` environment variable, or by running the service by hand and using a command line flag:
 
 ```bash
-sudo -u www-data libretime-analyzer --config /etc/airtime/airtime.conf --log-level debug
+sudo -u libretime libretime-analyzer --config /etc/libretime/config.yml --log-level debug
 ```
 
-The `/var/log/apache2/libretime.error.log` file contains logs from the web server.
+The `/var/log/nginx/libretime.error.log` file contains logs from the web server.

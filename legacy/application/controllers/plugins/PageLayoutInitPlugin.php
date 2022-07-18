@@ -36,8 +36,7 @@ class PageLayoutInitPlugin extends Zend_Controller_Plugin_Abstract
             'upgrade',
             'embed',
             'feeds',
-        ])
-        ) {
+        ])) {
             // Start the session
             Zend_Session::start();
             Application_Model_Auth::pinSessionToClient(Zend_Auth::getInstance());
@@ -54,15 +53,9 @@ class PageLayoutInitPlugin extends Zend_Controller_Plugin_Abstract
             $this->_initViewHelpers();
         }
 
-        // Skip upgrades and task management when running unit tests
+        // Skip task management when running unit tests
         if (getenv('AIRTIME_UNIT_TEST') != 1) {
             $taskManager = TaskManager::getInstance();
-
-            // Run the upgrade on each request (if it needs to be run)
-            // We can't afford to wait 7 minutes to run an upgrade: users could
-            // have several minutes of database errors while waiting for a
-            // schema change upgrade to happen after a deployment
-            $taskManager->runTask('UpgradeTask');
 
             // Piggyback the TaskManager onto API calls. This provides guaranteed consistency
             // (there is at least one API call made from pypo to Airtime every 7 minutes) and
@@ -80,7 +73,7 @@ class PageLayoutInitPlugin extends Zend_Controller_Plugin_Abstract
         }
 
         $view = $this->_bootstrap->getResource('view');
-        $baseUrl = Application_Common_OsPath::getBaseDir();
+        $baseUrl = Config::getBasePath();
 
         $view->headScript()->appendScript("var baseUrl = '{$baseUrl}';");
         $this->_initTranslationGlobals($view);
@@ -151,7 +144,7 @@ class PageLayoutInitPlugin extends Zend_Controller_Plugin_Abstract
         }, $track_types), SORT_ASC, $track_types);
 
         foreach ($track_types as $key => $tt) {
-            $track_type_options[$tt['code']] = $tt['type_name'];
+            $track_type_options[$tt['id']] = ['name' => $tt['type_name'], 'code' => $tt['code']];
         }
         $ttarr = json_encode($track_type_options, JSON_FORCE_OBJECT);
         $view->headScript()->appendScript('var TRACKTYPES = ' . $ttarr . ';');
@@ -163,7 +156,7 @@ class PageLayoutInitPlugin extends Zend_Controller_Plugin_Abstract
 
         $view = $this->_bootstrap->getResource('view');
 
-        $baseUrl = Application_Common_OsPath::getBaseDir();
+        $baseUrl = Config::getBasePath();
 
         $view->headLink(['rel' => 'icon', 'href' => $baseUrl . 'favicon.ico?' . $CC_CONFIG['airtime_version'], 'type' => 'image/x-icon'], 'PREPEND')
             ->appendStylesheet($baseUrl . 'css/bootstrap.css?' . $CC_CONFIG['airtime_version'])
@@ -185,7 +178,7 @@ class PageLayoutInitPlugin extends Zend_Controller_Plugin_Abstract
 
         $view = $this->_bootstrap->getResource('view');
 
-        $baseUrl = Application_Common_OsPath::getBaseDir();
+        $baseUrl = Config::getBasePath();
 
         $view->headScript()->appendFile($baseUrl . 'js/libs/jquery-1.8.3.min.js?' . $CC_CONFIG['airtime_version'], 'text/javascript')
             ->appendFile($baseUrl . 'js/libs/jquery-ui-1.8.24.min.js?' . $CC_CONFIG['airtime_version'], 'text/javascript')

@@ -31,6 +31,20 @@ You can install LibreTime using the one of the following methods:
 - 2 GB RAM recommended (1 GB required)
 - A static external IP address ([How to setup a static ip using Netplan](../tutorials/setup-a-static-ip-using-netplan.md))
 
+:::warning
+
+Make sure that you have configured a **firewall** and it's not blocking connection to the desired ports.
+
+- [How to setup a firewall using UFW](../tutorials/setup-a-firewall-using-ufw.md)
+
+LibreTime requires the following default ports to be open:
+
+- `80` for the web interface,
+- `8000` for the Icecast streams,
+- `8001` and `8002` for the live stream input endpoint.
+
+:::
+
 ## Using the installer
 
 The installer is shipped in the released tarballs or directly in the project repository.
@@ -95,88 +109,81 @@ git checkout {vars.version}
 
 ### Run the installer
 
-Install LibreTime with the recommended options:
+Install LibreTime with the recommended options, be sure to replace `PUBLIC_URL` with the public url of your installation,
+for example `https://libretime.example.com` or `http://192.168.10.100:80`:
 
 ```bash
-sudo ./install -fiap
+sudo ./install PUBLIC_URL
 ```
 
-Additional options can be listed with the following command:
-
-```bash
-./install --help
-```
-
-:::info
+:::caution
 
 When upgrading be sure to run the installer using the same arguments you used during the initial install.
 
 :::
 
-Once the installation is completed, open [http://localhost:80](http://localhost:80) to complete the [setup wizard](#setup-wizard).
+If you need to change some configuration, the install script can be configured using flags or environment variables. Changing the listening port of LibreTime or whether you want to install some dependency by yourself, you could run the following:
+
+```bash
+# Install LibreTime on your system with the following tweaks:
+# - do not install the liquidsoap package (remember to install liquidsoap yourself)
+# - set the listen port to 8080
+# - do not run the PostgreSQL setup (remember to setup PostgreSQL yourself)
+sudo \
+LIBRETIME_PACKAGES_EXCLUDES='liquidsoap' \
+./install \
+  --listen-port 8080 \
+  --no-setup-postgresql \
+  https://libretime.example.com
+```
+
+You can persist the install configuration in a `.env` file next to the install script. For example, the above command could be persisted using the `.env` file below, and you should be able to run the install script without arguments:
+
+```
+LIBRETIME_PACKAGES_EXCLUDES='liquidsoap'
+LIBRETIME_LISTEN_PORT='8080'
+LIBRETIME_SETUP_POSTGRESQL=false
+LIBRETIME_PUBLIC_URL='https://libretime.example.com'
+```
 
 :::note
 
-- If installed on a remote device, make sure to replace `localhost` with your server's remote address.
-- If installed with a custom port, make sure to replace `80` with the custom port.
+The install script will use randomly generated passwords to create the PostgreSQL user, RabbitMQ user and to update the default Icecast passwords. Those passwords will be saved to the configuration files.
 
 :::
 
-:::warning
-
-Make sure that you have configured a **firewall** and it's not blocking connection to the desired ports.
-
-- [How to setup a firewall using UFW](../tutorials/setup-a-firewall-using-ufw.md)
-
-LibreTime requires the following ports to be open:
-
-- `80` for the web interface,
-- `8000` for the Icecast streams,
-- `8001` and `8002` for the live stream input endpoint.
-
-Consider putting your installation behind a [reverse proxy](./reverse-proxy.md) to increase the security.
-
-:::
+Feel free to run `./install --help` to get more details.
 
 #### Using hardware audio output
 
-If you plan to output analog audio directly to a mixing console or transmitter, the user running LibreTime (by default `www-data`) needs to be added to the `audio` user group using the command below:
+If you plan to output analog audio directly to a mixing console or transmitter, the user running LibreTime needs to be added to the `audio` user group using the command below:
 
 ```bash
-sudo adduser www-data audio
+sudo adduser libretime audio
 ```
 
-### Setup wizard
+### Setup
 
-The setup wizard walk you through the rest of the installation process.
+Once the installation is completed, edit the [configuration file](./configuration.md) at `/etc/libretime/config.yml` to fill required information and to match your needs.
 
-#### Changing default passwords
-
-It's recommended that you change the passwords prompted in the setup wizard. Be sure to apply the changes on the server before going to any next step.
-
-You can change the default PostgreSQL user password using:
+Next, run the following commands to setup the database:
 
 ```bash
-sudo -u postgres psql -c "ALTER USER airtime PASSWORD 'new-password';"
+sudo -u libretime libretime-api migrate
 ```
 
-You can change the default RabbitMQ user password using:
+Synchronize the new Icecast passwords into the database:
 
 ```bash
-sudo rabbitmqctl change_password "airtime" "new-password"
+sudo libretime-api set_icecast_passwords --from-icecast-config
+```
+
+Finally, start the services, and check that they are running properly using the following commands:
+
+```bash
+sudo systemctl start libretime.target
+
+sudo systemctl --all --plain | grep libretime
 ```
 
 Once completed, it's recommended to [install a reverse proxy](./reverse-proxy.md) to setup SSL termination and secure your installation.
-
-## Using packages
-
-:::note
-
-Usually the packages are built soon after a release is published.
-
-:::
-
-You can install LibreTime using packages on the distributions listed below, please follow further instruction provided by the links below:
-
-- [Debian / Ubuntu packages](https://github.com/libretime/libretime-debian-packaging/releases)
-- [CentOS packages](https://build.opensuse.org/package/show/home:radiorabe:airtime/libretime)

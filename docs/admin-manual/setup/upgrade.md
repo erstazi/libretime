@@ -11,24 +11,44 @@ You should always have proper backups and a rollback scenario in place before up
 
 :::
 
+## Stop the services
+
+Run the following commands to stop the services:
+
+```bash
+sudo systemctl stop libretime.target
+# Or
+sudo systemctl stop libretime-analyzer.service
+sudo systemctl stop libretime-api.service
+sudo systemctl stop libretime-celery.service
+sudo systemctl stop libretime-liquidsoap.service
+sudo systemctl stop libretime-playout.service
+```
+
 ## Make a backup
 
 Follow [the backup guide](../backup.md) to make an extra backup of your installation and prepare a rollback scenario in case of accidental data loss during the upgrade process.
 
-## Install the new version
-
-Follow [the install guide](./install.md#download) to download and install the new version, and re-run the `./install` script with the same arguments you used during the initial install.
-
 ## Apply upgrade instructions
 
 Be sure to carefully read **all** the [releases notes](../../releases/README.md), from your current version to the targeted version, to apply upgrade or breaking changes instructions to your installation.
+
+:::caution
+
+You might need to run steps before and after the install procedure. Be sure to follow these steps thoroughly.
+
+:::
+
+## Install the new version
+
+Follow [the install guide](./install.md#download) to download and install the new version, and re-run the `./install` script with the same arguments you used during the initial install.
 
 ## Apply migrations
 
 Run the following command to apply the database migrations:
 
 ```bash
-libretime-api migrate
+sudo -u libretime libretime-api migrate
 ```
 
 ## Restart the services
@@ -36,14 +56,7 @@ libretime-api migrate
 Restart all the services to make sure all the changes are applied.
 
 ```bash
-sudo systemctl daemon-reload
-sudo systemctl restart \
-   libretime-analyzer \
-   libretime-api \
-   libretime-celery \
-   libretime-playout \
-   libretime-liquidsoap \
-   apache2
+sudo systemctl restart libretime.target
 ```
 
 ## Verify
@@ -51,13 +64,7 @@ sudo systemctl restart \
 Verify that all the services are still running after the install process:
 
 ```bash
-sudo systemctl status \
-   libretime-analyzer \
-   libretime-api \
-   libretime-celery \
-   libretime-playout \
-   libretime-liquidsoap \
-   apache2
+sudo systemctl --all --plain | egrep 'libretime|nginx|php.*-fpm'
 ```
 
 Verify for any error in the logs after the install process:

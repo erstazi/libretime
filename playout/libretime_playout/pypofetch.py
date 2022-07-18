@@ -16,8 +16,8 @@ from libretime_api_client import version1 as v1_api_client
 from libretime_api_client import version2 as api_client
 from loguru import logger
 
-from . import pure
 from .config import CACHE_DIR, POLL_INTERVAL, Config
+from .schedule import get_schedule
 from .timeout import ls_timeout
 
 
@@ -63,10 +63,8 @@ class PypoFetch(Thread):
         self.schedule_data = []
         logger.info("PypoFetch: init complete")
 
-    """
-    Handle a message from RabbitMQ, put it into our yucky global var.
-    Hopefully there is a better way to do this.
-    """
+    # Handle a message from RabbitMQ, put it into our yucky global var.
+    # Hopefully there is a better way to do this.
 
     def handle_message(self, message):
         try:
@@ -140,9 +138,7 @@ class PypoFetch(Thread):
 
         return command
 
-    """
-    Initialize Liquidsoap environment
-    """
+    # Initialize Liquidsoap environment
 
     def set_bootstrap_variables(self):
         logger.debug("Getting information needed on bootstrap from Airtime")
@@ -206,9 +202,7 @@ class PypoFetch(Thread):
             if self.telnet_lock.locked():
                 self.telnet_lock.release()
 
-    """
-    NOTE: This function is quite short after it was refactored.
-    """
+    # NOTE: This function is quite short after it was refactored.
 
     def regenerate_liquidsoap_conf(self, setting):
         self.restart_liquidsoap()
@@ -330,14 +324,12 @@ class PypoFetch(Thread):
         except Exception as e:
             logger.exception(e)
 
-    """
-    Process the schedule
-     - Reads the scheduled entries of a given range (actual time +/- "prepare_ahead" / "cache_for")
-     - Saves a serialized file of the schedule
-     - playlists are prepared. (brought to liquidsoap format) and, if not mounted via nsf, files are copied
-       to the cache dir (Folder-structure: cache/YYYY-MM-DD-hh-mm-ss)
-     - runs the cleanup routine, to get rid of unused cached files
-    """
+    # Process the schedule
+    #  - Reads the scheduled entries of a given range (actual time +/- "prepare_ahead" / "cache_for")
+    #  - Saves a serialized file of the schedule
+    #  - playlists are prepared. (brought to liquidsoap format) and, if not mounted via nsf, files are copied
+    #    to the cache dir (Folder-structure: cache/YYYY-MM-DD-hh-mm-ss)
+    #  - runs the cleanup routine, to get rid of unused cached files
 
     def process_schedule(self, schedule_data):
         self.last_update_schedule_timestamp = time.time()
@@ -348,9 +340,7 @@ class PypoFetch(Thread):
         # Download all the media and put playlists in liquidsoap "annotate" format
         try:
 
-            """
-            Make sure cache_dir exists
-            """
+            # Make sure cache_dir exists
             download_dir = self.cache_dir
             try:
                 os.makedirs(download_dir)
@@ -399,7 +389,7 @@ class PypoFetch(Thread):
         mimetypes.init(["%s/mime.types" % os.path.dirname(os.path.realpath(__file__))])
         mime_ext = mimetypes.guess_extension(mime, strict=False)
 
-        length1 = pure.date_interval_to_seconds(end - start)
+        length1 = (end - start).total_seconds()
         length2 = media_item["cue_out"] - media_item["cue_in"]
 
         if abs(length2 - length1) > 1:
@@ -458,7 +448,7 @@ class PypoFetch(Thread):
 
     def manual_schedule_fetch(self):
         try:
-            self.schedule_data = self.api_client.get_schedule()
+            self.schedule_data = get_schedule(self.api_client)
             logger.debug(f"Received event from API client: {self.schedule_data}")
             self.process_schedule(self.schedule_data)
             return True
@@ -508,19 +498,17 @@ class PypoFetch(Thread):
             logger.info(f"Loop #{loops}")
             manual_fetch_needed = False
             try:
-                """
-                our simple_queue.get() requires a timeout, in which case we
-                fetch the Airtime schedule manually. It is important to fetch
-                the schedule periodically because if we didn't, we would only
-                get schedule updates via RabbitMq if the user was constantly
-                using the Airtime interface.
+                # our simple_queue.get() requires a timeout, in which case we
+                # fetch the Airtime schedule manually. It is important to fetch
+                # the schedule periodically because if we didn't, we would only
+                # get schedule updates via RabbitMq if the user was constantly
+                # using the Airtime interface.
 
-                If the user is not using the interface, RabbitMq messages are not
-                sent, and we will have very stale (or non-existent!) data about the
-                schedule.
+                # If the user is not using the interface, RabbitMq messages are not
+                # sent, and we will have very stale (or non-existent!) data about the
+                # schedule.
 
-                Currently we are checking every POLL_INTERVAL seconds
-                """
+                # Currently we are checking every POLL_INTERVAL seconds
 
                 message = self.fetch_queue.get(
                     block=True, timeout=self.listener_timeout

@@ -5,22 +5,34 @@ django-settings-module = "libretime_api.settings.testing"
 [tool.pylint.messages_control]
 extension-pkg-whitelist = "pydantic"
 disable = [
+  "fixme",
   "missing-class-docstring",
   "missing-function-docstring",
   "missing-module-docstring",
+  "too-few-public-methods",
+  "too-many-arguments",
 ]
 
 [tool.pylint.design]
 max-parents = 15
+
+[tool.pylint.format]
+disable = "logging-fstring-interpolation"
 
 [tool.mypy]
 plugins = [
   "mypy_django_plugin.main",
   "mypy_drf_plugin.main",
 ]
+ignore_missing_imports = true
 
 [tool.django-stubs]
 django_settings_module = "libretime_api.settings.testing"
+
+[tool.coverage.run]
+omit = [
+  "*/tests/*",
+]
 
 [build-system]
 requires = ["setuptools", "wheel"]

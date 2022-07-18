@@ -8,7 +8,6 @@ class Application_Form_EditAudioMD extends Zend_Form
 
     public function startForm($p_id)
     {
-        $baseUrl = Application_Common_OsPath::getBaseDir();
         // Set the method for the display form to POST
         $this->setMethod('post');
 
@@ -101,14 +100,14 @@ class Application_Form_EditAudioMD extends Zend_Form
 
         $track_type_options[''] = _('Select a Type');
         foreach ($track_types as $key => $tt) {
-            $track_type_options[$tt['code']] = $tt['type_name'];
+            $track_type_options[$tt['id']] = $tt['type_name'];
         }
 
-        $track_type = new Zend_Form_Element_Select('track_type');
-        $track_type->class = 'input_text';
-        $track_type->setLabel(_('Track Type:'));
-        $track_type->setMultiOptions($track_type_options);
-        $this->addelement($track_type);
+        $track_type_id = new Zend_Form_Element_Select('track_type_id');
+        $track_type_id->class = 'input_text';
+        $track_type_id->setLabel(_('Track Type:'));
+        $track_type_id->setMultiOptions($track_type_options);
+        $this->addelement($track_type_id);
 
         // Description field
         $description = new Zend_Form_Element_Textarea('description');
@@ -198,7 +197,8 @@ class Application_Form_EditAudioMD extends Zend_Form
             ->setFilters(['StringTrim'])
             ->setValidators([
                 new Zend_Validate_StringLength(['min' => 0, 'max' => 8]),
-                new Zend_Validate_Digits(), ]);
+                new Zend_Validate_Digits(),
+            ]);
         $this->addElement($bpm);
 
         // Add copyright field

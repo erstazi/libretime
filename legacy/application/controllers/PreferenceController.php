@@ -25,7 +25,7 @@ class PreferenceController extends Zend_Controller_Action
 
         Zend_Layout::getMvcInstance()->assign('parent_page', 'Settings');
 
-        $baseUrl = Application_Common_OsPath::getBaseDir();
+        $baseUrl = Config::getBasePath();
 
         $this->view->headScript()->appendFile($baseUrl . 'js/airtime/preferences/preferences.js?' . $CC_CONFIG['airtime_version'], 'text/javascript');
         $this->view->statusMsg = '';
@@ -99,7 +99,7 @@ class PreferenceController extends Zend_Controller_Action
         // Append sharing token (download key) to Station podcast URL
         $stationPodcast = PodcastQuery::create()->findOneByDbId(Application_Model_Preference::getStationPodcastId());
         $key = Application_Model_Preference::getStationPodcastDownloadKey();
-        $url = Application_Common_HTTPHelper::getStationUrl() .
+        $url = Config::getPublicUrl() .
             (((int) $values->stationPodcastPrivacy) ? "feeds/station-rss?sharing_token={$key}" : 'feeds/station-rss');
         $stationPodcast->setDbUrl($url)->save();
         Application_Model_Preference::setStationPodcastPrivacy($values->stationPodcastPrivacy);
@@ -137,7 +137,7 @@ class PreferenceController extends Zend_Controller_Action
 
         Zend_Layout::getMvcInstance()->assign('parent_page', 'Settings');
 
-        $baseUrl = Application_Common_OsPath::getBaseDir();
+        $baseUrl = Config::getBasePath();
 
         $this->view->headScript()->appendFile($baseUrl . 'js/airtime/preferences/streamsetting.js?' . $CC_CONFIG['airtime_version'], 'text/javascript');
 
@@ -380,58 +380,6 @@ class PreferenceController extends Zend_Controller_Action
         $this->_helper->json->sendJson($result);
     }
 
-    public function changeStorDirectoryAction()
-    {
-        $chosen = $this->getRequest()->getParam('dir');
-        $element = $this->getRequest()->getParam('element');
-        $watched_dirs_form = new Application_Form_WatchedDirPreferences();
-
-        $res = Application_Model_MusicDir::setStorDir($chosen);
-        if ($res['code'] != 0) {
-            $watched_dirs_form->populate(['storageFolder' => $chosen]);
-            $watched_dirs_form->getElement($element)->setErrors([$res['error']]);
-        }
-
-        $this->view->subform = $watched_dirs_form->render();
-    }
-
-    public function reloadWatchDirectoryAction()
-    {
-        $chosen = $this->getRequest()->getParam('dir');
-        $element = $this->getRequest()->getParam('element');
-        $watched_dirs_form = new Application_Form_WatchedDirPreferences();
-
-        $res = Application_Model_MusicDir::addWatchedDir($chosen);
-        if ($res['code'] != 0) {
-            $watched_dirs_form->populate(['watchedFolder' => $chosen]);
-            $watched_dirs_form->getElement($element)->setErrors([$res['error']]);
-        }
-
-        $this->view->subform = $watched_dirs_form->render();
-    }
-
-    public function rescanWatchDirectoryAction()
-    {
-        $dir_path = $this->getRequest()->getParam('dir');
-        $dir = Application_Model_MusicDir::getDirByPath($dir_path);
-        $data = ['directory' => $dir->getDirectory(),
-            'id' => $dir->getId(), ];
-        Application_Model_RabbitMq::SendMessageToMediaMonitor('rescan_watch', $data);
-        Logging::info("Unhiding all files belonging to:: {$dir_path}");
-        $dir->unhideFiles();
-        $this->_helper->json->sendJson(null);
-    }
-
-    public function removeWatchDirectoryAction()
-    {
-        $chosen = $this->getRequest()->getParam('dir');
-
-        $dir = Application_Model_MusicDir::removeWatchedDir($chosen);
-
-        $watched_dirs_form = new Application_Form_WatchedDirPreferences();
-        $this->view->subform = $watched_dirs_form->render();
-    }
-
     public function isImportInProgressAction()
     {
         $now = time();
@@ -517,7 +465,6 @@ class PreferenceController extends Zend_Controller_Action
         }
 
         $this->deleteFutureScheduleItems();
-        $this->deleteCloudFiles();
         $this->deleteStoredFiles();
 
         $this->getResponse()
@@ -548,20 +495,6 @@ class PreferenceController extends Zend_Controller_Action
             }
 
             $i->delete();
-        }
-    }
-
-    private function deleteCloudFiles()
-    {
-        try {
-            $CC_CONFIG = Config::getConfig();
-
-            foreach ($CC_CONFIG['supportedStorageBackends'] as $storageBackend) {
-                $proxyStorageBackend = new ProxyStorageBackend($storageBackend);
-                $proxyStorageBackend->deleteAllCloudFileObjects();
-            }
-        } catch (Exception $e) {
-            Logging::info($e->getMessage());
         }
     }
 

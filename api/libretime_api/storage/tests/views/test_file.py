@@ -2,7 +2,7 @@ from django.conf import settings
 from model_bakery import baker
 from rest_framework.test import APITestCase
 
-from ...._fixtures import AUDIO_FILENAME, fixture_path
+from ...._fixtures import AUDIO_FILENAME
 
 
 class TestFileViewSet(APITestCase):
@@ -24,13 +24,8 @@ class TestFileViewSet(APITestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_exists(self):
-        music_dir = baker.make(
-            "storage.MusicDir",
-            directory=str(fixture_path),
-        )
         file = baker.make(
             "storage.File",
-            directory=music_dir,
             mime="audio/mp3",
             filepath=AUDIO_FILENAME,
         )

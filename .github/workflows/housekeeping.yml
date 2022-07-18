@@ -39,27 +39,20 @@ jobs:
 
       - name: Check Links
         id: lychee
-        uses: lycheeverse/lychee-action@v1.4.1
+        uses: lycheeverse/lychee-action@v1.5.0
         with:
           args: >-
             '**/*.md'
+            --exclude-path 'website/versioned_docs'
             --require-https
             --exclude-all-private
             --exclude-mail
             --exclude 'example\.(com|org)'
             --exclude '\$server_name\$request_uri'
+            --exclude '%7Bvars.version%7D'
             --exclude 'https://dir.xiph.org/cgi-bin/yp-cgi'
             --exclude 'https://radio.indymedia.org/cgi-bin/yp-cgi'
+            --exclude 'https://www.ascap.com'
+          fail: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create Report
-        if: ${{ steps.lychee.outputs.exit_code != 0 }}
-        uses: peter-evans/create-issue-from-file@v4
-        with:
-          issue-number: 1589
-          title: Link Checker Report
-          content-filepath: ./lychee/out.md
-          labels: |
-            is: documentation
-            ci

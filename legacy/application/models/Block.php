@@ -52,7 +52,8 @@ class Application_Model_Block implements Application_Model_LibraryEditable
         'is in the range' => Criteria::CUSTOM,
         'before' => Criteria::CUSTOM,
         'after' => Criteria::CUSTOM,
-        'between' => Criteria::CUSTOM, ];
+        'between' => Criteria::CUSTOM,
+    ];
 
     private static $criteria2PeerMap = [
         0 => 'Select criteria',
@@ -84,7 +85,7 @@ class Application_Model_Block implements Application_Model_LibraryEditable
         'track_title' => 'DbTrackTitle',
         'track_number' => 'DbTrackNumber',
         'year' => 'DbYear',
-        'track_type' => 'DbTrackType',
+        'track_type_id' => 'DbTrackTypeId',
     ];
 
     public function __construct($id = null, $con = null)
@@ -978,8 +979,10 @@ SQL;
             throw $e;
         }
 
-        return ['cliplength' => $cliplength, 'cueIn' => $cueIn, 'cueOut' => $cueOut, 'length' => $this->getUnformatedLength(),
-            'fadeIn' => $fadeIn, 'fadeOut' => $fadeOut, ];
+        return [
+            'cliplength' => $cliplength, 'cueIn' => $cueIn, 'cueOut' => $cueOut, 'length' => $this->getUnformatedLength(),
+            'fadeIn' => $fadeIn, 'fadeOut' => $fadeOut,
+        ];
     }
 
     public function getAllPLMetaData()
@@ -1159,6 +1162,7 @@ SQL;
     public function saveSmartBlockCriteria($p_criteria)
     {
         $data = $this->organizeSmartPlaylistCriteria($p_criteria);
+
         // saving dynamic/static flag
         $blockType = $data['etc']['sp_type'] == 0 ? 'dynamic' : 'static';
         $this->saveType($blockType);
@@ -1218,7 +1222,7 @@ SQL;
 
                     if ($field == 'utime' || $field == 'mtime' || $field == 'lptime') {
                         // if the date isn't relative we  want to convert the value to a specific UTC date
-                        if (!(in_array($modifier, ['before', 'after', 'between']))) {
+                        if (!in_array($modifier, ['before', 'after', 'between'])) {
                             $value = Application_Common_DateHelper::UserTimezoneStringToUTCString($value);
                         } else {
                             $value = $value . ' ' . $datetimeunit . ' ago';
@@ -1235,7 +1239,7 @@ SQL;
                     if (isset($d['sp_criteria_extra'])) {
                         if ($field == 'utime' || $field == 'mtime' || $field == 'lptime') {
                             // if the date isn't relative we  want to convert the value to a specific UTC date
-                            if (!(in_array($modifier, ['before', 'after', 'between']))) {
+                            if (!in_array($modifier, ['before', 'after', 'between'])) {
                                 $extra = Application_Common_DateHelper::UserTimezoneStringToUTCString($extra);
                             } else {
                                 $extra = $extra . ' ' . $extradatetimeunit . ' ago';
@@ -1340,6 +1344,10 @@ SQL;
         $totalTime = 0;
         $totalItems = 0;
 
+        if ($files->isEmpty()) {
+            return $insertList;
+        }
+
         // this moves the pointer to the first element in the collection
         $files->getFirst();
         $iterator = $files->getIterator();
@@ -1441,7 +1449,7 @@ SQL;
             'mtime' => _('Last Modified'),
             'lptime' => _('Last Played'),
             'length' => _('Length'),
-            'track_type' => _('Track Type'),
+            'track_type_id' => _('Track Type'),
             'mime' => _('Mime'),
             'mood' => _('Mood'),
             'owner_id' => _('Owner'),
@@ -1487,7 +1495,8 @@ SQL;
                 $storedCrit['limit'] = [
                     'value' => $value,
                     'modifier' => $modifier,
-                    'display_modifier' => _($modifier), ];
+                    'display_modifier' => _($modifier),
+                ];
             } elseif ($criteria == 'repeat_tracks') {
                 $storedCrit['repeat_tracks'] = ['value' => $value];
             } elseif ($criteria == 'overflow_tracks') {
@@ -1502,7 +1511,8 @@ SQL;
                     'extra' => $extra,
                     'criteria_group' => $criteriagroup,
                     'display_name' => $criteriaOptions[$criteria],
-                    'display_modifier' => $modifierOptions[$modifier], ];
+                    'display_modifier' => $modifierOptions[$modifier],
+                ];
             }
         }
 
@@ -1537,7 +1547,7 @@ SQL;
             'mtime' => _('Last Modified'),
             'lptime' => _('Last Played'),
             'length' => _('Length'),
-            'track_type' => _('Track Type'),
+            'track_type_id' => _('Track Type'),
             'mime' => _('Mime'),
             'mood' => _('Mood'),
             'owner_id' => _('Owner'),
@@ -1583,7 +1593,8 @@ SQL;
                 $storedCrit['limit'] = [
                     'value' => $value,
                     'modifier' => $modifier,
-                    'display_modifier' => _($modifier), ];
+                    'display_modifier' => _($modifier),
+                ];
             } elseif ($criteria == 'repeat_tracks') {
                 $storedCrit['repeat_tracks'] = ['value' => $value];
             } elseif ($criteria == 'overflow_tracks') {
@@ -1597,7 +1608,8 @@ SQL;
                     'modifier' => $modifier,
                     'extra' => $extra,
                     'display_name' => $criteriaOptions[$criteria],
-                    'display_modifier' => $modifierOptions[$modifier], ];
+                    'display_modifier' => $modifierOptions[$modifier],
+                ];
             }
         }
 
@@ -1664,7 +1676,7 @@ SQL;
                             // addslashes() does not esapce '%' so we have to do it manually
                             $spCriteriaValue = str_replace('%', '\%', $spCriteriaValue);
                         } else {
-                            $spCriteriaValue = ($criteria['value']);
+                            $spCriteriaValue = $criteria['value'];
                         }
                         $spCriteriaExtra = $criteria['extra'];
                     }
@@ -1681,13 +1693,13 @@ SQL;
                         // need to pull in the current time and subtract the value or figure out how to make it relative
                         $relativedate = new DateTime($spCriteriaValue);
                         $dt = $relativedate->format(DateTime::ISO8601);
+                        // Logging::info($spCriteriaValue);
                         $spCriteriaValue = "{$spCriteria} <= '{$dt}'";
-                    // Logging::info($spCriteriaValue);
                     } elseif ($spCriteriaModifier == 'after') {
                         $relativedate = new DateTime($spCriteriaValue);
                         $dt = $relativedate->format(DateTime::ISO8601);
+                        // Logging::info($spCriteriaValue);
                         $spCriteriaValue = "{$spCriteria} >= '{$dt}'";
-                    // Logging::info($spCriteriaValue);
                     } elseif ($spCriteriaModifier == 'between') {
                         $fromrelativedate = new DateTime($spCriteriaValue);
                         $fdt = $fromrelativedate->format(DateTime::ISO8601);
@@ -1760,9 +1772,9 @@ SQL;
             if ($storedCrit['limit']['modifier'] == 'items') {
                 $limits['time'] = 1440 * 60;
                 $limits['items'] = $storedCrit['limit']['value'];
-            } elseif (($storedCrit['limit']['modifier'] == 'remaining')) {
+            } elseif ($storedCrit['limit']['modifier'] == 'remaining') {
                 // show will be null unless being called inside a show instance
-                if (!(is_null($showLimit))) {
+                if (!is_null($showLimit)) {
                     $limits['time'] = $showLimit;
                     $limits['items'] = null;
                 } else {

@@ -17,6 +17,7 @@ Vagrant.configure('2') do |config|
     config.vm.network 'forwarded_port', guest: 8001, host: 8001 # liquidsoap
     config.vm.network 'forwarded_port', guest: 8002, host: 8002 # liquidsoap
     config.vm.network 'forwarded_port', guest: 5432, host: 5432 # database
+    config.vm.network 'forwarded_port', guest: 15672, host: 15672 # rabbitmq interface
   end
 
   config.vm.provider 'virtualbox' do |v|
@@ -72,19 +73,27 @@ Vagrant.configure('2') do |config|
                         path: 'installer/vagrant/%s' % prepare_script
 
     $script = <<-SCRIPT
+    set -e
     cd /vagrant
-    ./install \
-      --force \
+
+    LIBRETIME_POSTGRESQL_PASSWORD=libretime \
+    LIBRETIME_RABBITMQ_PASSWORD=libretime \
+    bash install \
+      --listen-port 8080 \
       --in-place \
-      --verbose \
-      --postgres \
-      --apache \
-      --icecast \
-      --web-port=8080 \
-      #{install_args}
+      http://192.168.10.100:8080
+
+    libretime-api migrate
+    libretime-api set_icecast_passwords --from-icecast-config
+
+    systemctl restart libretime.target
     SCRIPT
 
     config.vm.provision 'install', type: 'shell', inline: $script
+
+    config.vm.provision 'post-install',
+                        type: 'shell',
+                        path: 'installer/vagrant/post-install.sh'
   end
 
   # Define all the OS boxes we support

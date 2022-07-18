@@ -15,7 +15,7 @@ class Application_Common_OsPath
             $initial_slashes = false;
         }
         if (
-            ($initial_slashes)
+            $initial_slashes
             && (strpos($path, '//') === 0)
             && (strpos($path, '///') === false)
         ) {
@@ -71,22 +71,6 @@ class Application_Common_OsPath
         }
 
         return implode(DIRECTORY_SEPARATOR, $paths);
-    }
-
-    public static function getBaseDir()
-    {
-        $CC_CONFIG = Config::getConfig();
-        $baseUrl = $CC_CONFIG['baseDir'];
-
-        if ($baseUrl[0] != '/') {
-            $baseUrl = '/' . $baseUrl;
-        }
-
-        if ($baseUrl[strlen($baseUrl) - 1] != '/') {
-            $baseUrl = $baseUrl . '/';
-        }
-
-        return $baseUrl;
     }
 
     public static function formatDirectoryWithDirectorySeparators($dir)

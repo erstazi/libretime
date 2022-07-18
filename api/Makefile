@@ -3,8 +3,8 @@ all: lint
 include ../tools/python.mk
 
 PIP_INSTALL := --editable .[dev]
-PYLINT_ARG := libretime_api || true
-MYPY_ARG := libretime_api || true
+PYLINT_ARG := libretime_api
+MYPY_ARG := libretime_api
 BANDIT_ARG := libretime_api || true
 
 format: .format
@@ -13,9 +13,22 @@ clean: .clean
 
 test: $(VENV)
 	source $(VENV)/bin/activate
-	DJANGO_SETTINGS_MODULE=libretime_api.settings.testing libretime-api test libretime_api
+	export DJANGO_SETTINGS_MODULE=libretime_api.settings.testing
+	pytest -v \
+		--numprocesses=$(CPU_CORES) \
+		--color=yes \
+		--cov-config=pyproject.toml \
+		--cov-report=term \
+		--cov-report=xml:./coverage.xml \
+		--cov=libretime_api \
+		libretime_api
 
+SCHEMA_FILE ?= schema.yml
 schema: $(VENV)
 	source $(VENV)/bin/activate
-	DJANGO_SETTINGS_MODULE=libretime_api.settings.testing libretime-api spectacular --file schema.yml
-	if command -v npx > /dev/null; then npx prettier --write schema.yml; fi
+	export DJANGO_SETTINGS_MODULE=libretime_api.settings.testing
+	libretime-api spectacular --file $(SCHEMA_FILE)
+	if command -v npx > /dev/null; then npx prettier --write $(SCHEMA_FILE); fi
+
+schema-foreach-commit:
+	git rebase main -x "$(MAKE) -C api schema"

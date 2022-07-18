@@ -126,12 +126,6 @@ abstract class BaseCcSubjs extends BaseObject implements Persistent
     protected $collCcFilessRelatedByDbEditedbyPartial;
 
     /**
-     * @var        PropelObjectCollection|CcPerms[] Collection to store aggregation of CcPerms objects.
-     */
-    protected $collCcPermss;
-    protected $collCcPermssPartial;
-
-    /**
      * @var        PropelObjectCollection|CcShowHosts[] Collection to store aggregation of CcShowHosts objects.
      */
     protected $collCcShowHostss;
@@ -154,12 +148,6 @@ abstract class BaseCcSubjs extends BaseObject implements Persistent
      */
     protected $collCcPrefs;
     protected $collCcPrefsPartial;
-
-    /**
-     * @var        PropelObjectCollection|CcSess[] Collection to store aggregation of CcSess objects.
-     */
-    protected $collCcSesss;
-    protected $collCcSesssPartial;
 
     /**
      * @var        PropelObjectCollection|CcSubjsToken[] Collection to store aggregation of CcSubjsToken objects.
@@ -209,12 +197,6 @@ abstract class BaseCcSubjs extends BaseObject implements Persistent
      * An array of objects scheduled for deletion.
      * @var		PropelObjectCollection
      */
-    protected $ccPermssScheduledForDeletion = null;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var		PropelObjectCollection
-     */
     protected $ccShowHostssScheduledForDeletion = null;
 
     /**
@@ -234,12 +216,6 @@ abstract class BaseCcSubjs extends BaseObject implements Persistent
      * @var		PropelObjectCollection
      */
     protected $ccPrefsScheduledForDeletion = null;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var		PropelObjectCollection
-     */
-    protected $ccSesssScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -891,8 +867,6 @@ abstract class BaseCcSubjs extends BaseObject implements Persistent
 
             $this->collCcFilessRelatedByDbEditedby = null;
 
-            $this->collCcPermss = null;
-
             $this->collCcShowHostss = null;
 
             $this->collCcPlaylists = null;
@@ -900,8 +874,6 @@ abstract class BaseCcSubjs extends BaseObject implements Persistent
             $this->collCcBlocks = null;
 
             $this->collCcPrefs = null;
-
-            $this->collCcSesss = null;
 
             $this->collCcSubjsTokens = null;
 
@@ -1067,23 +1039,6 @@ abstract class BaseCcSubjs extends BaseObject implements Persistent
                 }
             }
 
-            if ($this->ccPermssScheduledForDeletion !== null) {
-                if (!$this->ccPermssScheduledForDeletion->isEmpty()) {
-                    CcPermsQuery::create()
-                        ->filterByPrimaryKeys($this->ccPermssScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->ccPermssScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collCcPermss !== null) {
-                foreach ($this->collCcPermss as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
-            }
-
             if ($this->ccShowHostssScheduledForDeletion !== null) {
                 if (!$this->ccShowHostssScheduledForDeletion->isEmpty()) {
                     CcShowHostsQuery::create()
@@ -1146,23 +1101,6 @@ abstract class BaseCcSubjs extends BaseObject implements Persistent
 
             if ($this->collCcPrefs !== null) {
                 foreach ($this->collCcPrefs as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
-            }
-
-            if ($this->ccSesssScheduledForDeletion !== null) {
-                if (!$this->ccSesssScheduledForDeletion->isEmpty()) {
-                    CcSessQuery::create()
-                        ->filterByPrimaryKeys($this->ccSesssScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->ccSesssScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collCcSesss !== null) {
-                foreach ($this->collCcSesss as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1436,14 +1374,6 @@ abstract class BaseCcSubjs extends BaseObject implements Persistent
                     }
                 }
 
-                if ($this->collCcPermss !== null) {
-                    foreach ($this->collCcPermss as $referrerFK) {
-                        if (!$referrerFK->validate($columns)) {
-                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
-                        }
-                    }
-                }
-
                 if ($this->collCcShowHostss !== null) {
                     foreach ($this->collCcShowHostss as $referrerFK) {
                         if (!$referrerFK->validate($columns)) {
@@ -1470,14 +1400,6 @@ abstract class BaseCcSubjs extends BaseObject implements Persistent
 
                 if ($this->collCcPrefs !== null) {
                     foreach ($this->collCcPrefs as $referrerFK) {
-                        if (!$referrerFK->validate($columns)) {
-                            $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
-                        }
-                    }
-                }
-
-                if ($this->collCcSesss !== null) {
-                    foreach ($this->collCcSesss as $referrerFK) {
                         if (!$referrerFK->validate($columns)) {
                             $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
                         }
@@ -1629,9 +1551,6 @@ abstract class BaseCcSubjs extends BaseObject implements Persistent
             if (null !== $this->collCcFilessRelatedByDbEditedby) {
                 $result['CcFilessRelatedByDbEditedby'] = $this->collCcFilessRelatedByDbEditedby->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
-            if (null !== $this->collCcPermss) {
-                $result['CcPermss'] = $this->collCcPermss->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-            }
             if (null !== $this->collCcShowHostss) {
                 $result['CcShowHostss'] = $this->collCcShowHostss->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
@@ -1643,9 +1562,6 @@ abstract class BaseCcSubjs extends BaseObject implements Persistent
             }
             if (null !== $this->collCcPrefs) {
                 $result['CcPrefs'] = $this->collCcPrefs->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-            }
-            if (null !== $this->collCcSesss) {
-                $result['CcSesss'] = $this->collCcSesss->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
             if (null !== $this->collCcSubjsTokens) {
                 $result['CcSubjsTokens'] = $this->collCcSubjsTokens->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
@@ -1882,12 +1798,6 @@ abstract class BaseCcSubjs extends BaseObject implements Persistent
                 }
             }
 
-            foreach ($this->getCcPermss() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addCcPerms($relObj->copy($deepCopy));
-                }
-            }
-
             foreach ($this->getCcShowHostss() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addCcShowHosts($relObj->copy($deepCopy));
@@ -1909,12 +1819,6 @@ abstract class BaseCcSubjs extends BaseObject implements Persistent
             foreach ($this->getCcPrefs() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addCcPref($relObj->copy($deepCopy));
-                }
-            }
-
-            foreach ($this->getCcSesss() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addCcSess($relObj->copy($deepCopy));
                 }
             }
 
@@ -1997,9 +1901,6 @@ abstract class BaseCcSubjs extends BaseObject implements Persistent
         if ('CcFilesRelatedByDbEditedby' == $relationName) {
             $this->initCcFilessRelatedByDbEditedby();
         }
-        if ('CcPerms' == $relationName) {
-            $this->initCcPermss();
-        }
         if ('CcShowHosts' == $relationName) {
             $this->initCcShowHostss();
         }
@@ -2011,9 +1912,6 @@ abstract class BaseCcSubjs extends BaseObject implements Persistent
         }
         if ('CcPref' == $relationName) {
             $this->initCcPrefs();
-        }
-        if ('CcSess' == $relationName) {
-            $this->initCcSesss();
         }
         if ('CcSubjsToken' == $relationName) {
             $this->initCcSubjsTokens();
@@ -2265,10 +2163,10 @@ abstract class BaseCcSubjs extends BaseObject implements Persistent
      * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
      * @return PropelObjectCollection|CcFiles[] List of CcFiles objects
      */
-    public function getCcFilessRelatedByDbOwnerIdJoinCcMusicDirs($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    public function getCcFilessRelatedByDbOwnerIdJoinCcTracktypes($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
     {
         $query = CcFilesQuery::create(null, $criteria);
-        $query->joinWith('CcMusicDirs', $join_behavior);
+        $query->joinWith('CcTracktypes', $join_behavior);
 
         return $this->getCcFilessRelatedByDbOwnerId($query, $con);
     }
@@ -2515,237 +2413,12 @@ abstract class BaseCcSubjs extends BaseObject implements Persistent
      * @param string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
      * @return PropelObjectCollection|CcFiles[] List of CcFiles objects
      */
-    public function getCcFilessRelatedByDbEditedbyJoinCcMusicDirs($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+    public function getCcFilessRelatedByDbEditedbyJoinCcTracktypes($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
     {
         $query = CcFilesQuery::create(null, $criteria);
-        $query->joinWith('CcMusicDirs', $join_behavior);
+        $query->joinWith('CcTracktypes', $join_behavior);
 
         return $this->getCcFilessRelatedByDbEditedby($query, $con);
-    }
-
-    /**
-     * Clears out the collCcPermss collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return CcSubjs The current object (for fluent API support)
-     * @see        addCcPermss()
-     */
-    public function clearCcPermss()
-    {
-        $this->collCcPermss = null; // important to set this to null since that means it is uninitialized
-        $this->collCcPermssPartial = null;
-
-        return $this;
-    }
-
-    /**
-     * reset is the collCcPermss collection loaded partially
-     *
-     * @return void
-     */
-    public function resetPartialCcPermss($v = true)
-    {
-        $this->collCcPermssPartial = $v;
-    }
-
-    /**
-     * Initializes the collCcPermss collection.
-     *
-     * By default this just sets the collCcPermss collection to an empty array (like clearcollCcPermss());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initCcPermss($overrideExisting = true)
-    {
-        if (null !== $this->collCcPermss && !$overrideExisting) {
-            return;
-        }
-        $this->collCcPermss = new PropelObjectCollection();
-        $this->collCcPermss->setModel('CcPerms');
-    }
-
-    /**
-     * Gets an array of CcPerms objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this CcSubjs is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @return PropelObjectCollection|CcPerms[] List of CcPerms objects
-     * @throws PropelException
-     */
-    public function getCcPermss($criteria = null, PropelPDO $con = null)
-    {
-        $partial = $this->collCcPermssPartial && !$this->isNew();
-        if (null === $this->collCcPermss || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collCcPermss) {
-                // return empty collection
-                $this->initCcPermss();
-            } else {
-                $collCcPermss = CcPermsQuery::create(null, $criteria)
-                    ->filterByCcSubjs($this)
-                    ->find($con);
-                if (null !== $criteria) {
-                    if (false !== $this->collCcPermssPartial && count($collCcPermss)) {
-                      $this->initCcPermss(false);
-
-                      foreach ($collCcPermss as $obj) {
-                        if (false == $this->collCcPermss->contains($obj)) {
-                          $this->collCcPermss->append($obj);
-                        }
-                      }
-
-                      $this->collCcPermssPartial = true;
-                    }
-
-                    $collCcPermss->getInternalIterator()->rewind();
-
-                    return $collCcPermss;
-                }
-
-                if ($partial && $this->collCcPermss) {
-                    foreach ($this->collCcPermss as $obj) {
-                        if ($obj->isNew()) {
-                            $collCcPermss[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collCcPermss = $collCcPermss;
-                $this->collCcPermssPartial = false;
-            }
-        }
-
-        return $this->collCcPermss;
-    }
-
-    /**
-     * Sets a collection of CcPerms objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param PropelCollection $ccPermss A Propel collection.
-     * @param PropelPDO $con Optional connection object
-     * @return CcSubjs The current object (for fluent API support)
-     */
-    public function setCcPermss(PropelCollection $ccPermss, PropelPDO $con = null)
-    {
-        $ccPermssToDelete = $this->getCcPermss(new Criteria(), $con)->diff($ccPermss);
-
-
-        $this->ccPermssScheduledForDeletion = $ccPermssToDelete;
-
-        foreach ($ccPermssToDelete as $ccPermsRemoved) {
-            $ccPermsRemoved->setCcSubjs(null);
-        }
-
-        $this->collCcPermss = null;
-        foreach ($ccPermss as $ccPerms) {
-            $this->addCcPerms($ccPerms);
-        }
-
-        $this->collCcPermss = $ccPermss;
-        $this->collCcPermssPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related CcPerms objects.
-     *
-     * @param Criteria $criteria
-     * @param boolean $distinct
-     * @param PropelPDO $con
-     * @return int             Count of related CcPerms objects.
-     * @throws PropelException
-     */
-    public function countCcPermss(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
-    {
-        $partial = $this->collCcPermssPartial && !$this->isNew();
-        if (null === $this->collCcPermss || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collCcPermss) {
-                return 0;
-            }
-
-            if ($partial && !$criteria) {
-                return count($this->getCcPermss());
-            }
-            $query = CcPermsQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByCcSubjs($this)
-                ->count($con);
-        }
-
-        return count($this->collCcPermss);
-    }
-
-    /**
-     * Method called to associate a CcPerms object to this object
-     * through the CcPerms foreign key attribute.
-     *
-     * @param    CcPerms $l CcPerms
-     * @return CcSubjs The current object (for fluent API support)
-     */
-    public function addCcPerms(CcPerms $l)
-    {
-        if ($this->collCcPermss === null) {
-            $this->initCcPermss();
-            $this->collCcPermssPartial = true;
-        }
-
-        if (!in_array($l, $this->collCcPermss->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
-            $this->doAddCcPerms($l);
-
-            if ($this->ccPermssScheduledForDeletion and $this->ccPermssScheduledForDeletion->contains($l)) {
-                $this->ccPermssScheduledForDeletion->remove($this->ccPermssScheduledForDeletion->search($l));
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param	CcPerms $ccPerms The ccPerms object to add.
-     */
-    protected function doAddCcPerms($ccPerms)
-    {
-        $this->collCcPermss[]= $ccPerms;
-        $ccPerms->setCcSubjs($this);
-    }
-
-    /**
-     * @param	CcPerms $ccPerms The ccPerms object to remove.
-     * @return CcSubjs The current object (for fluent API support)
-     */
-    public function removeCcPerms($ccPerms)
-    {
-        if ($this->getCcPermss()->contains($ccPerms)) {
-            $this->collCcPermss->remove($this->collCcPermss->search($ccPerms));
-            if (null === $this->ccPermssScheduledForDeletion) {
-                $this->ccPermssScheduledForDeletion = clone $this->collCcPermss;
-                $this->ccPermssScheduledForDeletion->clear();
-            }
-            $this->ccPermssScheduledForDeletion[]= $ccPerms;
-            $ccPerms->setCcSubjs(null);
-        }
-
-        return $this;
     }
 
     /**
@@ -3674,231 +3347,6 @@ abstract class BaseCcSubjs extends BaseObject implements Persistent
     }
 
     /**
-     * Clears out the collCcSesss collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return CcSubjs The current object (for fluent API support)
-     * @see        addCcSesss()
-     */
-    public function clearCcSesss()
-    {
-        $this->collCcSesss = null; // important to set this to null since that means it is uninitialized
-        $this->collCcSesssPartial = null;
-
-        return $this;
-    }
-
-    /**
-     * reset is the collCcSesss collection loaded partially
-     *
-     * @return void
-     */
-    public function resetPartialCcSesss($v = true)
-    {
-        $this->collCcSesssPartial = $v;
-    }
-
-    /**
-     * Initializes the collCcSesss collection.
-     *
-     * By default this just sets the collCcSesss collection to an empty array (like clearcollCcSesss());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initCcSesss($overrideExisting = true)
-    {
-        if (null !== $this->collCcSesss && !$overrideExisting) {
-            return;
-        }
-        $this->collCcSesss = new PropelObjectCollection();
-        $this->collCcSesss->setModel('CcSess');
-    }
-
-    /**
-     * Gets an array of CcSess objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this CcSubjs is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param Criteria $criteria optional Criteria object to narrow the query
-     * @param PropelPDO $con optional connection object
-     * @return PropelObjectCollection|CcSess[] List of CcSess objects
-     * @throws PropelException
-     */
-    public function getCcSesss($criteria = null, PropelPDO $con = null)
-    {
-        $partial = $this->collCcSesssPartial && !$this->isNew();
-        if (null === $this->collCcSesss || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collCcSesss) {
-                // return empty collection
-                $this->initCcSesss();
-            } else {
-                $collCcSesss = CcSessQuery::create(null, $criteria)
-                    ->filterByCcSubjs($this)
-                    ->find($con);
-                if (null !== $criteria) {
-                    if (false !== $this->collCcSesssPartial && count($collCcSesss)) {
-                      $this->initCcSesss(false);
-
-                      foreach ($collCcSesss as $obj) {
-                        if (false == $this->collCcSesss->contains($obj)) {
-                          $this->collCcSesss->append($obj);
-                        }
-                      }
-
-                      $this->collCcSesssPartial = true;
-                    }
-
-                    $collCcSesss->getInternalIterator()->rewind();
-
-                    return $collCcSesss;
-                }
-
-                if ($partial && $this->collCcSesss) {
-                    foreach ($this->collCcSesss as $obj) {
-                        if ($obj->isNew()) {
-                            $collCcSesss[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collCcSesss = $collCcSesss;
-                $this->collCcSesssPartial = false;
-            }
-        }
-
-        return $this->collCcSesss;
-    }
-
-    /**
-     * Sets a collection of CcSess objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param PropelCollection $ccSesss A Propel collection.
-     * @param PropelPDO $con Optional connection object
-     * @return CcSubjs The current object (for fluent API support)
-     */
-    public function setCcSesss(PropelCollection $ccSesss, PropelPDO $con = null)
-    {
-        $ccSesssToDelete = $this->getCcSesss(new Criteria(), $con)->diff($ccSesss);
-
-
-        $this->ccSesssScheduledForDeletion = $ccSesssToDelete;
-
-        foreach ($ccSesssToDelete as $ccSessRemoved) {
-            $ccSessRemoved->setCcSubjs(null);
-        }
-
-        $this->collCcSesss = null;
-        foreach ($ccSesss as $ccSess) {
-            $this->addCcSess($ccSess);
-        }
-
-        $this->collCcSesss = $ccSesss;
-        $this->collCcSesssPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related CcSess objects.
-     *
-     * @param Criteria $criteria
-     * @param boolean $distinct
-     * @param PropelPDO $con
-     * @return int             Count of related CcSess objects.
-     * @throws PropelException
-     */
-    public function countCcSesss(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
-    {
-        $partial = $this->collCcSesssPartial && !$this->isNew();
-        if (null === $this->collCcSesss || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collCcSesss) {
-                return 0;
-            }
-
-            if ($partial && !$criteria) {
-                return count($this->getCcSesss());
-            }
-            $query = CcSessQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByCcSubjs($this)
-                ->count($con);
-        }
-
-        return count($this->collCcSesss);
-    }
-
-    /**
-     * Method called to associate a CcSess object to this object
-     * through the CcSess foreign key attribute.
-     *
-     * @param    CcSess $l CcSess
-     * @return CcSubjs The current object (for fluent API support)
-     */
-    public function addCcSess(CcSess $l)
-    {
-        if ($this->collCcSesss === null) {
-            $this->initCcSesss();
-            $this->collCcSesssPartial = true;
-        }
-
-        if (!in_array($l, $this->collCcSesss->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
-            $this->doAddCcSess($l);
-
-            if ($this->ccSesssScheduledForDeletion and $this->ccSesssScheduledForDeletion->contains($l)) {
-                $this->ccSesssScheduledForDeletion->remove($this->ccSesssScheduledForDeletion->search($l));
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param	CcSess $ccSess The ccSess object to add.
-     */
-    protected function doAddCcSess($ccSess)
-    {
-        $this->collCcSesss[]= $ccSess;
-        $ccSess->setCcSubjs($this);
-    }
-
-    /**
-     * @param	CcSess $ccSess The ccSess object to remove.
-     * @return CcSubjs The current object (for fluent API support)
-     */
-    public function removeCcSess($ccSess)
-    {
-        if ($this->getCcSesss()->contains($ccSess)) {
-            $this->collCcSesss->remove($this->collCcSesss->search($ccSess));
-            if (null === $this->ccSesssScheduledForDeletion) {
-                $this->ccSesssScheduledForDeletion = clone $this->collCcSesss;
-                $this->ccSesssScheduledForDeletion->clear();
-            }
-            $this->ccSesssScheduledForDeletion[]= $ccSess;
-            $ccSess->setCcSubjs(null);
-        }
-
-        return $this;
-    }
-
-    /**
      * Clears out the collCcSubjsTokens collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
@@ -4399,11 +3847,6 @@ abstract class BaseCcSubjs extends BaseObject implements Persistent
                     $o->clearAllReferences($deep);
                 }
             }
-            if ($this->collCcPermss) {
-                foreach ($this->collCcPermss as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
             if ($this->collCcShowHostss) {
                 foreach ($this->collCcShowHostss as $o) {
                     $o->clearAllReferences($deep);
@@ -4421,11 +3864,6 @@ abstract class BaseCcSubjs extends BaseObject implements Persistent
             }
             if ($this->collCcPrefs) {
                 foreach ($this->collCcPrefs as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
-            if ($this->collCcSesss) {
-                foreach ($this->collCcSesss as $o) {
                     $o->clearAllReferences($deep);
                 }
             }
@@ -4451,10 +3889,6 @@ abstract class BaseCcSubjs extends BaseObject implements Persistent
             $this->collCcFilessRelatedByDbEditedby->clearIterator();
         }
         $this->collCcFilessRelatedByDbEditedby = null;
-        if ($this->collCcPermss instanceof PropelCollection) {
-            $this->collCcPermss->clearIterator();
-        }
-        $this->collCcPermss = null;
         if ($this->collCcShowHostss instanceof PropelCollection) {
             $this->collCcShowHostss->clearIterator();
         }
@@ -4471,10 +3905,6 @@ abstract class BaseCcSubjs extends BaseObject implements Persistent
             $this->collCcPrefs->clearIterator();
         }
         $this->collCcPrefs = null;
-        if ($this->collCcSesss instanceof PropelCollection) {
-            $this->collCcSesss->clearIterator();
-        }
-        $this->collCcSesss = null;
         if ($this->collCcSubjsTokens instanceof PropelCollection) {
             $this->collCcSubjsTokens->clearIterator();
         }

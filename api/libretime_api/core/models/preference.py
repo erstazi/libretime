@@ -2,22 +2,46 @@ from django.db import models
 
 
 class Preference(models.Model):
-    subjid = models.ForeignKey(
-        "User", models.DO_NOTHING, db_column="subjid", blank=True, null=True
+    user = models.ForeignKey(
+        "core.User",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        db_column="subjid",
     )
-    keystr = models.CharField(unique=True, max_length=255, blank=True, null=True)
-    valstr = models.TextField(blank=True, null=True)
+    key = models.CharField(
+        max_length=255,
+        unique=True,
+        blank=True,
+        null=True,
+        db_column="keystr",
+    )
+    value = models.TextField(
+        blank=True,
+        null=True,
+        db_column="valstr",
+    )
 
     class Meta:
         managed = False
         db_table = "cc_pref"
-        unique_together = (("subjid", "keystr"),)
+        unique_together = (("user", "key"),)
 
 
 class StreamSetting(models.Model):
-    keyname = models.CharField(primary_key=True, max_length=64)
-    value = models.CharField(max_length=255, blank=True, null=True)
-    type = models.CharField(max_length=16)
+    key = models.CharField(
+        primary_key=True,
+        max_length=64,
+        db_column="keyname",
+    )
+    value = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+    )
+    type = models.CharField(
+        max_length=16,
+    )
 
     class Meta:
         managed = False

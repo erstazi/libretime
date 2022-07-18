@@ -1,7 +1,7 @@
 from os import chdir
 from pathlib import Path
 
-from setuptools import setup
+from setuptools import find_packages, setup
 
 # Change directory since setuptools uses relative paths
 here = Path(__file__).parent.resolve()
@@ -19,32 +19,27 @@ setup(
         "Source Code": "https://github.com/libretime/libretime",
     },
     license="AGPLv3",
-    packages=[
-        "libretime_playout",
-        "libretime_playout.notify",
-        "libretime_liquidsoap",
-    ],
-    package_data={"": ["**/*.liq", "*.cfg", "*.types"]},
+    packages=find_packages(),
+    package_data={"": ["**/*.liq", "*.types"]},
     entry_points={
         "console_scripts": [
             "libretime-playout=libretime_playout.main:cli",
-            "libretime-liquidsoap=libretime_liquidsoap.main:cli",
+            "libretime-liquidsoap=libretime_playout.liquidsoap.main:cli",
             "libretime-playout-notify=libretime_playout.notify.main:cli",
         ]
     },
     python_requires=">=3.6",
     install_requires=[
-        "amqplib",
-        "defusedxml",
-        "kombu",
-        "mutagen",
-        "packaging",
-        "pytz",
-        "requests",
+        "backports.zoneinfo>=0.2.1,<0.3;python_version<'3.9'",
+        "defusedxml>=0.6.0,<0.8",
+        "kombu==4.6.11",
+        "mutagen>=1.45.1,<1.46",
+        "requests>=2.25.1,<2.29",
         "typing-extensions",
     ],
     extras_require={
         "dev": [
+            "distro",
             f"libretime-api-client @ file://localhost{here.parent / 'api-client'}",
             f"libretime-shared @ file://localhost{here.parent / 'shared'}",
         ],

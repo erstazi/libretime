@@ -9,9 +9,11 @@ class WidgetHelper
         // weekStart is in station time.
         $weekStartDateTime = Application_Common_DateHelper::getWeekStartDateTime();
 
-        $dow = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday',
+        $dow = [
+            'monday', 'tuesday', 'wednesday', 'thursday', 'friday',
             'saturday', 'sunday', 'nextmonday', 'nexttuesday', 'nextwednesday',
-            'nextthursday', 'nextfriday', 'nextsaturday', 'nextsunday', ];
+            'nextthursday', 'nextfriday', 'nextsaturday', 'nextsunday',
+        ];
 
         $result = [];
 
@@ -159,14 +161,11 @@ class WidgetHelper
      */
     public static function findAndConvertPaths(&$arr)
     {
-        $CC_CONFIG = Config::getConfig();
-        $baseDir = Application_Common_OsPath::formatDirectoryWithDirectorySeparators($CC_CONFIG['baseDir']);
-
         foreach ($arr as &$a) {
             if (is_array($a)) {
                 if (array_key_exists('image_path', $a)) {
                     $a['image_path'] = $a['image_path'] && $a['image_path'] !== '' ?
-                        Application_Common_HTTPHelper::getStationUrl() . 'api/show-logo?id=' . $a['id'] : '';
+                        Config::getPublicUrl() . 'api/show-logo?id=' . $a['id'] : '';
                 } else {
                     self::findAndConvertPaths($a);
                 }

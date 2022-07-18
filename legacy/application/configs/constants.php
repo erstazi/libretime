@@ -4,7 +4,6 @@
 define('ROOT_PATH', dirname(__DIR__, 2));
 define('LIB_PATH', ROOT_PATH . '/library');
 define('BUILD_PATH', ROOT_PATH . '/build');
-define('SETUP_PATH', BUILD_PATH . '/airtime-setup');
 define('APPLICATION_PATH', ROOT_PATH . '/application');
 define('CONFIG_PATH', APPLICATION_PATH . '/configs');
 define('VENDOR_PATH', ROOT_PATH . '/vendor');
@@ -20,13 +19,9 @@ defined('VERBOSE_STACK_TRACE') || define('VERBOSE_STACK_TRACE', getenv('VERBOSE_
 define('LIBRETIME_LOG_DIR', getenv('LIBRETIME_LOG_DIR') ?: '/var/log/libretime');
 define('LIBRETIME_LOG_FILEPATH', getenv('LIBRETIME_LOG_FILEPATH') ?: LIBRETIME_LOG_DIR . '/legacy.log');
 
-define('LIBRETIME_CONFIG_DIR', getenv('LIBRETIME_CONFIG_DIR') ?: '/etc/airtime');
+define('LIBRETIME_CONFIG_DIR', getenv('LIBRETIME_CONFIG_DIR') ?: '/etc/libretime');
 define('LIBRETIME_CONF_DIR', LIBRETIME_CONFIG_DIR); // Deprecated
-define('LIBRETIME_CONFIG_FILEPATH', getenv('LIBRETIME_CONFIG_FILEPATH') ?: LIBRETIME_CONFIG_DIR . '/airtime.conf');
-
-// Installer
-define('INSTALLER_CONFIG_FILEPATH', LIBRETIME_CONFIG_DIR . '/airtime.temp.conf');
-define('INSTALLER_DEFAULT_STORAGE_PATH', '/srv/airtime/stor');
+define('LIBRETIME_CONFIG_FILEPATH', getenv('LIBRETIME_CONFIG_FILEPATH') ?: LIBRETIME_CONFIG_DIR . '/config.yml');
 
 // Legacy constants
 define('PRODUCT_NAME', 'LibreTime');
@@ -105,7 +100,7 @@ define('MDATA_KEY_CUE_IN', 'cuein');
 define('MDATA_KEY_CUE_OUT', 'cueout');
 define('MDATA_KEY_ARTWORK', 'artwork');
 define('MDATA_KEY_ARTWORK_DATA', 'artwork_data');
-define('MDATA_KEY_TRACK_TYPE', 'track_type');
+define('MDATA_KEY_TRACK_TYPE', 'track_type_id');
 
 define('UI_MDATA_VALUE_FORMAT_FILE', 'File');
 define('UI_MDATA_VALUE_FORMAT_STREAM', 'live stream');

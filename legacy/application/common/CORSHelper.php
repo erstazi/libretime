@@ -8,9 +8,7 @@ class CORSHelper
         $origin = $request->getHeader('Origin');
         $allowedOrigins = self::getAllowedOrigins($request);
 
-        if ((!(preg_match('/https?:\/\/localhost/', $origin) === 1)) && ($origin != '')
-            && (!in_array($origin, $allowedOrigins))
-        ) {
+        if (!($origin == '' || preg_match('/https?:\/\/localhost/', $origin) === 1 || in_array($origin, $allowedOrigins))) {
             // Don't allow CORS from other domains to prevent XSS.
             Logging::error("request origin '{$origin}' is not in allowed '" . implode(', ', $allowedOrigins) . "'!");
 
@@ -29,32 +27,27 @@ class CORSHelper
      */
     public static function getAllowedOrigins($request)
     {
-        $allowedCorsUrls = array_map(
-            function ($v) { return trim($v); },
-            explode(PHP_EOL, Application_Model_Preference::GetAllowedCorsUrls())
+        $config = Config::getConfig();
+
+        return array_merge(
+            $config['allowedCorsOrigins'],
+            self::getDatabaseAllowedOrigins(),
         );
+    }
 
-        // always allow the configured server in (as reported by the server and not what is i baseUrl)
-        $scheme = $request->getServer('REQUEST_SCHEME');
-        $host = $request->getServer('SERVER_NAME');
-        $port = $request->getServer('SERVER_PORT');
-
-        $portString = '';
-        if (
-            $scheme == 'https' && $port != 443
-            || $scheme == 'http' && $port != 80
-        ) {
-            $portString = sprintf(':%s', $port);
-        }
-        $requestedUrl = sprintf(
-            '%s://%s%s',
-            $scheme,
-            $host,
-            $portString
+    /**
+     * Get database allowed origins.
+     *
+     * @return array
+     */
+    private static function getDatabaseAllowedOrigins()
+    {
+        return array_map(
+            'trim',
+            explode(
+                PHP_EOL,
+                Application_Model_Preference::GetAllowedCorsUrls(),
+            )
         );
-
-        return array_merge($allowedCorsUrls, [
-            $requestedUrl,
-        ]);
     }
 }

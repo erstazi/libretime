@@ -49,13 +49,12 @@ class Application_Model_StoredFile
         'ftype' => 'DbFtype',
         'language' => 'DbLanguage',
         'replay_gain' => 'DbReplayGain',
-        'directory' => 'DbDirectory',
         'owner_id' => 'DbOwnerId',
         'cuein' => 'DbCueIn',
         'cueout' => 'DbCueOut',
         'description' => 'DbDescription',
         'artwork' => 'DbArtwork',
-        'track_type' => 'DbTrackType',
+        'track_type_id' => 'DbTrackTypeId',
     ];
 
     public function __construct($file, $con)
@@ -386,7 +385,7 @@ SQL;
     }
 
     /**
-     * Deletes the physical file from the local file system or from the cloud.
+     * Deletes the physical file from the local file system.
      *
      * @param mixed $quiet
      */
@@ -413,7 +412,6 @@ SQL;
         }
 
         // Delete the physical file from either the local stor directory
-        // or from the cloud
         if ($this->_file->getDbImportStatus() == CcFiles::IMPORT_STATUS_SUCCESS) {
             try {
                 $this->_file->deletePhysicalFile();
@@ -434,7 +432,7 @@ SQL;
         // the file getting deleted
         self::updateBlockAndPlaylistLength($this->_file->getDbId());
 
-        // delete the file record from cc_files (and cloud_file, if applicable)
+        // delete the file record from cc_files
         $this->_file->delete();
     }
 
@@ -498,14 +496,11 @@ SQL;
      */
     public function setFilePath($p_filepath)
     {
-        $path_info = Application_Model_MusicDir::splitFilePath($p_filepath);
+        $path_info = Application_Common_Storage::splitFilePath($p_filepath);
 
         if (is_null($path_info)) {
             return -1;
         }
-        $musicDir = Application_Model_MusicDir::getDirByPath($path_info[0]);
-
-        $this->_file->setDbDirectory($musicDir->getId());
         $this->_file->setDbFilepath($path_info[1]);
         $this->_file->save($this->_con);
     }
@@ -515,13 +510,11 @@ SQL;
      */
     public function getFileUrl()
     {
-        $CC_CONFIG = Config::getConfig();
-
         $protocol = empty($_SERVER['HTTPS']) ? 'http' : 'https';
 
         $serverName = $_SERVER['SERVER_NAME'];
         $serverPort = $_SERVER['SERVER_PORT'];
-        $subDir = $CC_CONFIG['baseDir'];
+        $subDir = Config::getBasePath();
 
         if ($protocol === 'https' && $serverPort == 80) {
             $serverPort = 443;
@@ -620,16 +613,7 @@ SQL;
                 throw new Exception('Could not recall file with id: ' . $p_id);
             }
 
-            // Attempt to get the cloud file object and return it. If no cloud
-            // file object is found then we are dealing with a regular stored
-            // object so return that
-            $cloudFile = CloudFileQuery::create()->findOneByCcFileId($p_id);
-
-            if (is_null($cloudFile)) {
-                return self::createWithFile($storedFile, $con);
-            }
-
-            return self::createWithFile($cloudFile, $con);
+            return self::createWithFile($storedFile, $con);
         }
 
         throw new Exception('No arguments passed to RecallById');
@@ -650,15 +634,13 @@ SQL;
      */
     public static function RecallByFilepath($p_filepath, $con)
     {
-        $path_info = Application_Model_MusicDir::splitFilePath($p_filepath);
+        $path_info = Application_Common_Storage::splitFilePath($p_filepath);
 
         if (is_null($path_info)) {
             return null;
         }
 
-        $music_dir = Application_Model_MusicDir::getDirByPath($path_info[0]);
         $file = CcFilesQuery::create()
-            ->filterByDbDirectory($music_dir->getId())
             ->filterByDbFilepath($path_info[1])
             ->findOne($con);
 
@@ -667,15 +649,13 @@ SQL;
 
     public static function RecallByPartialFilepath($partial_path, $con)
     {
-        $path_info = Application_Model_MusicDir::splitFilePath($partial_path);
+        $path_info = Application_Common_Storage::splitFilePath($partial_path);
 
         if (is_null($path_info)) {
             return null;
         }
-        $music_dir = Application_Model_MusicDir::getDirByPath($path_info[0]);
 
         $files = CcFilesQuery::create()
-            ->filterByDbDirectory($music_dir->getId())
             ->filterByDbFilepath("{$path_info[1]}%")
             ->find($con);
         $res = [];
@@ -689,18 +669,20 @@ SQL;
 
     public static function getLibraryColumns()
     {
-        return ['id', 'track_title', 'artist_name', 'album_title',
+        return [
+            'id', 'track_title', 'artist_name', 'album_title',
             'genre', 'length', 'year', 'utime', 'mtime', 'ftype',
             'track_number', 'mood', 'bpm', 'composer', 'info_url',
             'bit_rate', 'sample_rate', 'isrc_number', 'encoded_by', 'label',
             'copyright', 'mime', 'language', 'filepath', 'owner_id',
             'conductor', 'replay_gain', 'lptime', 'is_playlist', 'is_scheduled',
-            'cuein', 'cueout', 'description', 'artwork', 'track_type', ];
+            'cuein', 'cueout', 'description', 'artwork', 'track_type_id',
+        ];
     }
 
     public static function searchLibraryFiles($datatables)
     {
-        $baseUrl = Application_Common_OsPath::getBaseDir();
+        $baseUrl = Config::getBasePath();
 
         $con = Propel::getConnection(CcFilesPeer::DATABASE_NAME);
 
@@ -848,8 +830,7 @@ SQL;
         $displayTimezone = new DateTimeZone(Application_Model_Preference::GetUserTimezone());
         $utcTimezone = new DateTimeZone('UTC');
 
-        $storDir = Application_Model_MusicDir::getStorDir();
-        $fp = $storDir->getDirectory();
+        $fp = Config::getStoragePath();
 
         foreach ($results['aaData'] as &$row) {
             $row['id'] = intval($row['id']);
@@ -951,8 +932,7 @@ SQL;
     {
         $audio_file = $tempFilePath;
 
-        $storDir = Application_Model_MusicDir::getStorDir();
-        $stor = $storDir->getDirectory();
+        $stor = Config::getStoragePath();
         // check if "organize" dir exists and if not create one
         if (!file_exists($stor . '/organize')) {
             if (!mkdir($stor . '/organize', 0777)) {
@@ -1129,11 +1109,6 @@ SQL;
         }
 
         return $rows;
-    }
-
-    public function getDirectory()
-    {
-        return $this->_file->getDbDirectory();
     }
 
     public function setFileExistsFlag($flag)

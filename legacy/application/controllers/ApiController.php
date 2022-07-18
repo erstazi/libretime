@@ -14,7 +14,8 @@ class ApiController extends Zend_Controller_Action
         }
 
         // Ignore API key and session authentication for these APIs:
-        $ignoreAuth = ['live-info',
+        $ignoreAuth = [
+            'live-info',
             'live-info-v2',
             'week-info',
             'station-metadata',
@@ -104,14 +105,14 @@ class ApiController extends Zend_Controller_Action
         $authAdapter = Zend_Auth::getInstance();
         Application_Model_Auth::pinSessionToClient($authAdapter);
 
-        if ((Zend_Auth::getInstance()->hasIdentity())) {
+        if (Zend_Auth::getInstance()->hasIdentity()) {
             return true;
         }
 
         header('HTTP/1.0 401 Unauthorized');
         echo _('You are not allowed to access this resource.');
 
-        exit();
+        exit;
     }
 
     public function versionAction()
@@ -119,7 +120,8 @@ class ApiController extends Zend_Controller_Action
         $config = Config::getConfig();
         $this->_helper->json->sendJson([
             'airtime_version' => $config['airtime_version'],
-            'api_version' => AIRTIME_API_VERSION, ]);
+            'api_version' => AIRTIME_API_VERSION,
+        ]);
     }
 
     /**
@@ -171,7 +173,8 @@ class ApiController extends Zend_Controller_Action
 
         $usage = Application_Model_Preference::getBandwidthLimitCounter();
         if (($usage > Application_Model_Preference::getBandwidthLimit())
-            && (Application_Model_Preference::getProvisioningStatus() == PROVISIONING_STATUS_ACTIVE)) {
+            && (Application_Model_Preference::getProvisioningStatus() == PROVISIONING_STATUS_ACTIVE)
+        ) {
             $CC_CONFIG = Config::getConfig();
             // Hacky way to get the user ID...
             $url = AIRTIMEPRO_API_URL . '/station/' . $CC_CONFIG['rabbitmq']['user'] . '/suspend';
@@ -208,15 +211,18 @@ class ApiController extends Zend_Controller_Action
 
         $isCurrentItemPlaying = $range['tracks']['current']['media_item_played'] ? true : false;
 
-        if ($isItemCurrentlyScheduled
+        if (
+            $isItemCurrentlyScheduled
             || Application_Model_Preference::GetSourceSwitchStatus('live_dj') == 'on'
-            || Application_Model_Preference::GetSourceSwitchStatus('master_dj') == 'on') {
+            || Application_Model_Preference::GetSourceSwitchStatus('master_dj') == 'on'
+        ) {
             $result['on_air_light_expected_status'] = true;
         }
 
         if (($isItemCurrentlyScheduled && $isCurrentItemPlaying)
             || Application_Model_Preference::GetSourceSwitchStatus('live_dj') == 'on'
-            || Application_Model_Preference::GetSourceSwitchStatus('master_dj') == 'on') {
+            || Application_Model_Preference::GetSourceSwitchStatus('master_dj') == 'on'
+        ) {
             $result['on_air_light'] = true;
         }
 
@@ -307,7 +313,7 @@ class ApiController extends Zend_Controller_Action
                 $this->returnJsonOrJsonp($request, []);
             }
 
-            $stationUrl = Application_Common_HTTPHelper::getStationUrl();
+            $stationUrl = Config::getPublicUrl();
 
             if (isset($result['previous'])) {
                 if (
@@ -604,8 +610,7 @@ class ApiController extends Zend_Controller_Action
                 throw new ZendActionHttpException($this, 400, 'ERROR: No ID was given.');
             }
 
-            $storDir = Application_Model_MusicDir::getStorDir();
-            $fp = $storDir->getDirectory();
+            $fp = Config::getStoragePath();
 
             // $this->view->type = $type;
             $file = Application_Model_StoredFile::RecallById($trackid);
@@ -693,12 +698,10 @@ class ApiController extends Zend_Controller_Action
             $this->view->layout()->disableLayout();
             $this->_helper->viewRenderer->setNoRender(true);
 
-            $CC_CONFIG = Config::getConfig();
-            $baseDir = Application_Common_OsPath::formatDirectoryWithDirectorySeparators($CC_CONFIG['baseDir']);
-            $path = 'http://' . $_SERVER['HTTP_HOST'] . $baseDir . 'api/station-logo';
+            $request = $this->getRequest();
 
             $result['name'] = Application_Model_Preference::GetStationName();
-            $result['logo'] = $path;
+            $result['logo'] = Config::getPublicUrl() . 'api/station-logo';
             $result['description'] = Application_Model_Preference::GetStationDescription();
             $result['timezone'] = Application_Model_Preference::GetDefaultTimezone();
             $result['locale'] = Application_Model_Preference::GetDefaultLocale();
@@ -876,13 +879,9 @@ class ApiController extends Zend_Controller_Action
 
     public function mediaMonitorSetupAction()
     {
-        $this->view->stor = Application_Model_MusicDir::getStorDir()->getDirectory();
+        $this->view->stor = Config::getStoragePath();
 
-        $watchedDirs = Application_Model_MusicDir::getWatchedDirs();
         $watchedDirsPath = [];
-        foreach ($watchedDirs as $wd) {
-            $watchedDirsPath[] = $wd->getDirectory();
-        }
         $this->view->watched_dirs = $watchedDirsPath;
     }
 
@@ -1006,7 +1005,8 @@ class ApiController extends Zend_Controller_Action
                 Logging::info($info_json);
                 array_push($responses, [
                     'error' => _("Bad request. no 'mode' parameter passed."),
-                    'key' => $k, ]);
+                    'key' => $k,
+                ]);
 
                 continue;
             }
@@ -1019,7 +1019,8 @@ class ApiController extends Zend_Controller_Action
                 array_push($responses, [
                     'error' => _("Bad request. 'mode' parameter is invalid"),
                     'key' => $k,
-                    'mode' => $mode, ]);
+                    'mode' => $mode,
+                ]);
 
                 continue;
             }
@@ -1049,46 +1050,6 @@ class ApiController extends Zend_Controller_Action
 
         $this->view->files =
             Application_Model_StoredFile::listAllFiles($dir_id, $all);
-    }
-
-    public function listAllWatchedDirsAction()
-    {
-        $result = [];
-
-        $arrWatchedDirs = Application_Model_MusicDir::getWatchedDirs();
-        $storDir = Application_Model_MusicDir::getStorDir();
-
-        $result[$storDir->getId()] = $storDir->getDirectory();
-
-        foreach ($arrWatchedDirs as $watchedDir) {
-            $result[$watchedDir->getId()] = $watchedDir->getDirectory();
-        }
-
-        $this->view->dirs = $result;
-    }
-
-    public function addWatchedDirAction()
-    {
-        $request = $this->getRequest();
-        $path = base64_decode($request->getParam('path'));
-
-        $this->view->msg = Application_Model_MusicDir::addWatchedDir($path);
-    }
-
-    public function removeWatchedDirAction()
-    {
-        $request = $this->getRequest();
-        $path = base64_decode($request->getParam('path'));
-
-        $this->view->msg = Application_Model_MusicDir::removeWatchedDir($path);
-    }
-
-    public function setStorageDirAction()
-    {
-        $request = $this->getRequest();
-        $path = base64_decode($request->getParam('path'));
-
-        $this->view->msg = Application_Model_MusicDir::setStorDir($path);
     }
 
     public function getStreamSettingAction()
@@ -1171,84 +1132,6 @@ class ApiController extends Zend_Controller_Action
         Application_Model_Preference::SetSourceStatus($sourcename, $status);
     }
 
-    // handles addition/deletion of mount point which watched dirs reside
-    public function updateFileSystemMountAction()
-    {
-        $request = $this->getRequest();
-
-        $params = $request->getParams();
-        $added_list = empty($params['added_dir']) ? [] : explode(',', $params['added_dir']);
-        $removed_list = empty($params['removed_dir']) ? [] : explode(',', $params['removed_dir']);
-
-        // get all watched dirs
-        $watched_dirs = Application_Model_MusicDir::getWatchedDirs(null, null);
-
-        foreach ($added_list as $ad) {
-            $ad .= '/';
-            foreach ($watched_dirs as $dir) {
-                $dirPath = $dir->getDirectory();
-
-                // if mount path itself was watched
-                if ($dirPath == $ad) {
-                    Application_Model_MusicDir::addWatchedDir($dirPath, false);
-                } elseif (substr($dirPath, 0, strlen($ad)) === $ad && $dir->getExistsFlag() == false) {
-                    // if dir contains any dir in removed_list( if watched dir resides on new mounted path )
-                    Application_Model_MusicDir::addWatchedDir($dirPath, false);
-                } elseif (substr($ad, 0, strlen($dirPath)) === $dirPath) {
-                    // is new mount point within the watched dir?
-                    // pyinotify doesn't notify anyhing in this case, so we add this mount point as
-                    // watched dir
-                    // bypass nested loop check
-                    Application_Model_MusicDir::addWatchedDir($ad, false, true);
-                }
-            }
-        }
-
-        foreach ($removed_list as $rd) {
-            $rd .= '/';
-            foreach ($watched_dirs as $dir) {
-                $dirPath = $dir->getDirectory();
-                // if dir contains any dir in removed_list( if watched dir resides on new mounted path )
-                if (substr($dirPath, 0, strlen($rd)) === $rd && $dir->getExistsFlag() == true) {
-                    Application_Model_MusicDir::removeWatchedDir($dirPath, false);
-                } elseif (substr($rd, 0, strlen($dirPath)) === $dirPath) {
-                    // is new mount point within the watched dir?
-                    // pyinotify doesn't notify anyhing in this case, so we walk through all files within
-                    // this watched dir in DB and mark them deleted.
-                    // In case of h) of use cases, due to pyinotify behaviour of noticing mounted dir, we need to
-                    // compare agaisnt all files in cc_files table
-
-                    $watchDir = Application_Model_MusicDir::getDirByPath($rd);
-                    // get all the files that is under $dirPath
-                    $files = Application_Model_StoredFile::listAllFiles(
-                        $dir->getId(),
-                        $all = false
-                    );
-                    foreach ($files as $f) {
-                        // if the file is from this mount
-                        $filePaths = $f->getFilePaths();
-                        $filePath = $filePaths[0];
-                        if (substr($filePath, 0, strlen($rd)) === $rd) {
-                            $f->delete();
-                        }
-                    }
-                    if ($watchDir) {
-                        Application_Model_MusicDir::removeWatchedDir($rd, false);
-                    }
-                }
-            }
-        }
-    }
-
-    // handles case where watched dir is missing
-    public function handleWatchedDirMissingAction()
-    {
-        $request = $this->getRequest();
-
-        $dir = base64_decode($request->getParam('dir'));
-        Application_Model_MusicDir::removeWatchedDir($dir, false);
-    }
-
     /* This action is for use by our dev scripts, that make
      * a change to the database and we want rabbitmq to send
      * out a message to pypo that a potential change has been made. */
@@ -1284,8 +1167,10 @@ class ApiController extends Zend_Controller_Action
 
         if ($djtype == 'master') {
             // check against master
-            if ($username == Application_Model_Preference::GetLiveStreamMasterUsername()
-                    && $password == Application_Model_Preference::GetLiveStreamMasterPassword()) {
+            if (
+                $username == Application_Model_Preference::GetLiveStreamMasterUsername()
+                && $password == Application_Model_Preference::GetLiveStreamMasterPassword()
+            ) {
                 $this->view->msg = true;
             } else {
                 $this->view->msg = false;
@@ -1631,7 +1516,7 @@ class ApiController extends Zend_Controller_Action
      */
     public function showTracksAction()
     {
-        $baseUrl = Application_Common_OsPath::getBaseDir();
+        $baseUrl = Config::getBasePath();
         $prefTimezone = Application_Model_Preference::GetTimezone();
 
         $instanceId = $this->_getParam('instance_id');

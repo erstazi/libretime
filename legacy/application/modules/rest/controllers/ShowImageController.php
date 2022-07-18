@@ -165,8 +165,7 @@ class Rest_ShowImageController extends Zend_Rest_Controller
             throw new Exception('Bad file extension.');
         }
 
-        $storDir = Application_Model_MusicDir::getStorDir();
-        $importedStorageDirectory = $storDir->getDirectory() . 'imported/' . $ownerId . '/show-images/' . $showId;
+        $importedStorageDirectory = Config::getStoragePath() . 'imported/' . $ownerId . '/show-images/' . $showId;
 
         try {
             $importedStorageDirectory = $this->copyFileToStor($tempFilePath, $importedStorageDirectory, $fileExtension);
@@ -257,8 +256,8 @@ class Rest_ShowImageController extends Zend_Rest_Controller
             unlink($image_file); // remove the file after failed rename
 
             throw new Exception('The file was not uploaded, this error can occur if the computer '
-                                . 'hard drive does not have enough disk space or the stor '
-                                . 'directory does not have correct write permissions.');
+                . 'hard drive does not have enough disk space or the stor '
+                . 'directory does not have correct write permissions.');
         }
 
         return $image_stor;
@@ -276,8 +275,7 @@ class Rest_ShowImageController extends Zend_Rest_Controller
     {
         $ownerId = RestAuth::getOwnerId();
 
-        $storDir = Application_Model_MusicDir::getStorDir();
-        $importedStorageDirectory = $storDir->getDirectory() . 'imported/' . $ownerId . '/show-images/' . $showId;
+        $importedStorageDirectory = Config::getStoragePath() . 'imported/' . $ownerId . '/show-images/' . $showId;
 
         Logging::info('Deleting images from ' . $importedStorageDirectory);
 

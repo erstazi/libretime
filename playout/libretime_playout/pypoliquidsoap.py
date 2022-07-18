@@ -3,8 +3,9 @@ from datetime import datetime, timedelta
 
 from loguru import logger
 
-from . import eventtypes
+from .events import EventKind
 from .telnetliquidsoap import TelnetLiquidsoap
+from .utils import seconds_between
 
 
 class PypoLiquidsoap:
@@ -25,13 +26,13 @@ class PypoLiquidsoap:
         return self.telnet_liquidsoap
 
     def play(self, media_item):
-        if media_item["type"] == eventtypes.FILE:
+        if media_item["type"] == EventKind.FILE:
             self.handle_file_type(media_item)
-        elif media_item["type"] == eventtypes.EVENT:
+        elif media_item["type"] == EventKind.EVENT:
             self.handle_event_type(media_item)
-        elif media_item["type"] == eventtypes.STREAM_BUFFER_START:
+        elif media_item["type"] == EventKind.STREAM_BUFFER_START:
             self.telnet_liquidsoap.start_web_stream_buffer(media_item)
-        elif media_item["type"] == eventtypes.STREAM_OUTPUT_START:
+        elif media_item["type"] == EventKind.STREAM_OUTPUT_START:
             if (
                 media_item["row_id"]
                 != self.telnet_liquidsoap.current_prebuffering_stream_id
@@ -40,9 +41,9 @@ class PypoLiquidsoap:
                 # so that the prebuffering stage could take effect. Let's do the prebuffering now.
                 self.telnet_liquidsoap.start_web_stream_buffer(media_item)
             self.telnet_liquidsoap.start_web_stream(media_item)
-        elif media_item["type"] == eventtypes.STREAM_BUFFER_END:
+        elif media_item["type"] == EventKind.STREAM_BUFFER_END:
             self.telnet_liquidsoap.stop_web_stream_buffer()
-        elif media_item["type"] == eventtypes.STREAM_OUTPUT_END:
+        elif media_item["type"] == EventKind.STREAM_OUTPUT_END:
             self.telnet_liquidsoap.stop_web_stream_output()
         else:
             raise UnknownMediaItemType(str(media_item))
@@ -123,13 +124,11 @@ class PypoLiquidsoap:
 
         try:
             scheduled_now_files = [
-                x for x in scheduled_now if x["type"] == eventtypes.FILE
+                x for x in scheduled_now if x["type"] == EventKind.FILE
             ]
 
             scheduled_now_webstream = [
-                x
-                for x in scheduled_now
-                if x["type"] in (eventtypes.STREAM_OUTPUT_START)
+                x for x in scheduled_now if x["type"] in (EventKind.STREAM_OUTPUT_START)
             ]
 
             schedule_ids = {x["row_id"] for x in scheduled_now_files}
@@ -202,7 +201,7 @@ class PypoLiquidsoap:
         self.liq_queue_tracker[queue] = None
 
     def is_file(self, media_item):
-        return media_item["type"] == eventtypes.FILE
+        return media_item["type"] == EventKind.FILE
 
     def clear_queue_tracker(self):
         for i in self.liq_queue_tracker.keys():
@@ -211,36 +210,12 @@ class PypoLiquidsoap:
     def modify_cue_point(self, link):
         assert self.is_file(link)
 
-        tnow = datetime.utcnow()
+        lateness = seconds_between(link["start"], datetime.utcnow())
 
-        link_start = link["start"]
-
-        diff_td = tnow - link_start
-        diff_sec = self.date_interval_to_seconds(diff_td)
-
-        if diff_sec > 0:
-            logger.debug(
-                "media item was supposed to start %s ago. Preparing to start..",
-                diff_sec,
-            )
-            original_cue_in_td = timedelta(seconds=float(link["cue_in"]))
-            link["cue_in"] = (
-                self.date_interval_to_seconds(original_cue_in_td) + diff_sec
-            )
-
-    def date_interval_to_seconds(self, interval):
-        """
-        Convert timedelta object into int representing the number of seconds. If
-        number of seconds is less than 0, then return 0.
-        """
-        seconds = (
-            interval.microseconds
-            + (interval.seconds + interval.days * 24 * 3600) * 10**6
-        ) / float(10**6)
-        if seconds < 0:
-            seconds = 0
-
-        return seconds
+        if lateness > 0:
+            logger.debug(f"media item was supposed to start {lateness}s ago")
+            cue_in_orig = timedelta(seconds=float(link["cue_in"]))
+            link["cue_in"] = cue_in_orig.total_seconds() + lateness
 
     def clear_all_queues(self):
         self.telnet_liquidsoap.queue_clear_all()

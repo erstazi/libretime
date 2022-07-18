@@ -63,10 +63,11 @@ final class TaskManager
         if ($task && $task->shouldBeRun()) {
             $task->run();
         }
-        $this->_taskList[$taskName] = true;  // Mark that the task has been checked/run.
-                                             // This is important for prioritized tasks that
-                                             // we need to run on every request (such as the
-                                             // schema check/upgrade)
+        // Mark that the task has been checked/run.
+        // This is important for prioritized tasks that
+        // we need to run on every request (such as the
+        // schema check/upgrade)
+        $this->_taskList[$taskName] = true;
     }
 
     /**
@@ -99,10 +100,15 @@ final class TaskManager
             }
             $this->_updateLock($lock);
             $this->_con->commit();
-        } catch (Exception $e) {
+        } catch (PDOException $e) {
             // We get here if there are simultaneous requests trying to fetch the lock row
             $this->_con->rollBack();
-            Logging::warn($e->getMessage());
+
+            // Do not log 'could not obtain lock' exception
+            // SQLSTATE[55P03]: Lock not available: 7 ERROR:  could not obtain lock on row in relation "cc_pref"
+            if ($e->getCode() != '55P03') {
+                Logging::warn($e->getMessage());
+            }
 
             return;
         }
@@ -178,32 +184,6 @@ interface AirtimeTask
      * Run the task.
      */
     public function run();
-}
-
-/**
- * Class UpgradeTask.
- *
- * Checks the current Airtime version and runs any outstanding upgrades
- */
-class UpgradeTask implements AirtimeTask
-{
-    /**
-     * Check the current Airtime schema version to see if an upgrade should be run.
-     *
-     * @return bool true if an upgrade is needed
-     */
-    public function shouldBeRun()
-    {
-        return UpgradeManager::checkIfUpgradeIsNeeded();
-    }
-
-    /**
-     * Run all upgrades above the current schema version.
-     */
-    public function run()
-    {
-        UpgradeManager::doUpgrade();
-    }
 }
 
 /**

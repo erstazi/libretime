@@ -3,21 +3,31 @@ from pathlib import Path
 from typing import List
 from unittest import mock
 
-from pydantic import BaseModel
+from pydantic import AnyHttpUrl, BaseModel
 from pytest import mark, raises
 
-from libretime_shared.config import BaseConfig, DatabaseConfig, RabbitMQConfig
+from libretime_shared.config import (
+    BaseConfig,
+    DatabaseConfig,
+    RabbitMQConfig,
+    no_trailing_slash_validator,
+)
 
 
 # pylint: disable=too-few-public-methods
 class FixtureConfig(BaseConfig):
+    public_url: AnyHttpUrl
     api_key: str
     allowed_hosts: List[str] = []
     database: DatabaseConfig
     rabbitmq: RabbitMQConfig = RabbitMQConfig()
 
+    # Validators
+    _public_url_no_trailing_slash = no_trailing_slash_validator("public_url")
+
 
 FIXTURE_CONFIG_RAW = """
+public_url: http://libretime.example.com/
 api_key: "f3bf04fc"
 allowed_hosts:
   - example.com
@@ -49,6 +59,7 @@ def test_base_config(tmp_path: Path):
     ):
         config = FixtureConfig(filepath=config_filepath)
 
+        assert config.public_url == "http://libretime.example.com"
         assert config.api_key == "f3bf04fc"
         assert config.allowed_hosts == ["example.com", "sub.example.com"]
         assert config.database.host == "localhost"
@@ -132,28 +143,6 @@ def test_base_config_required_submodel(tmp_path: Path):
     with mock.patch.dict(environ, {}):
         with raises(SystemExit):
             FixtureWithRequiredSubmodelConfig(filepath=None)
-
-
-FIXTURE_CONFIG_RAW_INI = """
-[database]
-host = changed
-port = 6666
-"""
-
-
-def test_base_config_ini(tmp_path: Path):
-    config_filepath = tmp_path / "config.conf"
-    config_filepath.write_text(FIXTURE_CONFIG_RAW_INI)
-
-    with mock.patch.dict(
-        environ,
-        {"LIBRETIME_API_KEY": "f3bf04fc"},
-    ):
-        config = FixtureConfig(filepath=config_filepath)
-
-        assert config.api_key == "f3bf04fc"
-        assert config.database.host == "changed"
-        assert config.database.port == 6666
 
 
 FIXTURE_CONFIG_RAW_MISSING = """

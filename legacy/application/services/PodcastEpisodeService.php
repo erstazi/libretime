@@ -181,7 +181,7 @@ class Application_Service_PodcastEpisodeService extends Application_Service_Thir
     private function _download($id, $url, $title, $album_override, $track_title = null)
     {
         $CC_CONFIG = Config::getConfig();
-        $stationUrl = Application_Common_HTTPHelper::getStationUrl();
+        $stationUrl = Config::getPublicUrl();
         $data = [
             'id' => $id,
             'url' => $url,
@@ -189,7 +189,8 @@ class Application_Service_PodcastEpisodeService extends Application_Service_Thir
             'api_key' => $CC_CONFIG['apiKey'][0],
             'podcast_name' => $title,
             'album_override' => $album_override,
-            'track_title' => $track_title, ];
+            'track_title' => $track_title,
+        ];
         $task = $this->_executeTask(static::$_CELERY_TASKS[self::DOWNLOAD], $data);
         // Get the created ThirdPartyTaskReference and set the episode ID so
         // we can remove the placeholder if the import ends up stuck in a pending state
@@ -248,7 +249,7 @@ class Application_Service_PodcastEpisodeService extends Application_Service_Thir
     public function publish($fileId)
     {
         $id = Application_Model_Preference::getStationPodcastId();
-        $url = $guid = Application_Common_HTTPHelper::getStationUrl() . "rest/media/{$fileId}/download";
+        $url = $guid = Config::getPublicUrl() . "rest/media/{$fileId}/download";
         if (!PodcastEpisodesQuery::create()
             ->filterByDbPodcastId($id)
             ->findOneByDbFileId($fileId)) {  // Don't allow duplicate episodes
@@ -299,7 +300,7 @@ class Application_Service_PodcastEpisodeService extends Application_Service_Thir
      */
     public static function getStuckPendingImports()
     {
-        $timeout = gmdate(DEFAULT_TIMESTAMP_FORMAT, (microtime(true) - self::PENDING_EPISODE_TIMEOUT_SECONDS));
+        $timeout = gmdate(DEFAULT_TIMESTAMP_FORMAT, microtime(true) - self::PENDING_EPISODE_TIMEOUT_SECONDS);
         $episodes = PodcastEpisodesQuery::create()
             ->filterByDbFileId()
             ->find();
@@ -378,7 +379,7 @@ class Application_Service_PodcastEpisodeService extends Application_Service_Thir
             ->find();
 
         return $isStationPodcast ? $this->_getStationPodcastEpisodeArray($episodes)
-                                 : $this->_getImportedPodcastEpisodeArray($podcast, $episodes);
+            : $this->_getImportedPodcastEpisodeArray($podcast, $episodes);
     }
 
     /**

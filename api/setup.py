@@ -21,6 +21,9 @@ setup(
     },
     license="AGPLv3",
     packages=find_packages(),
+    package_data={
+        "libretime_api": ["legacy/migrations/sql/*.sql"],
+    },
     include_package_data=True,
     python_requires=">=3.6",
     entry_points={
@@ -29,16 +32,15 @@ setup(
         ]
     },
     install_requires=[
-        "coreapi",
-        "django~=3.0",
-        "djangorestframework",
-        "django-filter",
-        "drf-spectacular",
-        "markdown",
+        "django-filter>=2.4.0,<22.0",
+        "django>=3.2.12,<4.0",
+        "djangorestframework>=3.12.1,<3.14",
+        "drf-spectacular>=0.22.1,<0.23",
+        "requests>=2.25.1,<2.29",
     ],
     extras_require={
         "prod": [
-            "psycopg2",
+            "psycopg2>=2.8.6,<2.10",
         ],
         "dev": [
             "django-stubs",
@@ -46,6 +48,8 @@ setup(
             "model_bakery",
             "psycopg2-binary",
             "pylint-django",
+            "pytest-django",
+            "requests-mock",
             f"libretime-shared @ file://localhost/{here.parent / 'shared'}#egg=libretime_shared",
         ],
     },

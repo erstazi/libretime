@@ -43,7 +43,6 @@ class CcFilesTableMap extends TableMap
         $this->addColumn('name', 'DbName', 'VARCHAR', true, 255, '');
         $this->addColumn('mime', 'DbMime', 'VARCHAR', true, 255, '');
         $this->addColumn('ftype', 'DbFtype', 'VARCHAR', true, 128, '');
-        $this->addForeignKey('directory', 'DbDirectory', 'INTEGER', 'cc_music_dirs', 'id', false, null, null);
         $this->addColumn('filepath', 'DbFilepath', 'LONGVARCHAR', false, null, '');
         $this->addColumn('import_status', 'DbImportStatus', 'INTEGER', true, null, 1);
         $this->addColumn('currentlyaccessing', 'DbCurrentlyaccessing', 'INTEGER', true, null, 0);
@@ -106,8 +105,8 @@ class CcFilesTableMap extends TableMap
         $this->addColumn('is_playlist', 'DbIsPlaylist', 'BOOLEAN', false, null, false);
         $this->addColumn('filesize', 'DbFilesize', 'INTEGER', true, null, 0);
         $this->addColumn('description', 'DbDescription', 'VARCHAR', false, 512, null);
-        $this->addColumn('artwork', 'DbArtwork', 'VARCHAR', false, 512, null);
-        $this->addColumn('track_type', 'DbTrackType', 'VARCHAR', false, 16, null);
+        $this->addColumn('artwork', 'DbArtwork', 'VARCHAR', false, 4096, null);
+        $this->addForeignKey('track_type_id', 'DbTrackTypeId', 'INTEGER', 'cc_track_types', 'id', false, null, null);
         // validators
     } // initialize()
 
@@ -118,8 +117,7 @@ class CcFilesTableMap extends TableMap
     {
         $this->addRelation('FkOwner', 'CcSubjs', RelationMap::MANY_TO_ONE, array('owner_id' => 'id', ), null, null);
         $this->addRelation('CcSubjsRelatedByDbEditedby', 'CcSubjs', RelationMap::MANY_TO_ONE, array('editedby' => 'id', ), null, null);
-        $this->addRelation('CcMusicDirs', 'CcMusicDirs', RelationMap::MANY_TO_ONE, array('directory' => 'id', ), null, null);
-        $this->addRelation('CloudFile', 'CloudFile', RelationMap::ONE_TO_MANY, array('id' => 'cc_file_id', ), 'CASCADE', null, 'CloudFiles');
+        $this->addRelation('CcTracktypes', 'CcTracktypes', RelationMap::MANY_TO_ONE, array('track_type_id' => 'id', ), null, null);
         $this->addRelation('CcShowInstances', 'CcShowInstances', RelationMap::ONE_TO_MANY, array('id' => 'file_id', ), 'CASCADE', null, 'CcShowInstancess');
         $this->addRelation('CcPlaylistcontents', 'CcPlaylistcontents', RelationMap::ONE_TO_MANY, array('id' => 'file_id', ), 'CASCADE', null, 'CcPlaylistcontentss');
         $this->addRelation('CcBlockcontents', 'CcBlockcontents', RelationMap::ONE_TO_MANY, array('id' => 'file_id', ), 'CASCADE', null, 'CcBlockcontentss');
