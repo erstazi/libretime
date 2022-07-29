@@ -1,11 +1,4 @@
-from os import chdir
-from pathlib import Path
-
-from setuptools import setup
-
-# Change directory since setuptools uses relative paths
-here = Path(__file__).parent.resolve()
-chdir(here)
+from setuptools import find_packages, setup
 
 setup(
     name="libretime-celery",
@@ -19,7 +12,7 @@ setup(
         "Source Code": "https://github.com/libretime/libretime",
     },
     license="MIT",
-    packages=["libretime_worker"],
+    packages=find_packages(exclude=["*tests*", "*fixtures*"]),
     python_requires=">=3.6",
     install_requires=[
         "celery==4.4.7",
@@ -28,9 +21,7 @@ setup(
         "requests>=2.25.1,<2.29",
     ],
     extras_require={
-        "dev": [
-            f"libretime-shared @ file://localhost{here.parent / 'shared'}",
-        ],
+        "dev": [],
     },
     zip_safe=False,
 )

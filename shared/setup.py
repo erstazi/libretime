@@ -1,11 +1,4 @@
-from os import chdir
-from pathlib import Path
-
-from setuptools import setup
-
-# Change directory since setuptools uses relative paths
-here = Path(__file__).parent.resolve()
-chdir(here)
+from setuptools import find_packages, setup
 
 setup(
     name="libretime-shared",
@@ -14,7 +7,7 @@ setup(
     url="http://github.com/libretime/libretime",
     author="LibreTime Contributors",
     license="AGPLv3",
-    packages=["libretime_shared"],
+    packages=find_packages(exclude=["*tests*", "*fixtures*"]),
     package_data={"": ["py.typed"]},
     install_requires=[
         "click~=8.0.4",

@@ -1,11 +1,4 @@
-from os import chdir
-from pathlib import Path
-
 from setuptools import find_packages, setup
-
-# Change directory since setuptools uses relative paths
-here = Path(__file__).parent.resolve()
-chdir(here)
 
 setup(
     name="libretime-playout",
@@ -19,7 +12,7 @@ setup(
         "Source Code": "https://github.com/libretime/libretime",
     },
     license="AGPLv3",
-    packages=find_packages(),
+    packages=find_packages(exclude=["*tests*", "*fixtures*"]),
     package_data={"": ["**/*.liq", "*.types"]},
     entry_points={
         "console_scripts": [
@@ -40,8 +33,7 @@ setup(
     extras_require={
         "dev": [
             "distro",
-            f"libretime-api-client @ file://localhost{here.parent / 'api-client'}",
-            f"libretime-shared @ file://localhost{here.parent / 'shared'}",
+            "requests-mock",
         ],
     },
     zip_safe=False,

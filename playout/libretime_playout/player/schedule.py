@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from typing import Dict
 
 from dateutil.parser import isoparse
-from libretime_api_client.version2 import AirtimeApiClient as ApiClient
+from libretime_api_client.v2 import ApiClient
 from libretime_shared.datetime import (
     time_fromisoformat,
     time_in_milliseconds,
@@ -25,29 +25,29 @@ def get_schedule(api_client: ApiClient):
     current_time_str = current_time.isoformat(timespec="seconds")
     end_time_str = end_time.isoformat(timespec="seconds")
 
-    schedule = api_client.services.schedule_url(
+    schedule = api_client.list_schedule(
         params={
             "ends_after": f"{current_time_str}Z",
             "ends_before": f"{end_time_str}Z",
             "overbooked": False,
             "position_status__gt": 0,
         }
-    )
+    ).json()
 
     events = {}
     for item in schedule:
         item["starts_at"] = isoparse(item["starts_at"])
         item["ends_at"] = isoparse(item["ends_at"])
 
-        show_instance = api_client.services.show_instance_url(id=item["instance_id"])
-        show = api_client.services.show_url(id=show_instance["show_id"])
+        show_instance = api_client.get_show_instance(item["instance"]).json()
+        show = api_client.get_show(show_instance["show"]).json()
 
         if item["file"]:
-            file = api_client.services.file_url(id=item["file_id"])
+            file = api_client.get_file(item["file"]).json()
             events.update(generate_file_events(item, file, show))
 
         elif item["stream"]:
-            webstream = api_client.services.webstream_url(id=item["stream_id"])
+            webstream = api_client.get_webstream(item["stream"]).json()
             events.update(generate_webstream_events(item, webstream, show))
 
     return {"media": events}
@@ -68,7 +68,6 @@ def generate_file_events(
 
     events[schedule_start_event_key] = {
         "type": EventKind.FILE,
-        "independent_event": False,
         "row_id": schedule["id"],
         "start": schedule_start_event_key,
         "end": schedule_end_event_key,
@@ -108,7 +107,6 @@ def generate_webstream_events(
 
     events[schedule_start_event_key] = {
         "type": EventKind.STREAM_BUFFER_START,
-        "independent_event": True,
         "row_id": schedule["id"],
         "start": datetime_to_event_key(schedule["starts_at"] - timedelta(seconds=5)),
         "end": datetime_to_event_key(schedule["starts_at"] - timedelta(seconds=5)),
@@ -118,7 +116,6 @@ def generate_webstream_events(
 
     events[f"{schedule_start_event_key}_0"] = {
         "type": EventKind.STREAM_OUTPUT_START,
-        "independent_event": True,
         "row_id": schedule["id"],
         "start": schedule_start_event_key,
         "end": schedule_end_event_key,
@@ -132,7 +129,6 @@ def generate_webstream_events(
     # the schedule end.
     events[schedule_end_event_key] = {
         "type": EventKind.STREAM_BUFFER_END,
-        "independent_event": True,
         "row_id": schedule["id"],
         "start": schedule_end_event_key,
         "end": schedule_end_event_key,
@@ -142,7 +138,6 @@ def generate_webstream_events(
 
     events[f"{schedule_end_event_key}_0"] = {
         "type": EventKind.STREAM_OUTPUT_END,
-        "independent_event": True,
         "row_id": schedule["id"],
         "start": schedule_end_event_key,
         "end": schedule_end_event_key,

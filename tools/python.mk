@@ -37,18 +37,18 @@ install: $(VENV)
 .format: $(VENV)
 	source $(VENV)/bin/activate
 	black .
-	isort . --profile black
+	isort . --combine-as --profile black
 
 .PHONY: .format-check
 .format-check: $(VENV)
 	source $(VENV)/bin/activate
 	black . --check
-	isort . --profile black --check
+	isort . --combine-as --profile black --check
 
 .PHONY: .pylint
 .pylint: $(VENV)
 	source $(VENV)/bin/activate
-	pylint --jobs=$(CPU_CORES) --output-format=colorized $(PYLINT_ARG)
+	pylint --jobs=$(CPU_CORES) --output-format=colorized --recursive=true $(PYLINT_ARG)
 
 .PHONY: .mypy
 .mypy: $(VENV)

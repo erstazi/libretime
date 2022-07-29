@@ -14,9 +14,14 @@ import traceback
 import urllib.parse
 
 import requests
+from libretime_shared.config import BaseConfig, GeneralConfig
 
-from ._config import Config
-from .utils import ApiRequest, RequestProvider
+from ._utils import ApiRequest, RequestProvider
+
+
+class Config(BaseConfig):
+    general: GeneralConfig
+
 
 AIRTIME_API_VERSION = "1.1"
 
@@ -120,7 +125,7 @@ api_endpoints[
 ################################################################################
 # Airtime API Version 1 Client
 ################################################################################
-class AirtimeApiClient:
+class ApiClient:
     API_BASE = "/api"
     UPLOAD_RETRIES = 3
     UPLOAD_WAIT = 60
@@ -249,8 +254,8 @@ class AirtimeApiClient:
                 """
                 break
 
-            except requests.exceptions.HTTPError as e:
-                logger.error("Http error code: %s", e.code)
+            except requests.exceptions.HTTPError as exception:
+                logger.error(f"Http error code: {exception.response.status_code}")
                 logger.error("traceback: %s", traceback.format_exc())
             except requests.exceptions.ConnectionError as e:
                 logger.error("Server is down: %s", e.args)

@@ -16,7 +16,7 @@ from .views import (
     WebstreamViewSet,
 )
 
-router = routers.DefaultRouter()
+router = routers.DefaultRouter(trailing_slash=False)
 router.register("playlist-contents", PlaylistContentViewSet)
 router.register("playlists", PlaylistViewSet)
 router.register("schedule", ScheduleViewSet)
@@ -30,3 +30,5 @@ router.register("smart-block-criteria", SmartBlockCriteriaViewSet)
 router.register("smart-blocks", SmartBlockViewSet)
 router.register("webstream-metadata", WebstreamMetadataViewSet)
 router.register("webstreams", WebstreamViewSet)
+
+urls = router.urls

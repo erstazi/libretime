@@ -1,5 +1,3 @@
-""" Analyzes and imports an audio file into the Airtime library.
-"""
 from enum import Enum
 from queue import Queue
 from typing import Any, Dict
@@ -31,9 +29,7 @@ class Pipeline:
 
     This currently performs metadata extraction (eg. gets the ID3 tags from an MP3),
     then moves the file to the Airtime music library (stor/imported), and returns
-    the results back to the parent process. This class is used in an isolated process
-    so that if it crashes, it does not kill the entire airtime_analyzer daemon and
-    the failure to import can be reported back to the web application.
+    the results back to the parent process.
     """
 
     @staticmethod
@@ -42,8 +38,6 @@ class Pipeline:
         audio_file_path,
         import_directory,
         original_filename,
-        storage_backend,
-        file_prefix,
     ):
         """Analyze and import an audio file, and put all extracted metadata into queue.
 
@@ -57,8 +51,6 @@ class Pipeline:
                                preserve. The file at audio_file_path typically has a
                                temporary randomly generated name, which is why we want
                                to know what the original name was.
-            storage_backend: String indicating the storage backend (amazon_s3 or file)
-            file_prefix:
         """
         try:
             if not isinstance(queue, Queue):
@@ -81,41 +73,31 @@ class Pipeline:
                     + type(original_filename).__name__
                     + " instead."
                 )
-            if not isinstance(file_prefix, str):
-                raise TypeError(
-                    "file_prefix must be unicode. Was of type "
-                    + type(file_prefix).__name__
-                    + " instead."
-                )
 
             # Analyze the audio file we were told to analyze:
             # First, we extract the ID3 tags and other metadata:
-            metadata = dict()
-            metadata["file_prefix"] = file_prefix
-
+            metadata = {}
             metadata = analyze_metadata(audio_file_path, metadata)
             metadata = analyze_cuepoint(audio_file_path, metadata)
             metadata = analyze_replaygain(audio_file_path, metadata)
             metadata = analyze_playability(audio_file_path, metadata)
 
             metadata = organise_file(
-                audio_file_path, import_directory, original_filename, metadata
+                audio_file_path,
+                import_directory,
+                original_filename,
+                metadata,
             )
 
-            metadata["import_status"] = 0  # Successfully imported
+            metadata["import_status"] = PipelineStatus.succeed
 
-            # Note that the queue we're putting the results into is our interprocess communication
-            # back to the main process.
-
-            # Pass all the file metadata back to the main analyzer process, which then passes
-            # it back to the Airtime web application.
+            # Pass all the file metadata back to the main analyzer process
             queue.put(metadata)
-        except UnplayableFileError as e:
-            logger.exception(e)
+        except UnplayableFileError as exception:
+            logger.exception(exception)
             metadata["import_status"] = PipelineStatus.failed
             metadata["reason"] = "The file could not be played."
-            raise e
-        except Exception as e:
-            # Ensures the traceback for this child process gets written to our log files:
-            logger.exception(e)
-            raise e
+            raise exception
+        except Exception as exception:
+            logger.exception(exception)
+            raise exception

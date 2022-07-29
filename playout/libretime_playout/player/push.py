@@ -6,12 +6,11 @@ from datetime import datetime
 from queue import Queue
 from threading import Thread
 
-from libretime_api_client import version1 as api_client
 from loguru import logger
 
-from .config import PUSH_INTERVAL, Config
-from .pypoliqqueue import PypoLiqQueue
-from .timeout import ls_timeout
+from ..config import PUSH_INTERVAL, Config
+from ..timeout import ls_timeout
+from .queue import PypoLiqQueue
 
 
 def is_stream(media_item):
@@ -25,7 +24,6 @@ def is_file(media_item):
 class PypoPush(Thread):
     def __init__(self, q, telnet_lock, pypo_liquidsoap, config: Config):
         Thread.__init__(self)
-        self.api_client = api_client.AirtimeApiClient()
         self.queue = q
 
         self.telnet_lock = telnet_lock

@@ -29,6 +29,12 @@ ignore_missing_imports = true
 [tool.django-stubs]
 django_settings_module = "libretime_api.settings.testing"
 
+[tool.pytest.ini_options]
+log_cli = true
+log_cli_level = "DEBUG"
+
+DJANGO_SETTINGS_MODULE = "libretime_api.settings.testing"
+
 [tool.coverage.run]
 omit = [
   "*/tests/*",

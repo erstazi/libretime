@@ -10,18 +10,13 @@ from urllib.parse import urlparse
 import requests
 from loguru import logger
 
-# Disable urllib3 warnings because these can cause a rare deadlock due to Python 2's crappy internal non-reentrant locking
-# around POSIX stuff. See SAAS-714. The hasattr() is for compatibility with older versions of requests.
-if hasattr(requests, "packages"):
-    requests.packages.urllib3.disable_warnings()
-
 
 class PicklableHttpRequest:
-    def __init__(self, method, url, data, api_key):
+    def __init__(self, method, url, api_key, data):
         self.method = method
         self.url = url
-        self.data = data
         self.api_key = api_key
+        self.data = data
 
     def create_request(self):
         return requests.Request(
@@ -168,7 +163,6 @@ def is_web_server_broken(url):
     else:
         # The request worked fine, so the web server and Airtime are still up.
         return False
-    return False
 
 
 class StatusReporter:
@@ -178,12 +172,7 @@ class StatusReporter:
 
     _HTTP_REQUEST_TIMEOUT = 30
 
-    """ We use multiprocessing.Process again here because we need a thread for this stuff
-        anyways, and Python gives us process isolation for free (crash safety).
-    """
     _ipc_queue = queue.Queue()
-    # _http_thread = multiprocessing.Process(target=process_http_requests,
-    #                        args=(_ipc_queue,))
     _http_thread = None
 
     @classmethod
@@ -197,8 +186,7 @@ class StatusReporter:
     @classmethod
     def stop_thread(self):
         logger.info("Terminating status_reporter process")
-        # StatusReporter._http_thread.terminate() # Triggers SIGTERM on the child process
-        StatusReporter._ipc_queue.put("shutdown")  # Special trigger
+        StatusReporter._ipc_queue.put("shutdown")
         StatusReporter._http_thread.join()
 
     @classmethod
@@ -206,50 +194,32 @@ class StatusReporter:
         StatusReporter._ipc_queue.put(request)
 
     @classmethod
-    def report_success_to_callback_url(self, callback_url, api_key, audio_metadata):
+    def report_success(
+        self,
+        callback_url: str,
+        callback_api_key: str,
+        metadata: dict,
+    ):
         """Report the extracted metadata and status of the successfully imported file
         to the callback URL (which should be the Airtime File Upload API)
         """
-        put_payload = json.dumps(audio_metadata)
-        # r = requests.Request(method='PUT', url=callback_url, data=put_payload,
-        #                     auth=requests.auth.HTTPBasicAuth(api_key, ''))
-        """
-        r = requests.Request(method='PUT', url=callback_url, data=put_payload,
-                             auth=requests.auth.HTTPBasicAuth(api_key, ''))
-
-        StatusReporter._send_http_request(r)
-        """
-
+        put_payload = json.dumps(metadata)
         StatusReporter._send_http_request(
             PicklableHttpRequest(
-                method="PUT", url=callback_url, data=put_payload, api_key=api_key
+                method="PUT",
+                url=callback_url,
+                api_key=callback_api_key,
+                data=put_payload,
             )
         )
 
-        """
-        try:
-            r.raise_for_status() # Raise an exception if there was an http error code returned
-        except requests.exceptions.RequestException:
-            StatusReporter._ipc_queue.put(r.prepare())
-        """
-
-        """
-        # Encode the audio metadata as json and post it back to the callback_url
-        put_payload = json.dumps(audio_metadata)
-        logger.debug("sending http put with payload: " + put_payload)
-        r = requests.put(callback_url, data=put_payload,
-                         auth=requests.auth.HTTPBasicAuth(api_key, ''),
-                         timeout=StatusReporter._HTTP_REQUEST_TIMEOUT)
-        logger.debug("HTTP request returned status: " + str(r.status_code))
-        logger.debug(r.text) # log the response body
-
-        #TODO: queue up failed requests and try them again later.
-        r.raise_for_status() # Raise an exception if there was an http error code returned
-        """
-
     @classmethod
-    def report_failure_to_callback_url(
-        self, callback_url, api_key, import_status, reason
+    def report_failure(
+        self,
+        callback_url,
+        callback_api_key,
+        import_status,
+        reason,
     ):
         if not isinstance(import_status, int):
             raise TypeError(
@@ -258,25 +228,17 @@ class StatusReporter:
             )
 
         logger.debug("Reporting import failure to Airtime REST API...")
-        audio_metadata = dict()
+        audio_metadata = {}
         audio_metadata["import_status"] = import_status
         audio_metadata["comment"] = reason  # hack attack
         put_payload = json.dumps(audio_metadata)
         # logger.debug("sending http put with payload: " + put_payload)
-        """
-        r = requests.put(callback_url, data=put_payload,
-                         auth=requests.auth.HTTPBasicAuth(api_key, ''),
-                         timeout=StatusReporter._HTTP_REQUEST_TIMEOUT)
-        """
+
         StatusReporter._send_http_request(
             PicklableHttpRequest(
-                method="PUT", url=callback_url, data=put_payload, api_key=api_key
+                method="PUT",
+                url=callback_url,
+                api_key=callback_api_key,
+                data=put_payload,
             )
         )
-        """
-        logger.debug("HTTP request returned status: " + str(r.status_code))
-        logger.debug(r.text) # log the response body
-
-        #TODO: queue up failed requests and try them again later.
-        r.raise_for_status() # raise an exception if there was an http error code returned
-        """

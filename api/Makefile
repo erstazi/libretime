@@ -2,10 +2,12 @@ all: lint
 
 include ../tools/python.mk
 
-PIP_INSTALL := --editable .[dev]
+PIP_INSTALL := \
+	--editable ../shared \
+	--editable .[dev]
 PYLINT_ARG := libretime_api
 MYPY_ARG := libretime_api
-BANDIT_ARG := libretime_api || true
+BANDIT_ARG := --exclude '*/tests/*' libretime_api || true
 
 format: .format
 lint: .format-check .pylint .mypy .bandit

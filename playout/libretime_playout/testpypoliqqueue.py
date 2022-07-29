@@ -7,8 +7,8 @@ from threading import Lock
 from libretime_shared.logging import TRACE, setup_logger
 from loguru import logger
 
-from .pypoliqqueue import PypoLiqQueue
-from .telnetliquidsoap import TelnetLiquidsoap
+from .player.liquidsoap_gateway import TelnetLiquidsoap
+from .player.queue import PypoLiqQueue
 
 
 def keyboardInterruptHandler(signum, frame):
@@ -67,7 +67,6 @@ media_schedule[start_dt] = {
     "end": end_dt,
     "show_name": "Untitled",
     "replay_gain": 0,
-    "independent_event": True,
 }
 
 
@@ -88,7 +87,6 @@ media_schedule[start_dt] = {
     "end": end_dt,
     "show_name": "Untitled",
     "replay_gain": 0,
-    "independent_event": True,
 }
 pypoLiq_q.put(media_schedule)
 

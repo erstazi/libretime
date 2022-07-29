@@ -1,11 +1,4 @@
-from os import chdir
-from pathlib import Path
-
-from setuptools import setup
-
-# Change directory since setuptools uses relative paths
-here = Path(__file__).parent.resolve()
-chdir(here)
+from setuptools import find_packages, setup
 
 setup(
     name="libretime-api-client",
@@ -19,7 +12,7 @@ setup(
         "Source Code": "https://github.com/libretime/libretime",
     },
     license="AGPLv3",
-    packages=["libretime_api_client"],
+    packages=find_packages(exclude=["*tests*", "*fixtures*"]),
     python_requires=">=3.6",
     install_requires=[
         "python-dateutil>=2.8.1,<2.9",
@@ -27,7 +20,8 @@ setup(
     ],
     extras_require={
         "dev": [
-            f"libretime-shared @ file://localhost{here.parent / 'shared'}",
+            "requests-mock",
+            "types-requests",
         ],
     },
     zip_safe=False,
