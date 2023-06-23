@@ -1,10 +1,12 @@
+import logging
 from typing import Optional
 
-from loguru import logger
 from requests import Response, Session as BaseSession
 from requests.adapters import HTTPAdapter
 from requests.exceptions import RequestException
 from urllib3.util import Retry
+
+logger = logging.getLogger(__name__)
 
 DEFAULT_TIMEOUT = 5
 
@@ -24,20 +26,26 @@ class TimeoutHTTPAdapter(HTTPAdapter):
         return super().send(request, *args, **kwargs)
 
 
+def default_retry(max_retries: int = 5):
+    return Retry(
+        total=max_retries,
+        backoff_factor=2,
+        status_forcelist=[413, 429, 500, 502, 503, 504],
+    )
+
+
 class Session(BaseSession):
     base_url: Optional[str]
 
-    def __init__(self, base_url: Optional[str] = None):
+    def __init__(
+        self,
+        base_url: Optional[str] = None,
+        retry: Optional[Retry] = None,
+    ):
         super().__init__()
         self.base_url = base_url
 
-        retry_strategy = Retry(
-            total=5,
-            backoff_factor=2,
-            status_forcelist=[413, 429, 500, 502, 503, 504],
-        )
-
-        adapter = TimeoutHTTPAdapter(max_retries=retry_strategy)
+        adapter = TimeoutHTTPAdapter(max_retries=retry)
 
         self.mount("http://", adapter)
         self.mount("https://", adapter)
@@ -59,9 +67,16 @@ class AbstractApiClient:
     session: Session
     base_url: str
 
-    def __init__(self, base_url: str):
+    def __init__(
+        self,
+        base_url: str,
+        retry: Optional[Retry] = None,
+    ):
         self.base_url = base_url
-        self.session = Session(base_url=base_url)
+        self.session = Session(
+            base_url=base_url,
+            retry=retry,
+        )
 
     def _request(
         self,

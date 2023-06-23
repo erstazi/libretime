@@ -95,6 +95,7 @@ CREATE TABLE "cc_track_types"
     "visibility" BOOLEAN DEFAULT 't' NOT NULL,
     "type_name" VARCHAR(64) DEFAULT '' NOT NULL,
     "description" VARCHAR(255) DEFAULT '' NOT NULL,
+    "analyze_cue_points" BOOLEAN DEFAULT 'f' NOT NULL,
     PRIMARY KEY ("id"),
     CONSTRAINT "cc_track_types_id_idx" UNIQUE ("id"),
     CONSTRAINT "cc_track_types_code_idx" UNIQUE ("code")
@@ -395,20 +396,6 @@ CREATE TABLE "cc_subjs_token"
 );
 
 -----------------------------------------------------------------------
--- cc_stream_setting
------------------------------------------------------------------------
-
-DROP TABLE IF EXISTS "cc_stream_setting" CASCADE;
-
-CREATE TABLE "cc_stream_setting"
-(
-    "keyname" VARCHAR(64) NOT NULL,
-    "value" VARCHAR(255),
-    "type" VARCHAR(16) NOT NULL,
-    PRIMARY KEY ("keyname")
-);
-
------------------------------------------------------------------------
 -- cc_login_attempts
 -----------------------------------------------------------------------
 
@@ -696,6 +683,21 @@ CREATE TABLE "podcast_episodes"
     "episode_guid" VARCHAR(4096) NOT NULL,
     "episode_title" VARCHAR(4096) NOT NULL,
     "episode_description" TEXT NOT NULL,
+    PRIMARY KEY ("id")
+);
+
+-----------------------------------------------------------------------
+-- sessions
+-----------------------------------------------------------------------
+
+DROP TABLE IF EXISTS "sessions" CASCADE;
+
+CREATE TABLE "sessions"
+(
+    "id" CHAR(32) NOT NULL,
+    "modified" INTEGER,
+    "lifetime" INTEGER,
+    "data" TEXT,
     PRIMARY KEY ("id")
 );
 

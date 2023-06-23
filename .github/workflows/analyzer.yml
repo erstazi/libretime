@@ -1,19 +1,27 @@
 name: Analyzer
 
 on:
+  workflow_dispatch:
   push:
-    branches: [main]
+    branches: [main, stable]
     paths:
-      - .github/workflows/**
+      - .github/workflows/_python.yml
+      - .github/workflows/analyzer.yml
       - analyzer/**
       - shared/**
+      - tools/python*
 
   pull_request:
-    branches: [main]
+    branches: [main, stable]
     paths:
-      - .github/workflows/**
+      - .github/workflows/_python.yml
+      - .github/workflows/analyzer.yml
       - analyzer/**
       - shared/**
+      - tools/python*
+
+  schedule:
+    - cron: 0 1 * * 1
 
 jobs:
   python:

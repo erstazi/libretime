@@ -7,7 +7,6 @@ The `libretime_shared` package contains reusable functions and classes for the L
 This library assumes that:
 
 - You will use [`Click`](https://github.com/pallets/click) to build a CLI for your app.
-- You will use [`Loguru`](https://github.com/delgan/loguru) to log messages from your app.
 - You will use [`Pydantic`](https://github.com/samuelcolvin/pydantic/) to validate objects in your app.
 
 ### Configuration
@@ -29,7 +28,7 @@ class Config(BaseConfig):
     rabbitmq: RabbitMQConfig
     analyzer: AnalyzerConfig
 
-config = Config(filepath="/etc/libretime/config.yml")
+config = Config("/etc/libretime/config.yml")
 ```
 
 > Don't instantiate a sub model if it has a required field, otherwise the `Config` class import will raise a `ValidationError`.

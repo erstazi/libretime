@@ -10,6 +10,9 @@ on:
         required: true
         default: "5"
 
+permissions:
+  issues: write
+
 jobs:
   find_closed_references:
     if: github.repository_owner == 'libretime'
@@ -27,7 +30,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           issueLimit: ${{ github.event.inputs.issueLimit || '5' }}
-          ignore: .git,/docs/releases/*,/website/versioned*
+          ignore: .git,/docs/releases/*,CHANGELOG.md
 
   find_broken_links:
     if: github.repository_owner == 'libretime'
@@ -37,13 +40,18 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - uses: actions/cache@v3
+        with:
+          path: .lycheecache
+          key: housekeeping-find-broken-links-${{ github.sha }}
+          restore-keys: housekeeping-find-broken-links-
+
       - name: Check Links
         id: lychee
-        uses: lycheeverse/lychee-action@v1.5.0
+        uses: lycheeverse/lychee-action@v1.8.0
         with:
           args: >-
             '**/*.md'
-            --exclude-path 'website/versioned_docs'
             --require-https
             --exclude-all-private
             --exclude-mail
@@ -53,6 +61,45 @@ jobs:
             --exclude 'https://dir.xiph.org/cgi-bin/yp-cgi'
             --exclude 'https://radio.indymedia.org/cgi-bin/yp-cgi'
             --exclude 'https://www.ascap.com'
+            --exclude 'https://www.youtube-nocookie.com'
+            --exclude 'github\.com/libretime/libretime/(issues|pulls)'
+            --cache
+            --max-cache-age 2d
           fail: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  find_stale_issues:
+    if: github.repository_owner == 'libretime'
+    name: Find stale issues
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v8
+        with:
+          stale-issue-message: >
+            This issue has been automatically marked as stale because it has not had
+            activity in the last 5 months. It will be closed if no activity occurs in
+            the next month.
+
+            Please chat to us on the [forum](https://discourse.libretime.org/) or
+            ask for help on [#libretime:matrix.org](https://matrix.to/#/#libretime:matrix.org)
+            if you have any questions or need further support with getting this issue resolved.
+
+            You may also label an issue as *pinned* if you would like to make sure
+            that it does not get closed by this bot.
+          close-issue-message: >
+            This issue has been automatically closed after is was marked as stale and
+            did not receive any further inputs.
+
+            Feel free to let us know on the [forum](https://discourse.libretime.org/) or
+            ask for help on [#libretime:matrix.org](https://matrix.to/#/#libretime:matrix.org)
+            if you feel this issue should not have been closed.
+
+            Thank you for your contributions.
+          days-before-issue-stale: 150
+          days-before-issue-close: 30
+          stale-issue-label: "status: stalled"
+          exempt-issue-labels: "status: pinned,status: maybe later,security,is: feature-request"
+          exempt-issue-assignees: true
+          exempt-issue-milestones: true

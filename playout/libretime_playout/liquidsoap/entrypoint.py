@@ -1,67 +1,39 @@
-import os
-import sys
-import time
-import traceback
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Tuple
 
-from libretime_api_client.v1 import ApiClient as LegacyClient
-from loguru import logger
+from jinja2 import Environment, PackageLoader
 
+from ..config import Config
+from .models import Info, StreamPreferences
+from .utils import quote
 
-def generate_liquidsoap_config(ss, log_filepath: Optional[Path]):
-    data = ss["msg"]
-    fh = open("/etc/libretime/liquidsoap.cfg", "w")
-    fh.write("################################################\n")
-    fh.write("# THIS FILE IS AUTO GENERATED. DO NOT CHANGE!! #\n")
-    fh.write("################################################\n")
-    fh.write("# The ignore() lines are to squash unused variable warnings\n")
+here = Path(__file__).parent
 
-    for key, value in data.items():
-        try:
-            if not "port" in key and not "bitrate" in key:  # Stupid hack
-                raise ValueError()
-            str_buffer = f"{key} = {int(value)}\n"
-        except ValueError:
-            try:  # Is it a boolean?
-                if value == "true" or value == "false":
-                    str_buffer = f"{key} = {value.lower()}\n"
-                else:
-                    raise ValueError()  # Just drop into the except below
-            except:  # Everything else is a string
-                str_buffer = f'{key} = "{value}"\n'
-
-        fh.write(str_buffer)
-        # ignore squashes unused variable errors from Liquidsoap
-        fh.write("ignore(%s)\n" % key)
-
-    auth_path = os.path.dirname(os.path.realpath(__file__))
-    log_file = log_filepath.resolve() if log_filepath is not None else ""
-
-    fh.write(f'log_file = "{log_file}"\n')
-    fh.write('auth_path = "%s/liquidsoap_auth.py"\n' % auth_path)
-    fh.close()
+templates_loader = PackageLoader(__name__, "templates")
+templates = Environment(  # nosec
+    loader=templates_loader,
+    keep_trailing_newline=True,
+)
+templates.filters["quote"] = quote
 
 
-def generate_entrypoint(log_filepath: Optional[Path]):
-    attempts = 0
-    max_attempts = 10
-    successful = False
+def generate_entrypoint(
+    log_filepath: Optional[Path],
+    config: Config,
+    preferences: StreamPreferences,
+    info: Info,
+    version: Tuple[int, int, int],
+) -> str:
+    paths = {}
+    paths["lib_filepath"] = here / f"{version[0]}.{version[1]}/ls_script.liq"
 
-    while not successful:
-        try:
-            legacy_client = LegacyClient(logger)
-            ss = legacy_client.get_stream_setting()
-            generate_liquidsoap_config(ss, log_filepath)
-            successful = True
-        except Exception as e:
-            print("Unable to connect to the Airtime server.")
-            logger.error(str(e))
-            logger.error("traceback: %s", traceback.format_exc())
-            if attempts == max_attempts:
-                logger.error("giving up and exiting...")
-                sys.exit(1)
-            else:
-                logger.info("Retrying in 3 seconds...")
-                time.sleep(3)
-        attempts += 1
+    if log_filepath is not None:
+        paths["log_filepath"] = log_filepath.resolve()
+
+    return templates.get_template("entrypoint.liq.j2").render(
+        config=config.copy(),
+        preferences=preferences,
+        info=info,
+        paths=paths,
+        version=version,
+    )

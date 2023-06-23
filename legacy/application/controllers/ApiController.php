@@ -207,9 +207,12 @@ class ApiController extends Zend_Controller_Action
 
         $range = Application_Model_Schedule::GetPlayOrderRange();
 
-        $isItemCurrentlyScheduled = !is_null($range['tracks']['current']) && count($range['tracks']['current']) > 0 ? true : false;
-
-        $isCurrentItemPlaying = $range['tracks']['current']['media_item_played'] ? true : false;
+        $isItemCurrentlyScheduled = false;
+        $isCurrentItemPlaying = false;
+        if (!is_null($range['tracks']['current']) && count($range['tracks']['current']) > 0) {
+            $isItemCurrentlyScheduled = true;
+            $isCurrentItemPlaying = $range['tracks']['current']['media_item_played'] ? true : false;
+        }
 
         if (
             $isItemCurrentlyScheduled
@@ -587,9 +590,6 @@ class ApiController extends Zend_Controller_Action
      * New API endpoint to display metadata from any single track.
      *
      * Find metadata to any track imported (eg. id=1&return=json)
-     *
-     * @param int    $id     track ID
-     * @param string $return json, artwork_data, or artwork
      */
     public function trackAction()
     {
@@ -1100,7 +1100,7 @@ class ApiController extends Zend_Controller_Action
         $stream_id = $request->getParam('stream_id');
         $boot_time = $request->getParam('boot_time');
 
-        Application_Model_StreamSetting::setLiquidsoapError($stream_id, $msg, $boot_time);
+        Application_Model_Preference::setLiquidsoapError($stream_id, $msg, $boot_time);
     }
 
     public function updateSourceStatusAction()
@@ -1389,8 +1389,8 @@ class ApiController extends Zend_Controller_Action
             return;
         }
 
-        foreach ($data as $k => $v) {
-            Application_Model_StreamSetting::SetListenerStatError($k, $v);
+        foreach ($data as $stream_id => $status) {
+            Application_Model_Preference::SetListenerStatError($stream_id, $status);
         }
     }
 

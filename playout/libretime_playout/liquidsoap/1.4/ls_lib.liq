@@ -15,29 +15,29 @@ def notify_queue(m)
 end
 
 def notify_stream(m)
-  if !current_dyn_id != "-1" then
+  if !web_stream_id != "-1" then
     json_str = string.replace(pattern="\n",(fun (s) -> ""), json_of(m))
     #if a string has a single apostrophe in it, let's comment it out by ending the string before right before it
     #escaping the apostrophe, and then starting a new string right after it. This is why we use 3 apostrophes.
     json_str = string.replace(pattern="'",(fun (s) -> "'\''"), json_str)
 
-    gateway("webstream '#{!current_dyn_id}' '#{json_str}'")
+    gateway("webstream '#{!web_stream_id}' '#{json_str}'")
   end
 end
 
 # A function applied to each metadata chunk
 def append_title(m) =
-  log("Using stream_format #{!stream_metadata_type}")
+  log("Using message format #{message_format()}")
 
   if list.mem_assoc("mapped", m) then
-    #protection against applying this function twice. It shouldn't be happening
-    #and bug file with Liquidsoap.
+    # protection against applying this function twice. It shouldn't be happening and bug
+    # file with Liquidsoap.
     m
   else
-      if !stream_metadata_type == 1 then
-        [("title", "#{!show_name} - #{m['artist']} - #{m['title']}"), ("mapped", "true")]
-      elsif !stream_metadata_type == 2 then
-        [("title", "#{!station_name} - #{!show_name}"), ("mapped", "true")]
+      if message_format() == "1" then
+        [("title", "#{show_name()} - #{m['artist']} - #{m['title']}"), ("mapped", "true")]
+      elsif message_format() == "2" then
+        [("title", "#{station_name()} - #{show_name()}"), ("mapped", "true")]
       else
         if "#{m['artist']}" == "" then
           [("title", "#{m['title']}"), ("mapped", "true")]
@@ -50,188 +50,69 @@ end
 
 def transition(a,b) =
   log("transition called...")
-  add(normalize=false,
-     [ sequence([ blank(duration=0.01),
-                   fade.initial(duration=!default_dj_fade, b) ]),
-        fade.final(duration=!default_dj_fade, a) ])
+  add(
+    normalize=false,
+    [
+      sequence([
+        blank(duration=0.01),
+        fade.initial(duration=input_fade_transition(), b)
+      ]),
+      fade.final(duration=input_fade_transition(), a)
+    ]
+  )
 end
 
-# we need this function for special transition case(from default to queue)
-# we don't want the trasition fade to have effect on the first song that would
-# be played switching out of the default(silent) source
+# we need this function for special transition case(from default to queue) we don't want
+# the trasition fade to have effect on the first song that would be played switching out
+# of the default(silent) source
 def transition_default(a,b) =
   log("transition called...")
   if !just_switched then
       just_switched := false
-      add(normalize=false,
-         [ sequence([ blank(duration=0.01),
-                       fade.initial(duration=!default_dj_fade, b) ]),
-            fade.final(duration=!default_dj_fade, a) ])
+      add(
+        normalize=false,
+        [
+          sequence([
+            blank(duration=0.01),
+            fade.initial(duration=input_fade_transition(), b)
+          ]),
+          fade.final(duration=input_fade_transition(), a)
+        ]
+      )
   else
     just_switched := false
     b
   end
 end
 
-
-# Define a transition that fades out the
-# old source, adds a single, and then
-# plays the new source
+# Define a transition that fades out the old source, adds a single, and then plays the
+# new source
 def to_live(old,new) =
   # Fade out old source
   old = fade.final(old)
-  # Compose this in sequence with
-  # the new source
+  # Compose this in sequence with the new source
   sequence([old,new])
 end
 
 
-def output_to(output_type, type, bitrate, host, port, pass, mount_point, url, description, genre, user, s, stream, connected, name, channels) =
-    source = ref s
-    def on_error(msg)
-        connected := "false"
-        gateway("stream '#{stream}' '#{!time}' --error='#{msg}'")
-        5.
-    end
-    def on_connect()
-        connected := "true"
-        gateway("stream '#{stream}' '#{!time}'")
-    end
-
-    stereo = (channels == "stereo")
-
-    if output_type == "icecast" then
-        user_ref = ref user
-        if user == "" then
-            user_ref := "source"
-        end
-        output_mono = output.icecast(host = host,
-                    port = port,
-                    password = pass,
-                    mount = mount_point,
-                    fallible = true,
-                    url = url,
-                    description = description,
-                    name = name,
-                    genre = genre,
-                    user = !user_ref,
-                    on_error = on_error,
-                    on_connect = on_connect)
-
-        output_stereo = output.icecast(host = host,
-                    port = port,
-                    password = pass,
-                    mount = mount_point,
-                    fallible = true,
-                    url = url,
-                    description = description,
-                    name = name,
-                    genre = genre,
-                    user = !user_ref,
-                    on_error = on_error,
-                    on_connect = on_connect)
-        if type == "mp3" then
-            %include "mp3.liq"
-        end
-        if type == "ogg" then
-            %include "ogg.liq"
-        end
-
-        %ifencoder %opus
-        if type == "opus" then
-            %include "opus.liq"
-        end
-        %endif
-
-        %ifencoder %fdkaac
-        if type == "aac" then
-            %include "fdkaac.liq"
-        end
-        %endif
-    else
-        user_ref = ref user
-        if user == "" then
-            user_ref := "source"
-        end
-
-        output_mono = output.shoutcast(id = "shoutcast_stream_#{stream}",
-                    host = host,
-                    port = port,
-                    password = pass,
-                    fallible = true,
-                    url = url,
-                    genre = genre,
-                    name = description,
-                    user = !user_ref,
-                    on_error = on_error,
-                    on_connect = on_connect)
-
-        output_stereo = output.shoutcast(id = "shoutcast_stream_#{stream}",
-                    host = host,
-                    port = port,
-                    password = pass,
-                    fallible = true,
-                    url = url,
-                    genre = genre,
-                    name = description,
-                    user = !user_ref,
-                    on_error = on_error,
-                    on_connect = on_connect)
-
-        if type == "mp3" then
-            %include "mp3.liq"
-        end
-
-        %ifencoder %fdkaac
-        if type == "aac" then
-            %include "fdkaac.liq"
-        end
-        %endif
-    end
+def make_ouput_on_connect_handler(stream)
+  def on_connect()
+    gateway("stream '#{stream}' '#{boot_timestamp}'")
+  end
+  on_connect
 end
 
-# Add a skip function to a source
-# when it does not have one
-# by default
-#def add_skip_command(s)
-# # A command to skip
-#  def skip(_)
-#    # get playing (active) queue and flush it
-#    l = list.hd(server.execute("queue.secondary_queue"))
-#    l = string.split(separator=" ",l)
-#    list.iter(fun (rid) -> ignore(server.execute("queue.remove #{rid}")), l)
-#
-#    l = list.hd(server.execute("queue.primary_queue"))
-#    l = string.split(separator=" ", l)
-#    if list.length(l) > 0 then
-#      source.skip(s)
-#      "Skipped"
-#    else
-#      "Not skipped"
-#    end
-#  end
-# # Register the command:
-# server.register(namespace="source",
-#                 usage="skip",
-#                 description="Skip the current song.",
-#                 "skip",fun(s) -> begin log("source.skip") skip(s) end)
-#end
+def make_ouput_on_error_handler(stream)
+  def on_error(msg)
+    gateway("stream '#{stream}' '#{boot_timestamp}' --error='#{msg}'")
+    5.
+  end
+  on_error
+end
 
 def clear_queue(s)
     source.skip(s)
 end
-
-def set_dynamic_source_id(id) =
-    current_dyn_id := id
-    string_of(!current_dyn_id)
-end
-
-def get_dynamic_source_id() =
-    string_of(!current_dyn_id)
-end
-
-#cc-4633
-
 
 # NOTE
 # A few values are hardcoded and may be dependent:
@@ -274,11 +155,6 @@ def input.http_restart(~id,~initial_url="http://dummy/url")
                     "OK"
                   end)
 
-  # Dummy output should be useless if HTTP stream is meant
-  # to be listened to immediately. Otherwise, apply it.
-  #
-  # output.dummy(fallible=true,source)
-
   source
 
 end
@@ -310,8 +186,8 @@ def cross_http(~debug=true,~http_input_id,source)
   cross_d = 3.
 
   def crosser(a,b,ma,mb,sa,sb)
-    url = list.hd(server.execute('#{id}.url'), default="")
-    status = list.hd(server.execute('#{id}.status'))
+    url = list.hd(server.execute("#{id}.url"), default="")
+    status = list.hd(server.execute("#{id}.status"))
     on_m([("source_url",url)])
     if debug then
       log("New track inside HTTP stream")
@@ -381,7 +257,7 @@ def http_fallback(~http_input_id,~http,~default)
     track_sensitive=false,
     transitions=[to_live,to_static],
     [(# make sure it is connected, and not buffering
-      {connected() and source.is_ready(http) and !webstream_enabled}, http),
+      {connected() and source.is_ready(http) and !web_stream_enabled}, http),
      ({true},default)])
 
 end

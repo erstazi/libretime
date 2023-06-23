@@ -1,10 +1,29 @@
+[tool.isort]
+profile = "black"
+combine_as_imports = true
+known_first_party = ["libretime_playout"]
+
 [tool.pylint.messages_control]
-extension-pkg-whitelist = "pydantic"
+extension-pkg-whitelist = [
+  "lxml.etree",
+  "pydantic",
+]
 disable = [
+  "fixme",
   "missing-class-docstring",
   "missing-function-docstring",
   "missing-module-docstring",
 ]
+
+[tool.pytest.ini_options]
+log_cli = true
+log_cli_level = "DEBUG"
+
+[tool.mypy]
+check_untyped_defs = true
+
+[tool.coverage.run]
+source = ["libretime_playout"]
 
 [build-system]
 requires = ["setuptools", "wheel"]

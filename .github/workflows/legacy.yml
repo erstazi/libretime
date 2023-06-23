@@ -1,19 +1,23 @@
 name: Legacy
 
 on:
+  workflow_dispatch:
   push:
-    branches: [main]
+    branches: [main, stable]
     paths:
-      - .github/workflows/**
+      - .github/workflows/legacy.yml
       - api/**
       - legacy/**
 
   pull_request:
-    branches: [main]
+    branches: [main, stable]
     paths:
-      - .github/workflows/**
+      - .github/workflows/legacy.yml
       - api/**
       - legacy/**
+
+  schedule:
+    - cron: 0 1 * * 1
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -22,11 +26,18 @@ concurrency:
 jobs:
   lint:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - php-version: "7.4" # Focal, Bullseye
+
     steps:
       - uses: actions/checkout@v3
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: 7.4
+          php-version: ${{ matrix.php-version }}
+
       - name: Lint
         run: make lint
         working-directory: legacy
@@ -37,9 +48,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - php-version: "7.2" # Bionic
-          - php-version: "7.3" # Buster
-          - php-version: "7.4" # Bullseye, Focal
+          - php-version: "7.4" # Focal, Bullseye
 
     env:
       ENVIRONMENT: testing
@@ -63,7 +72,7 @@ jobs:
       - name: Get Composer Cache Directory
         id: composer-cache
         run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v3
         with:
@@ -75,3 +84,36 @@ jobs:
       - name: Run tests
         run: make test
         working-directory: legacy
+
+  locale:
+    runs-on: ubuntu-latest
+
+    if: >
+      github.repository_owner == 'libretime' && (
+        github.event_name == 'schedule' ||
+        github.event_name == 'workflow_dispatch'
+      )
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.LIBRETIME_BOT_TOKEN }}
+
+      - name: Install dependencies
+        run: |
+          DEBIAN_FRONTEND=noninteractive sudo apt-get update
+          DEBIAN_FRONTEND=noninteractive sudo apt-get install -y gettext
+
+      - name: Update locales
+        run: |
+          git config --global user.name "libretime-bot"
+          git config --global user.email "libretime-bot@users.noreply.github.com"
+
+          git pull
+
+          make -C legacy/locale update
+
+          git add legacy/locale
+          git diff-index --quiet HEAD -- legacy/locale || {
+            git commit --message "chore(legacy): update locales"
+            git push
+          }

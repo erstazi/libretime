@@ -121,7 +121,7 @@ class Application_Service_ShowFormService
      * Delegates populating each show form with the appropriate
      * data of the current show being edited.
      *
-     * @param $forms
+     * @param mixed $forms
      */
     public function delegateShowFormPopulation($forms)
     {
@@ -284,8 +284,8 @@ class Application_Service_ShowFormService
     /**
      * Enter description here ...
      *
-     * @param $form
      * @param DateTime $nextFutureShowStart user's local timezone
+     * @param mixed    $form
      */
     private function populateFormRepeats($form, $nextFutureShowStart)
     {
@@ -469,8 +469,7 @@ class Application_Service_ShowFormService
     /**
      * Enter description here ...
      *
-     * @param DateTime $showStart   user's local time
-     * @param mixed    $p_showStart
+     * @param mixed $p_showStart
      */
     private function hasShowStarted($p_showStart)
     {
@@ -488,7 +487,7 @@ class Application_Service_ShowFormService
      * Before we send the form data in for validation, there
      * are a few fields we may need to adjust first.
      *
-     * @param $formData
+     * @param mixed $formData
      */
     public function preEditShowValidationCheck($formData)
     {
@@ -658,9 +657,8 @@ class Application_Service_ShowFormService
      * When the timezone is changed in add-show form this function
      * applies the new timezone to the start and end time.
      *
-     * @param $date String
-     * @param $time String
-     * @param $timezone String
+     * @param       $date        String
+     * @param       $time        String
      * @param mixed $newTimezone
      * @param mixed $oldTimezone
      */

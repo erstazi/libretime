@@ -1,6 +1,7 @@
-from subprocess import PIPE, CalledProcessError, CompletedProcess, run
+import logging
+from subprocess import CalledProcessError, CompletedProcess, run
 
-from loguru import logger
+logger = logging.getLogger(__name__)
 
 
 def run_(*args, **kwargs) -> CompletedProcess:
@@ -8,15 +9,14 @@ def run_(*args, **kwargs) -> CompletedProcess:
         return run(
             args,
             check=True,
-            stdout=PIPE,
-            stderr=PIPE,
-            universal_newlines=True,
+            capture_output=True,
+            text=True,
             **kwargs,
         )
 
     except OSError as exception:  # executable was not found
         cmd = args[0]
-        logger.warning(f"Failed to run: {cmd} - {exception}. Is {cmd} installed?")
+        logger.warning("Failed to run: %s - %s. Is %s installed?", cmd, exception, cmd)
         raise exception
 
     except CalledProcessError as exception:  # returned an error code

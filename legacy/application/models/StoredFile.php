@@ -4,7 +4,7 @@
  *  Application_Model_StoredFile class.
  *
  * @copyright 2010 Sourcefabric O.P.S.
- * @license http://www.gnu.org/licenses/gpl.txt
+ * @license https://www.gnu.org/licenses/gpl.txt
  *
  * @see MetaData
  */
@@ -108,7 +108,7 @@ class Application_Model_StoredFile
      * Set multiple metadata values using defined metadata constants.
      *
      * @param array $p_md
-     *                    example: $p_md['MDATA_KEY_URL'] = 'http://www.fake.com'
+     *                    example: $p_md['MDATA_KEY_URL'] = 'https://example.org'
      */
     public function setMetadata($p_md = null)
     {
@@ -163,7 +163,7 @@ class Application_Model_StoredFile
      * Set multiple metadata values using database columns as indexes.
      *
      * @param array $p_md
-     *                    example: $p_md['url'] = 'http://www.fake.com'
+     *                    example: $p_md['url'] = 'https://www.example.com'
      */
     public function setDbColMetadata($p_md = null)
     {
@@ -247,12 +247,8 @@ class Application_Model_StoredFile
     /**
      * Set metadata element value.
      *
-     * @param string $category
-     *                           Metadata element by metadata constant
-     * @param string $value
-     *                           value to store, if NULL then delete record
-     * @param mixed  $p_category
-     * @param mixed  $p_value
+     * @param mixed $p_category
+     * @param mixed $p_value
      */
     public function setMetadataValue($p_category, $p_value)
     {
@@ -264,12 +260,8 @@ class Application_Model_StoredFile
     /**
      * Set metadata element value.
      *
-     * @param string $category
-     *                           Metadata element by db column
-     * @param string $value
-     *                           value to store, if NULL then delete record
-     * @param mixed  $p_category
-     * @param mixed  $p_value
+     * @param mixed $p_category
+     * @param mixed $p_value
      */
     public function setDbColMetadataValue($p_category, $p_value)
     {
@@ -468,7 +460,6 @@ SQL;
      * This function is for when media monitor detects deletion of file
      * and trying to update airtime side.
      *
-     * @param bool  $p_deleteFile
      * @param mixed $deleteFromPlaylist
      */
     public function deleteByMediaMonitor($deleteFromPlaylist = false)
@@ -516,28 +507,12 @@ SQL;
      */
     public function getFileUrl()
     {
-        $protocol = empty($_SERVER['HTTPS']) ? 'http' : 'https';
-
-        $serverName = $_SERVER['SERVER_NAME'];
-        $serverPort = $_SERVER['SERVER_PORT'];
-        $subDir = Config::getBasePath();
-
-        if ($protocol === 'https' && $serverPort == 80) {
-            $serverPort = 443;
-        }
-
-        if ($subDir[0] === '/') {
-            $subDir = substr($subDir, 1, strlen($subDir) - 1);
-        }
-
-        $baseUrl = "{$protocol}://{$serverName}:{$serverPort}/{$subDir}";
-
-        return $this->getRelativeFileUrl($baseUrl);
+        return $this->getRelativeFileUrl(Config::getPublicUrl());
     }
 
     /**
      * Sometimes we want a relative URL and not a full URL. See bug
-     * http://dev.sourcefabric.org/browse/CC-2403.
+     * https://dev.sourcefabric.org/browse/CC-2403.
      *
      * @param mixed $baseUrl
      */
@@ -600,9 +575,9 @@ SQL;
      * @param Propel Connection
      * @param null|mixed $con
      *
-     * @throws Exception
-     *
      * @return Application_Model_StoredFile
+     *
+     * @throws Exception
      */
     public static function RecallById($p_id = null, $con = null)
     {
@@ -688,8 +663,6 @@ SQL;
 
     public static function searchLibraryFiles($datatables)
     {
-        $baseUrl = Config::getBasePath();
-
         $con = Propel::getConnection(CcFilesPeer::DATABASE_NAME);
 
         $displayColumns = self::getLibraryColumns();
@@ -765,7 +738,7 @@ SQL;
                 $streamSelect[] = 'EXTRACT(YEAR FROM utime)::varchar AS ' . $key;
             }
             // need to cast certain data as ints for the union to search on.
-            elseif (in_array($key, ['track_number', 'bit_rate', 'sample_rate', 'bpm'])) {
+            elseif (in_array($key, ['track_number', 'bit_rate', 'sample_rate', 'bpm', 'track_type_id'])) {
                 $plSelect[] = 'NULL::int AS ' . $key;
                 $blSelect[] = 'NULL::int AS ' . $key;
                 $fileSelect[] = $key;
@@ -929,12 +902,13 @@ SQL;
      * @param string $tempFilePath
      * @param string $originalFilename
      * @param bool   $copyFile         copy the file instead of moving it
-     *
-     * @throws Exception
+     * @param mixed  $fileId
      *
      * @return Ambigous <unknown, string>
+     *
+     * @throws Exception
      */
-    public static function moveFileToStor($tempFilePath, $originalFilename, $copyFile = false)
+    public static function moveFileToStor($tempFilePath, $fileId, $originalFilename, $copyFile = false)
     {
         $audio_file = $tempFilePath;
 
@@ -954,7 +928,7 @@ SQL;
         $audio_stor = Application_Common_OsPath::join(
             $stor,
             'organize',
-            $originalFilename
+            $fileId . '-' . $originalFilename
         );
         // if the uploaded file is not UTF-8 encoded, let's encode it. Assuming source
         // encoding is ISO-8859-1
@@ -1026,8 +1000,8 @@ SQL;
     /**
      * Enter description here ...
      *
-     * @param $dir_id - if this is not provided, it returns all files with full
-     * path constructed
+     * @param       $dir_id - if this is not provided, it returns all files with full
+     *                      path constructed
      * @param mixed $all
      */
     public static function listAllFiles($dir_id = null, $all = true)

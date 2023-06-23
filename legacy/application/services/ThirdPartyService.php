@@ -24,10 +24,10 @@ abstract class Application_Service_ThirdPartyService
      *
      * @param $fileId int local CcFiles identifier
      *
+     * @return string the new ThirdPartyTrackReferences identifier
+     *
      * @throws Exception
      * @throws PropelException
-     *
-     * @return string the new ThirdPartyTrackReferences identifier
      */
     public function createTrackReference($fileId)
     {
@@ -76,8 +76,7 @@ abstract class Application_Service_ThirdPartyService
     {
         $ref = ThirdPartyTrackReferencesQuery::create()
             ->filterByDbService(static::$_SERVICE_NAME)
-            ->findOneByDbFileId($fileId)  // There shouldn't be duplicates!
-;
+            ->findOneByDbFileId($fileId);  // There shouldn't be duplicates!
 
         return empty($ref) ? '' : $ref->getDbForeignId();
     }

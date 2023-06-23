@@ -1,15 +1,17 @@
+import logging
 from enum import Enum
 from queue import Queue
-from typing import Any, Dict
+from typing import Any, Dict, Protocol
 
-from loguru import logger
-from typing_extensions import Protocol
+from pydantic import BaseModel
 
-from .analyze_cuepoint import analyze_cuepoint
+from .analyze_cuepoint import analyze_cuepoint, analyze_duration
 from .analyze_metadata import analyze_metadata
 from .analyze_playability import UnplayableFileError, analyze_playability
 from .analyze_replaygain import analyze_replaygain
 from .organise_file import organise_file
+
+logger = logging.getLogger(__name__)
 
 
 class Step(Protocol):
@@ -19,9 +21,13 @@ class Step(Protocol):
 
 
 class PipelineStatus(int, Enum):
-    succeed = 0
-    pending = 1
-    failed = 2
+    SUCCEED = 0
+    PENDING = 1
+    FAILED = 2
+
+
+class PipelineOptions(BaseModel):
+    analyze_cue_points: bool = False
 
 
 class Pipeline:
@@ -34,10 +40,11 @@ class Pipeline:
 
     @staticmethod
     def run_analysis(
-        queue,
-        audio_file_path,
-        import_directory,
-        original_filename,
+        queue: Queue,
+        audio_file_path: str,
+        import_directory: str,
+        original_filename: str,
+        options: PipelineOptions,
     ):
         """Analyze and import an audio file, and put all extracted metadata into queue.
 
@@ -78,7 +85,9 @@ class Pipeline:
             # First, we extract the ID3 tags and other metadata:
             metadata = {}
             metadata = analyze_metadata(audio_file_path, metadata)
-            metadata = analyze_cuepoint(audio_file_path, metadata)
+            metadata = analyze_duration(audio_file_path, metadata)
+            if options.analyze_cue_points:
+                metadata = analyze_cuepoint(audio_file_path, metadata)
             metadata = analyze_replaygain(audio_file_path, metadata)
             metadata = analyze_playability(audio_file_path, metadata)
 
@@ -89,13 +98,13 @@ class Pipeline:
                 metadata,
             )
 
-            metadata["import_status"] = PipelineStatus.succeed
+            metadata["import_status"] = PipelineStatus.SUCCEED
 
             # Pass all the file metadata back to the main analyzer process
             queue.put(metadata)
         except UnplayableFileError as exception:
             logger.exception(exception)
-            metadata["import_status"] = PipelineStatus.failed
+            metadata["import_status"] = PipelineStatus.FAILED
             metadata["reason"] = "The file could not be played."
             raise exception
         except Exception as exception:

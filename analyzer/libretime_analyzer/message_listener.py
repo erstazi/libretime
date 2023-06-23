@@ -1,14 +1,16 @@
 import json
+import logging
 import signal
 import time
 from queue import Queue
 
 import pika
-from loguru import logger
 
 from .config import Config
-from .pipeline import Pipeline, PipelineStatus
+from .pipeline import Pipeline, PipelineOptions, PipelineStatus
 from .status_reporter import StatusReporter
+
+logger = logging.getLogger(__name__)
 
 EXCHANGE = "airtime-uploads"
 EXCHANGE_TYPE = "topic"
@@ -98,7 +100,7 @@ class MessageListener:
         Here we parse the message, spin up an analyzer process, and report the
         metadata back to the Airtime web application (or report an error).
         """
-        logger.info(f" - Received '{body}' on routing_key '{method_frame.routing_key}'")
+        logger.info("Received '%s' on routing_key '%s'", body, method_frame.routing_key)
 
         audio_file_path = ""
         # final_file_path = ""
@@ -111,17 +113,19 @@ class MessageListener:
                 body = body.decode()
             except (UnicodeDecodeError, AttributeError):
                 pass
-            msg_dict = json.loads(body)
+            msg_dict: dict = json.loads(body)
 
             file_id = msg_dict["file_id"]
             audio_file_path = msg_dict["tmp_file_path"]
             original_filename = msg_dict["original_filename"]
             import_directory = msg_dict["import_directory"]
+            options = msg_dict.get("options", {})
 
             metadata = MessageListener.spawn_analyzer_process(
                 audio_file_path,
                 import_directory,
                 original_filename,
+                options,
             )
 
             callback_url = f"{self.config.general.public_url}/rest/media/{file_id}"
@@ -161,6 +165,7 @@ class MessageListener:
         audio_file_path,
         import_directory,
         original_filename,
+        options: dict,
     ):
         metadata = {}
 
@@ -171,11 +176,12 @@ class MessageListener:
                 audio_file_path,
                 import_directory,
                 original_filename,
+                PipelineOptions(**options),
             )
             metadata = queue.get()
         except Exception as exception:
-            logger.error("Analyzer pipeline exception: %s" % str(exception))
-            metadata["import_status"] = PipelineStatus.failed
+            logger.exception("Analyzer pipeline exception: %s", exception)
+            metadata["import_status"] = PipelineStatus.FAILED
 
         # Ensure our queue doesn't fill up and block due to unexpected behavior. Defensive code.
         while not queue.empty():

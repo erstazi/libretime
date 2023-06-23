@@ -614,13 +614,13 @@ final class Application_Model_Scheduler
     /**
      * Enter description here ...
      *
-     * @param $scheduleItems
-     *     cc_schedule items, where the items get inserted after
-     * @param $filesToInsert
-     *     array of schedule item info, what gets inserted into cc_schedule
-     * @param $adjustSched
+     * @param       $scheduleItems
+     *                             cc_schedule items, where the items get inserted after
+     * @param       $filesToInsert
+     *                             array of schedule item info, what gets inserted into cc_schedule
      * @param mixed $mediaItems
      * @param mixed $moveAction
+     * @param mixed $adjustSched
      */
     private function insertAfter($scheduleItems, $mediaItems, $filesToInsert = null, $adjustSched = true, $moveAction = false)
     {
@@ -782,8 +782,6 @@ final class Application_Model_Scheduler
 
                             ++$pos;
                         }
-
-                        // $pos++;
                     }
                     // selected empty row to add after
                     else {

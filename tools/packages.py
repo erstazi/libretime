@@ -8,7 +8,7 @@ from typing import Iterator, List, Optional, Set
 
 DEFAULT_PACKAGES_FILENAME = "packages.ini"
 FORMATS = ("list", "line")
-DISTRIBUTIONS = ("buster", "bullseye", "bionic", "focal", "jammy")
+DISTRIBUTIONS = ("focal", "bullseye", "jammy", "bookworm")
 
 SETTINGS_SECTION = "=settings"
 DEVELOPMENT_SECTION = "=development"
@@ -49,7 +49,7 @@ def list_packages_files(
             path = path / DEFAULT_PACKAGES_FILENAME
 
         if not path.is_file():
-            raise Exception(f"{path} is not a file!")
+            raise ValueError(f"{path} is not a file!")
 
         yield path
 

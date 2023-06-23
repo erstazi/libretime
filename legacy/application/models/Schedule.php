@@ -171,9 +171,9 @@ SQL;
      * If a current media item is currently playing, this function then attempts to
      * find an item that played previously and is scheduled to play next.
      *
-     * @param $utcNow                   DateTime current time in UTC
-     * @param $currentShowInstanceId    int      id of the show instance currently playing
-     * @param $source                   string   the current prioritized source
+     * @param $utcNow                DateTime current time in UTC
+     * @param $currentShowInstanceId int      id of the show instance currently playing
+     * @param $source                string   the current prioritized source
      *
      * @return array with data about the previous, current, and next media items playing.
      *               Returns an empty arrays if there is no media item currently playing
@@ -871,7 +871,6 @@ SQL;
      * @param array  $item     schedule info about one track
      * @param int    $media_id scheduled item's cc_files id
      * @param string $uri      path to the scheduled item's physical location
-     * @param int    $filsize  The file's file size in bytes
      * @param mixed  $filesize
      */
     private static function createFileScheduleEvent(&$data, $item, $media_id, $uri, $filesize)
@@ -891,11 +890,9 @@ SQL;
         $schedule_item = [
             'id' => $media_id,
             'type' => 'file',
-            'metadata' => [
-                'track_title' => $fileMetadata['track_title'],
-                'artist_name' => $fileMetadata['artist_name'],
-                'mime' => $fileMetadata['mime'],
-            ],
+            'track_title' => $fileMetadata['track_title'],
+            'artist_name' => $fileMetadata['artist_name'],
+            'mime' => $fileMetadata['mime'],
             'row_id' => $item['id'],
             'uri' => $uri,
             'fade_in' => Application_Model_Schedule::WallTimeToMillisecs($item['fade_in']),
@@ -926,25 +923,26 @@ SQL;
 
         $stream_buffer_start = self::AirtimeTimeToPypoTime($buffer_start->format(DEFAULT_TIMESTAMP_FORMAT));
 
-        $schedule_item = [
+        $schedule_common = [
+            'row_id' => $item['id'],
+            'id' => $media_id,
+            'uri' => $uri,
+            'show_name' => $item['show_name'],
+        ];
+
+        $schedule_item = array_merge($schedule_common, [
             'start' => $stream_buffer_start,
             'end' => $stream_buffer_start,
-            'uri' => $uri,
-            'row_id' => $item['id'],
             'type' => 'stream_buffer_start',
-        ];
+        ]);
 
         self::appendScheduleItem($data, $start, $schedule_item);
 
-        $schedule_item = [
-            'id' => $media_id,
-            'type' => 'stream_output_start',
-            'row_id' => $item['id'],
-            'uri' => $uri,
+        $schedule_item = array_merge($schedule_common, [
             'start' => $start,
             'end' => $end,
-            'show_name' => $item['show_name'],
-        ];
+            'type' => 'stream_output_start',
+        ]);
         self::appendScheduleItem($data, $start, $schedule_item);
 
         // since a stream never ends we have to insert an additional "kick stream" event. The "start"
@@ -954,21 +952,18 @@ SQL;
 
         $stream_end = self::AirtimeTimeToPypoTime($dt->format(DEFAULT_TIMESTAMP_FORMAT));
 
-        $schedule_item = [
+        $schedule_item = array_merge($schedule_common, [
             'start' => $stream_end,
             'end' => $stream_end,
-            'uri' => $uri,
             'type' => 'stream_buffer_end',
-            'row_id' => $item['id'],
-        ];
+        ]);
         self::appendScheduleItem($data, $stream_end, $schedule_item);
 
-        $schedule_item = [
+        $schedule_item = array_merge($schedule_common, [
             'start' => $stream_end,
             'end' => $stream_end,
-            'uri' => $uri,
             'type' => 'stream_output_end',
-        ];
+        ]);
         self::appendScheduleItem($data, $stream_end, $schedule_item);
     }
 

@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="libretime-api",
-    version="2.0.0a1",
+    version="3.1.0",
     description="LibreTime API",
     author="LibreTime Contributors",
     url="https://github.com/libretime/libretime",
@@ -17,31 +17,38 @@ setup(
         "libretime_api": ["legacy/migrations/sql/*.sql"],
     },
     include_package_data=True,
-    python_requires=">=3.6",
+    python_requires=">=3.8",
     entry_points={
         "console_scripts": [
             "libretime-api=libretime_api.manage:main",
         ]
     },
     install_requires=[
-        "django-filter>=2.4.0,<22.0",
-        "django>=3.2.12,<4.0",
-        "djangorestframework>=3.12.1,<3.14",
-        "drf-spectacular>=0.22.1,<0.23",
-        "requests>=2.25.1,<2.29",
+        "django-cors-headers>=3.14.0,<4.1",
+        "django-filter>=2.4.0,<23.3",
+        "django>=4.2.0,<4.3",
+        "djangorestframework>=3.14.0,<3.15",
+        "drf-spectacular>=0.22.1,<0.27",
+        "requests>=2.31.0,<2.32",
     ],
     extras_require={
         "prod": [
-            "psycopg2>=2.8.6,<2.10",
+            "gunicorn>=20.1.0,<20.2",
+            "psycopg[c]>=3.1.8,<3.2",
+            "uvicorn[standard]>=0.17.6,<0.23.0",
         ],
         "dev": [
-            "django-stubs",
-            "djangorestframework-stubs",
-            "model_bakery",
-            "psycopg2-binary",
-            "pylint-django",
-            "pytest-django",
-            "requests-mock",
+            "django-coverage-plugin>=3.0.0,<3.1",
+            "django-stubs>=1.14.0,<4.3",
+            "djangorestframework-stubs>=1.8.0,<3.15",
+            "model_bakery>=1.10.1,<1.13",
+            "psycopg[binary]>=3.1.8,<3.2",
+            "pylint-django>=2.5.3,<2.6",
+            "pytest-django>=4.5.2,<4.6",
+            "requests-mock>=1.10.0,<1.12",
+        ],
+        "sentry": [
+            "sentry-sdk[django]>=1.15.0,<1.26",
         ],
     },
 )

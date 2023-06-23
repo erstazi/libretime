@@ -27,6 +27,14 @@ class FileDataHelper
         ];
     }
 
+    public static function getUploadAudioMimeTypeArray()
+    {
+        $mimes = self::getAudioMimeTypeArray();
+        unset($mimes['audio/x-ms-wma']);
+
+        return $mimes;
+    }
+
     /**
      * We want to throw out invalid data and process the upload successfully
      * at all costs, so check the data and sanitize it if necessary.
@@ -59,9 +67,9 @@ class FileDataHelper
      *
      * @param string $mime
      *
-     * @throws Exception
-     *
      * @return string file extension with(!) a dot (for convenience)
+     *
+     * @throws Exception
      */
     public static function getFileExtensionFromMime($mime)
     {
@@ -297,15 +305,31 @@ class FileDataHelper
 
         $fp = Config::getStoragePath();
 
-        $dbAudioPath = $md['MDATA_KEY_ARTWORK'];
-        $fullpath = $fp . $dbAudioPath;
+        $artworkBasePath = $fp . $md['MDATA_KEY_ARTWORK'];
+        $audioPath = $fp . $md['MDATA_KEY_FILEPATH'];
 
-        if (file_exists($fullpath)) {
-            foreach (glob("{$fullpath}*", GLOB_NOSORT) as $filename) {
+        $artworkPaths = [
+            $artworkBasePath,
+            $artworkBasePath . '-32.jpg',
+            $artworkBasePath . '-64.jpg',
+            $artworkBasePath . '-128.jpg',
+            $artworkBasePath . '-256.jpg',
+            $artworkBasePath . '-512.jpg',
+            $artworkBasePath . '-32',
+            $artworkBasePath . '-64',
+            $artworkBasePath . '-128',
+            $artworkBasePath . '-256',
+        ];
+
+        foreach ($artworkPaths as $filename) {
+            // This should never happen. Make sure we don't delete the audio file.
+            if ($filename == $audioPath) {
+                continue;
+            }
+
+            if (file_exists($filename)) {
                 unlink($filename);
             }
-        } else {
-            throw new Exception('Could not locate file ' . $filepath);
         }
 
         return '';

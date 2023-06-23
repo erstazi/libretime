@@ -1,5 +1,7 @@
-from os import getenv
+from os import environ, getenv
 from typing import Optional
+
+from .. import PACKAGE, VERSION
 
 API_VERSION = "2.0.0"
 
@@ -23,9 +25,11 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_filters",
     "drf_spectacular",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -167,8 +171,9 @@ AUTH_USER_MODEL = "core.User"
 # https://drf-spectacular.readthedocs.io/en/latest/settings.html
 
 SPECTACULAR_ENUM_NAME_OVERRIDES = {
-    "SmartBlockKindEnum": "libretime_api.schedule.models.SmartBlock.Kind",
+    "FileImportStatusEnum": "libretime_api.storage.models.File.ImportStatus",
     "PlaylistContentKindEnum": "libretime_api.schedule.models.PlaylistContent.Kind",
+    "SmartBlockKindEnum": "libretime_api.schedule.models.SmartBlock.Kind",
 }
 
 SPECTACULAR_SETTINGS = {
@@ -177,3 +182,18 @@ SPECTACULAR_SETTINGS = {
     "VERSION": API_VERSION,
     "ENUM_NAME_OVERRIDES": SPECTACULAR_ENUM_NAME_OVERRIDES,
 }
+
+# Sentry
+# https://docs.sentry.io/platforms/python/guides/django/
+if "SENTRY_DSN" in environ:
+    # pylint: disable=import-outside-toplevel
+    import sentry_sdk
+    from sentry_sdk.integrations.django import DjangoIntegration
+
+    sentry_sdk.init(
+        traces_sample_rate=1.0,
+        release=f"{PACKAGE}@{VERSION}",
+        integrations=[
+            DjangoIntegration(),
+        ],
+    )

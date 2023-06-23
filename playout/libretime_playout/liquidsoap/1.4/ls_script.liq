@@ -1,40 +1,12 @@
-%include "/etc/libretime/liquidsoap.cfg"
+boot_timestamp = string_of(gettimeofday())
 
-if (log_file != "") then
-    set("log.file.path", log_file)
-else
-    set("log.file", false)
-end
+web_stream_enabled = ref false
+web_stream_id = ref '-1'
 
-set("server.telnet", true)
-set("server.telnet.port", 1234)
-
-#Dynamic source list
-#dyn_sources = ref []
-webstream_enabled = ref false
-
-time = ref string_of(gettimeofday())
-
-#live stream setup
-set("harbor.bind_addr", "0.0.0.0")
-
-current_dyn_id = ref '-1'
-
-pypo_data = ref '0'
-stream_metadata_type = ref 0
-default_dj_fade = ref 0.
-station_name = ref ''
-show_name = ref ''
+show_name = interactive.string("show_name", "")
 
 dynamic_metadata_callback = ref fun (~new_track=false, s) -> begin () end
 
-s1_connected = ref ''
-s2_connected = ref ''
-s3_connected = ref ''
-s4_connected = ref ''
-s1_namespace = ref ''
-s2_namespace = ref ''
-s3_namespace = ref ''
 just_switched = ref false
 
 %include "ls_lib.liq"
@@ -42,58 +14,32 @@ just_switched = ref false
 sources = ref []
 source_id = ref 0
 
-def check_version(~version=liquidsoap.version, major, minor) =
-    v = list.map(int_of_string, string.split(separator="\.", version))
-    list.nth(v,0,default=0) > major or list.nth(v,0,default=0) == major and list.nth(v,1,default=0) >= minor
-end
-
-# cue cut fix for liquidsoap <1.2.2
-#
-# This was most likely broken on 1.1.1 (debian) as well.
-#
-# adapted from https://github.com/savonet/liquidsoap/issues/390#issuecomment-277562081
-#
-def fix_cue_in(~cue_in_metadata='liq_cue_in', m) =
-    # 0.04 might need to be adjusted according to your frame size
-    if float_of_string(m[cue_in_metadata]) < 0.04 then
-        [(cue_in_metadata, "0")]
-    else
-        []
-    end
-end
-
 def create_source()
-    l = request.equeue(id="s#{!source_id}", length=0.5)
+    this_source_id = !source_id
+
+    l = request.equeue(id="s#{this_source_id}", length=0.5)
 
     l = audio_to_stereo(id="queue_src", l)
-
-    l = if not check_version(1, 3) then
-        map_metadata(fix_cue_in, l)
-    else
-        l
-    end
     l = cue_cut(l)
     l = amplify(1., override="replay_gain", l)
 
-    # the crossfade function controls fade in/out
-    l = crossfade(duration=0., smart=true, l)
+    # Fade the tracks to avoid hard cuts in between two tracks and at the end of the shows.
+    # Liquidsoap reads the fade in/out durations from the annotation "liq_fade_in/out" which
+    # value can be set via Libretime settings.
+    l = fade.in(l)
+    l = fade.out(l)
 
     l = on_metadata(notify_queue, l)
 
     sources := list.append([l], !sources)
     server.register(namespace="queues",
-                "s#{!source_id}_skip",
-                fun (s) -> begin log("queues.s#{!source_id}_skip")
+                "s#{this_source_id}_skip",
+                fun (s) -> begin log("queues.s#{this_source_id}_skip")
                     clear_queue(l)
                     "Done"
                 end)
     source_id := !source_id + 1
 end
-
-create_source()
-create_source()
-create_source()
-create_source()
 
 create_source()
 create_source()
@@ -111,351 +57,173 @@ http = input.http_restart(id="http")
 http = cross_http(http_input_id="http",http)
 output.dummy(fallible=true, http)
 stream_queue = http_fallback(http_input_id="http", http=http, default=queue)
-stream_queue = map_metadata(update=false, append_title, stream_queue)
+stream_queue = map_metadata(id="map_metadata:schedule", update=false, append_title, stream_queue)
 
 ignore(output.dummy(stream_queue, fallible=true))
 
-server.register(namespace="vars",
-                "pypo_data",
-                fun (s) -> begin log("vars.pypo_data") pypo_data := s "Done" end)
-server.register(namespace="vars",
-                "stream_metadata_type",
-                fun (s) -> begin log("vars.stream_metadata_type") stream_metadata_type := int_of_string(s) s end)
-server.register(namespace="vars",
-                "show_name",
-                fun (s) -> begin log("vars.show_name") show_name := s s end)
-server.register(namespace="vars",
-                "station_name",
-                fun (s) -> begin log("vars.station_name") station_name := s s end)
-server.register(namespace="vars",
-                "bootup_time",
-                fun (s) -> begin log("vars.bootup_time") time := s s end)
-server.register(namespace="streams",
-                "connection_status",
-                fun (s) -> begin log("streams.connection_status") "1:#{!s1_connected},2:#{!s2_connected},3:#{!s3_connected},4:#{!s4_connected}" end)
-server.register(namespace="vars",
-                "default_dj_fade",
-                fun (s) -> begin log("vars.default_dj_fade") default_dj_fade := float_of_string(s) s end)
+def web_stream_set_id(value)
+    web_stream_id := value
+    string_of(!web_stream_id)
+end
 
-server.register(namespace="dynamic_source",
-                description="Enable webstream output",
-                usage='start',
-                "output_start",
-                fun (s) -> begin log("dynamic_source.output_start")
-                    notify([("schedule_table_id", !current_dyn_id)])
-                    webstream_enabled := true "enabled" end)
-server.register(namespace="dynamic_source",
-                description="Enable webstream output",
-                usage='stop',
-                "output_stop",
-                fun (s) -> begin log("dynamic_source.output_stop") webstream_enabled := false "disabled" end)
+def web_stream_get_id()
+    string_of(!web_stream_id)
+end
 
-server.register(namespace="dynamic_source",
-                description="Set the streams cc_schedule row id",
-                usage="id <id>",
-                "id",
-                fun (s) -> begin log("dynamic_source.id") set_dynamic_source_id(s) end)
+server.register(namespace="sources",
+                description="Start webstream source",
+                "start_web_stream",
+                fun (s) -> begin log("sources.start_web_stream")
+                    notify([("schedule_table_id", !web_stream_id)])
+                    web_stream_enabled := true "enabled" end)
+server.register(namespace="sources",
+                description="Stop webstream source",
+                "stop_web_stream",
+                fun (s) -> begin log("sources.stop_web_stream") web_stream_enabled := false "disabled" end)
 
-server.register(namespace="dynamic_source",
-                description="Get the streams cc_schedule row id",
-                usage="get_id",
+server.register(namespace="web_stream",
+                description="Set the web stream id",
+                "set_id",
+                fun (s) -> begin log("web_stream.set_id") web_stream_set_id(s) end)
+
+server.register(namespace="web_stream",
+                description="Get the web stream id",
                 "get_id",
-                fun (s) -> begin log("dynamic_source.get_id") get_dynamic_source_id() end)
-
-#server.register(namespace="dynamic_source",
-#                description="Start a new dynamic source.",
-#                usage="start <uri>",
-#                "read_start",
-#                fun (uri) -> begin log("dynamic_source.read_start") begin_stream_read(uri) end)
-#server.register(namespace="dynamic_source",
-#                description="Stop a dynamic source.",
-#                usage="stop <id>",
-#                "read_stop",
-#                fun (s) -> begin log("dynamic_source.read_stop") stop_stream_read(s) end)
-
-#server.register(namespace="dynamic_source",
-#                description="Stop a dynamic source.",
-#                usage="stop <id>",
-#                "read_stop_all",
-#                fun (s) -> begin log("dynamic_source.read_stop") destroy_dynamic_source_all() end)
+                fun (s) -> begin log("web_stream.get_id") web_stream_get_id() end)
 
 default = amplify(id="silence_src", 0.00001, noise())
-ref_off_air_meta = ref off_air_meta
-if !ref_off_air_meta == "" then
-    ref_off_air_meta := "LibreTime - offline"
+
+def map_message_offline(m) =
+  [("title", message_offline())]
 end
-def map_off_air_meta(m) =
-  [("title", !ref_off_air_meta)]
-end
-default = map_metadata(map_off_air_meta, default)
+
+default = map_metadata(id="map_metadata:offline", map_message_offline, default)
 ignore(output.dummy(default, fallible=true))
 
-master_dj_enabled = ref false
-live_dj_enabled = ref false
-scheduled_play_enabled = ref false
+input_main_streaming = ref false
+input_show_streaming = ref false
+schedule_streaming = ref false
 
-def make_master_dj_available()
-    master_dj_enabled := true
-end
-
-def make_master_dj_unavailable()
-    master_dj_enabled := false
-end
-
-def make_live_dj_available()
-    live_dj_enabled := true
-end
-
-def make_live_dj_unavailable()
-    live_dj_enabled := false
-end
-
-def make_scheduled_play_available()
-    scheduled_play_enabled := true
-    just_switched := true
-end
-
-def make_scheduled_play_unavailable()
-    scheduled_play_enabled := false
-end
+def start_input_main() input_main_streaming := true end
+def stop_input_main() input_main_streaming := false end
+def start_input_show() input_show_streaming := true end
+def stop_input_show() input_show_streaming := false end
+def start_schedule() schedule_streaming := true; just_switched := true end
+def stop_schedule() schedule_streaming := false end
 
 def update_source_status(sourcename, status) =
     gateway("live '#{sourcename}' '#{status}'")
 end
 
-def live_dj_connect(header) =
-    update_source_status("live_dj", true)
-end
+def input_main_on_connect(header) update_source_status("master_dj", true) end
+def input_main_on_disconnect() update_source_status("master_dj", false) end
+def input_show_on_connect(header) update_source_status("live_dj", true) end
+def input_show_on_disconnect() update_source_status("live_dj", false) end
 
-def live_dj_disconnect() =
-    update_source_status("live_dj", false)
-end
-
-def master_dj_connect(header) =
-    update_source_status("master_dj", true)
-end
-
-def master_dj_disconnect() =
-    update_source_status("master_dj", false)
-end
-
-# Auth function for live stream
-# @Category LiveStream
-# @param user     Username to check against LibreTime API
-# @param password Password to check against LibreTime API
-# @param ~type    Type of password to check, "dj" or "master, default: "master"
-def check_auth(user="", password="", ~type="master") =
-    log("#{type} user #{user} connected",label="#{type}_source")
-
-    # Check auth based on return value from auth script
-    ret = test_process("python3 #{auth_path} --#{type} #{user} #{password}")
-
-    if ret then
-        log("#{type} user #{user} authenticated",label="#{type}_source")
+def make_input_func(secure)
+    if secure then
+        input.harbor.ssl
     else
-        log("#{type} user #{user} auth failed",label="#{type}_source",level=2)
+        input.harbor
     end
-
-    ret
 end
 
-# Check master source auth
-# @Category LiveStream
-# @param user     Username to check against LibreTime API
-# @param password Password to check against LibreTime API
-def check_master_dj_client(user, password) =
-    check_auth(user, password)
+def make_input_auth_handler(input_name)
+    def auth_handler(user, password)
+        log("user '#{user}' connected", label="#{input_name}_input")
+
+        # Check auth based on return value from auth script
+        ret = test_process("libretime-playout-notify live-auth '#{input_name}' '#{user}' '#{password}'")
+        if ret then
+            log("user '#{user}' authenticated", label="#{input_name}_input")
+        else
+            log("user '#{user}' auth failed", label="#{input_name}_input",level=2)
+        end
+
+        ret
+    end
+    auth_handler
 end
 
-# Check dj/show source auth
-# @Category LiveStream
-# @param user     Username to check against LibreTime API
-# @param password Password to check against LibreTime API
-def check_dj_client(user, password) =
-    check_auth(user, password, type="dj")
-end
-
-s = switch(id="schedule_noise_switch",
+s = switch(id="switch:blank+schedule",
             track_sensitive=false,
             transitions=[transition_default, transition],
-            [({!scheduled_play_enabled}, stream_queue), ({true}, default)]
+            [({!schedule_streaming}, stream_queue), ({true}, default)]
     )
 
-s = if dj_live_stream_port != 0 and dj_live_stream_mp != "" then
-    dj_live =
+s = if input_show_port != 0 and input_show_mount != "" then
+    input_show_func = make_input_func(input_show_secure)
+    input_show_source =
         audio_to_stereo(
-            input.harbor(id="live_dj_harbor",
-                dj_live_stream_mp,
-                port=dj_live_stream_port,
-                auth=check_dj_client,
+            input_show_func(id="harbor:input_show",
+                input_show_mount,
+                port=input_show_port,
+                auth=make_input_auth_handler("show"),
                 max=40.,
-                on_connect=live_dj_connect,
-                on_disconnect=live_dj_disconnect))
+                on_connect=input_show_on_connect,
+                on_disconnect=input_show_on_disconnect))
 
-    ignore(output.dummy(dj_live, fallible=true))
+    ignore(output.dummy(input_show_source, fallible=true))
 
-    switch(id="show_schedule_noise_switch",
+    switch(id="switch:blank+schedule+show",
             track_sensitive=false,
             transitions=[transition, transition],
-            [({!live_dj_enabled}, dj_live), ({true}, s)]
+            [({!input_show_streaming}, input_show_source), ({true}, s)]
         )
 else
     s
 end
 
-s = if master_live_stream_port != 0 and master_live_stream_mp != "" then
-    master_dj =
+s = if input_main_port != 0 and input_main_mount != "" then
+    input_main_func = make_input_func(input_main_secure)
+    input_main_source =
         audio_to_stereo(
-            input.harbor(id="master_harbor",
-                master_live_stream_mp,
-                port=master_live_stream_port,
-                auth=check_master_dj_client,
+            input_main_func(id="harbor:input_main",
+                input_main_mount,
+                port=input_main_port,
+                auth=make_input_auth_handler("main"),
                 max=40.,
-                on_connect=master_dj_connect,
-                on_disconnect=master_dj_disconnect))
+                on_connect=input_main_on_connect,
+                on_disconnect=input_main_on_disconnect))
 
-    ignore(output.dummy(master_dj, fallible=true))
+    ignore(output.dummy(input_main_source, fallible=true))
 
-    switch(id="master_show_schedule_noise_switch",
+    switch(id="switch:blank+schedule+show+main",
             track_sensitive=false,
             transitions=[transition, transition],
-            [({!master_dj_enabled}, master_dj), ({true}, s)]
+            [({!input_main_streaming}, input_main_source), ({true}, s)]
         )
 else
     s
 end
 
-
-# Attach a skip command to the source s:
-#add_skip_command(s)
-
-server.register(namespace="streams",
-    description="Stop Master DJ source.",
-    usage="master_dj_stop",
-    "master_dj_stop",
-    fun (s) -> begin log("streams.master_dj_stop") make_master_dj_unavailable() "Done." end)
-server.register(namespace="streams",
-    description="Start Master DJ source.",
-    usage="master_dj_start",
-    "master_dj_start",
-    fun (s) -> begin log("streams.master_dj_start") make_master_dj_available() "Done." end)
-server.register(namespace="streams",
-    description="Stop Live DJ source.",
-    usage="live_dj_stop",
-    "live_dj_stop",
-    fun (s) -> begin log("streams.live_dj_stop") make_live_dj_unavailable() "Done." end)
-server.register(namespace="streams",
-    description="Start Live DJ source.",
-    usage="live_dj_start",
-    "live_dj_start",
-    fun (s) -> begin log("streams.live_dj_start") make_live_dj_available() "Done." end)
-server.register(namespace="streams",
-    description="Stop Scheduled Play source.",
-    usage="scheduled_play_stop",
-    "scheduled_play_stop",
-    fun (s) -> begin log("streams.scheduled_play_stop") make_scheduled_play_unavailable() "Done." end)
-server.register(namespace="streams",
-    description="Start Scheduled Play source.",
-    usage="scheduled_play_start",
-    "scheduled_play_start",
-    fun (s) -> begin log("streams.scheduled_play_start") make_scheduled_play_available() "Done." end)
-
-if output_sound_device then
-    success = ref false
-
-    log(output_sound_device_type)
-
-    %ifdef output.alsa
-	if output_sound_device_type == "ALSA" then
-		ignore(output.alsa(s))
-        success := true
-	end
-	%endif
-
-	%ifdef output.ao
-	if output_sound_device_type == "AO" then
-		ignore(output.ao(s))
-        success := true
-	end
-	%endif
-
-	%ifdef output.oss
-	if output_sound_device_type == "OSS" then
-        ignore(output.oss(s))
-        success := true
-	end
-	%endif
-
-	%ifdef output.portaudio
-	if output_sound_device_type == "Portaudio" then
-        ignore(output.portaudio(s))
-        success := true
-	end
-	%endif
-
-	%ifdef output.pulseaudio
-	if output_sound_device_type == "Pulseaudio" then
-        ignore(output.pulseaudio(s))
-        success := true
-	end
-	%endif
-
-    if (!success == false) then
-        ignore(output.prefered(s))
-	end
-
-end
-
-if s1_enable == true then
-    if s1_output == 'shoutcast' then
-        s1_namespace := "shoutcast_stream_1"
-    else
-        s1_namespace := s1_mount
-    end
-    server.register(namespace=!s1_namespace, "connected", fun (s) -> begin log("#{!s1_namespace}.connected") !s1_connected end)
-    output_to(s1_output, s1_type, s1_bitrate, s1_host, s1_port, s1_pass,
-                s1_mount, s1_url, s1_description, s1_genre, s1_user, s, "1",
-                s1_connected, s1_name, s1_channels)
-end
-
-if s2_enable == true then
-    if s2_output == 'shoutcast' then
-        s2_namespace := "shoutcast_stream_2"
-    else
-        s2_namespace := s2_mount
-    end
-    server.register(namespace=!s2_namespace, "connected", fun (s) -> begin log("#{!s2_namespace}.connected") !s2_connected end)
-    output_to(s2_output, s2_type, s2_bitrate, s2_host, s2_port, s2_pass,
-                s2_mount, s2_url, s2_description, s2_genre, s2_user, s, "2",
-                s2_connected, s2_name, s2_channels)
-
-end
-
-if s3_enable == true then
-    if s3_output == 'shoutcast' then
-        s3_namespace := "shoutcast_stream_3"
-    else
-        s3_namespace := s3_mount
-    end
-    server.register(namespace=!s3_namespace, "connected", fun (s) -> begin log("#{!s3_namespace}.connected") !s3_connected end)
-    output_to(s3_output, s3_type, s3_bitrate, s3_host, s3_port, s3_pass,
-                s3_mount, s3_url, s3_description, s3_genre, s3_user, s, "3",
-                s3_connected, s3_name, s3_channels)
-end
-
-s4_namespace = ref ''
-if s4_enable == true then
-    log("Stream 4 Enabled")
-    if s4_output == 'shoutcast' then
-        s4_namespace := "shoutcast_stream_4"
-    else
-        s4_namespace := s4_mount
-    end
-    server.register(namespace=!s4_namespace, "connected", fun (s) -> begin log("#{!s4_namespace}.connected") !s4_connected end)
-    output_to(s4_output, s4_type, s4_bitrate, s4_host, s4_port, s4_pass,
-                s4_mount, s4_url, s4_name, s4_genre, s4_user, s, "4",
-                s4_connected, s4_description, s4_channels)
-end
-
-
-gateway("started")
+server.register(namespace="sources",
+    description="Stop main input source.",
+    usage="stop_input_main",
+    "stop_input_main",
+    fun (s) -> begin log("sources.stop_input_main") stop_input_main() "Done." end)
+server.register(namespace="sources",
+    description="Start main input source.",
+    usage="start_input_main",
+    "start_input_main",
+    fun (s) -> begin log("sources.start_input_main") start_input_main() "Done." end)
+server.register(namespace="sources",
+    description="Stop show input source.",
+    usage="stop_input_show",
+    "stop_input_show",
+    fun (s) -> begin log("sources.stop_input_show") stop_input_show() "Done." end)
+server.register(namespace="sources",
+    description="Start show input source.",
+    usage="start_input_show",
+    "start_input_show",
+    fun (s) -> begin log("sources.start_input_show") start_input_show() "Done." end)
+server.register(namespace="sources",
+    description="Stop schedule source.",
+    usage="stop_schedule",
+    "stop_schedule",
+    fun (s) -> begin log("sources.stop_schedule") stop_schedule() "Done." end)
+server.register(namespace="sources",
+    description="Start schedule source.",
+    usage="start_schedule",
+    "start_schedule",
+    fun (s) -> begin log("sources.start_schedule") start_schedule() "Done." end)

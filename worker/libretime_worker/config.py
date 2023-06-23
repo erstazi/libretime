@@ -11,7 +11,7 @@ class Config(BaseConfig):
 
 LIBRETIME_CONFIG_FILEPATH = getenv("LIBRETIME_CONFIG_FILEPATH")
 
-config = Config(filepath=LIBRETIME_CONFIG_FILEPATH)
+config = Config(LIBRETIME_CONFIG_FILEPATH)
 
 # Celery amqp settings
 BROKER_URL = config.rabbitmq.url
@@ -29,5 +29,4 @@ CELERY_EVENT_QUEUE_EXPIRES = 900  # RabbitMQ x-expire after 15 minutes
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_ACCEPT_CONTENT = ["json"]
-CELERY_TIMEZONE = "UTC"
-CELERY_ENABLE_UTC = True
+CELERY_TIMEZONE = config.general.timezone

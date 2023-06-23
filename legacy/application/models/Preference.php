@@ -117,7 +117,7 @@ class Application_Model_Preference
      * Given a PDO connection, lock the cc_pref table for the current transaction.
      *
      * Creates a table level lock, which defaults to ACCESS EXCLUSIVE mode;
-     * see http://www.postgresql.org/docs/9.1/static/explicit-locking.html
+     * see https://www.postgresql.org/docs/9.1/static/explicit-locking.html
      *
      * @param PDO $con
      */
@@ -350,6 +350,21 @@ class Application_Model_Preference
         return self::getValue('stream_label_format');
     }
 
+    public static function getOffAirMeta()
+    {
+        return self::getValue('off_air_meta');
+    }
+
+    public static function setOffAirMeta($offAirMeta)
+    {
+        self::setValue('off_air_meta', $offAirMeta);
+
+        Application_Model_RabbitMq::SendMessageToPypo(
+            'update_message_offline',
+            ['message_offline' => $offAirMeta]
+        );
+    }
+
     public static function GetStationName()
     {
         return self::getValue('station_name');
@@ -521,21 +536,10 @@ class Application_Model_Preference
         return sprintf(_('Powered by %s'), SAAS_PRODUCT_BRANDING_NAME);
     }
 
-    // Sets station default timezone (from preferences)
-    public static function SetDefaultTimezone($timezone)
-    {
-        self::setValue('timezone', $timezone);
-    }
-
     // Returns station default timezone (from preferences)
     public static function GetDefaultTimezone()
     {
-        $stationTimezone = self::getValue('timezone');
-        if (is_null($stationTimezone) || $stationTimezone == '') {
-            $stationTimezone = 'UTC';
-        }
-
-        return $stationTimezone;
+        return Config::get('general.timezone');
     }
 
     public static function SetUserTimezone($timezone = null)
@@ -785,20 +789,6 @@ class Application_Model_Preference
         return (int) self::getValue('import_timestamp');
     }
 
-    public static function GetStreamType()
-    {
-        $st = self::getValue('stream_type');
-
-        return explode(',', $st);
-    }
-
-    public static function GetStreamBitrate()
-    {
-        $sb = self::getValue('stream_bitrate');
-
-        return explode(',', $sb);
-    }
-
     public static function SetPrivacyPolicyCheck($flag)
     {
         self::setValue('privacy_policy', $flag);
@@ -809,36 +799,9 @@ class Application_Model_Preference
         return self::getValue('privacy_policy');
     }
 
-    public static function SetNumOfStreams($num)
-    {
-        self::setValue('num_of_streams', intval($num));
-
-        // Enable or disable each stream according to whatever was just changed.
-        for ($streamIdx = 1; $streamIdx <= MAX_NUM_STREAMS; ++$streamIdx) {
-            $prefix = 's' . $streamIdx . '_';
-            $enable = 'false';
-            if ($streamIdx <= intval($num)) {
-                $enable = 'true';
-            }
-
-            // Enable or disable the stream in the Stream Settings DB table.
-            Application_Model_StreamSetting::setIndividualStreamSetting([$prefix . 'enable' => $enable]);
-        }
-    }
-
     public static function GetNumOfStreams()
     {
-        return self::getValue('num_of_streams');
-    }
-
-    public static function SetMaxBitrate($bitrate)
-    {
-        self::setValue('max_bitrate', intval($bitrate));
-    }
-
-    public static function GetMaxBitrate()
-    {
-        return self::getValue('max_bitrate');
+        return count(Config::get('stream.outputs.merged'));
     }
 
     public static function SetEnableStreamConf($bool)
@@ -989,7 +952,7 @@ class Application_Model_Preference
     /**
      * Sets the time scale preference (agendaDay/agendaWeek/month) in Calendar.
      *
-     * @param $timeScale    new time scale
+     * @param $timeScale new time scale
      */
     public static function SetCalendarTimeScale($timeScale)
     {
@@ -1013,7 +976,7 @@ class Application_Model_Preference
     /**
      * Sets the number of entries to show preference in library under Playlist Builder.
      *
-     * @param $numEntries    new number of entries to show
+     * @param $numEntries new number of entries to show
      */
     public static function SetLibraryNumEntries($numEntries)
     {
@@ -1037,7 +1000,7 @@ class Application_Model_Preference
     /**
      * Sets the time interval preference in Calendar.
      *
-     * @param $timeInterval        new time interval
+     * @param $timeInterval new time interval
      */
     public static function SetCalendarTimeInterval($timeInterval)
     {
@@ -1118,57 +1081,37 @@ class Application_Model_Preference
         return ($value == null || $value == 'off') ? 'off' : 'on';
     }
 
-    public static function SetMasterDJSourceConnectionURL($value)
-    {
-        self::setValue('master_dj_source_connection_url', $value, false);
-    }
-
     public static function GetMasterDJSourceConnectionURL()
     {
-        $master_connection_url = self::getValue('master_dj_source_connection_url');
-        if ($master_connection_url == '') {
-            $master_connection_url = 'http://' . $_SERVER['SERVER_NAME'] . ':' . Application_Model_StreamSetting::getMasterLiveStreamPort() . Application_Model_StreamSetting::getMasterLiveStreamMountPoint();
+        if (Config::has('stream.inputs.main.public_url') && Config::get('stream.inputs.main.public_url')) {
+            return Config::get('stream.inputs.main.public_url');
         }
 
-        return $master_connection_url;
-    }
+        $host = Config::get('general.public_url_raw')->getHost();
+        $port = Application_Model_StreamSetting::getMasterLiveStreamPort();
+        $mount = Application_Model_StreamSetting::getMasterLiveStreamMountPoint();
+        $secure = Application_Model_StreamSetting::getMasterLiveStreamSecure();
 
-    public static function SetLiveDJSourceConnectionURL($value)
-    {
-        self::setValue('live_dj_source_connection_url', $value, false);
+        $scheme = $secure ? 'https' : 'http';
+
+        return "{$scheme}://{$host}:{$port}/{$mount}";
     }
 
     public static function GetLiveDJSourceConnectionURL()
     {
-        $livedj_connection_url = self::getValue('live_dj_source_connection_url');
-        if ($livedj_connection_url == '') {
-            $livedj_connection_url = 'http://' . $_SERVER['SERVER_NAME'] . ':' . Application_Model_StreamSetting::getDjLiveStreamPort() . Application_Model_StreamSetting::getDjLiveStreamMountPoint();
+        if (Config::has('stream.inputs.show.public_url') && Config::get('stream.inputs.show.public_url')) {
+            return Config::get('stream.inputs.show.public_url');
         }
 
-        return $livedj_connection_url;
-    }
+        $host = Config::get('general.public_url_raw')->getHost();
+        $port = Application_Model_StreamSetting::getDjLiveStreamPort();
+        $mount = Application_Model_StreamSetting::getDjLiveStreamMountPoint();
+        $secure = Application_Model_StreamSetting::getDjLiveStreamSecure();
 
-    // Source Connection URL override status starts
-    public static function GetLiveDjConnectionUrlOverride()
-    {
-        return self::getValue('live_dj_connection_url_override');
-    }
+        $scheme = $secure ? 'https' : 'http';
 
-    public static function SetLiveDjConnectionUrlOverride($value)
-    {
-        self::setValue('live_dj_connection_url_override', $value, false);
+        return "{$scheme}://{$host}:{$port}/{$mount}";
     }
-
-    public static function GetMasterDjConnectionUrlOverride()
-    {
-        return self::getValue('master_dj_connection_url_override');
-    }
-
-    public static function SetMasterDjConnectionUrlOverride($value)
-    {
-        self::setValue('master_dj_connection_url_override', $value, false);
-    }
-    // Source Connection URL override status ends
 
     public static function SetAutoTransition($value)
     {
@@ -1444,28 +1387,6 @@ class Application_Model_Preference
     // SAAS-876 - Store the default Icecast password to restore when switching
     //            back to Airtime Pro streaming settings
 
-    public static function getDefaultIcecastPassword()
-    {
-        $val = self::getValue('default_icecast_password');
-
-        return empty($val) ? DEFAULT_ICECAST_PASS : $val;
-    }
-
-    public static function setDefaultIcecastPassword($value)
-    {
-        self::setValue('default_icecast_password', $value);
-    }
-
-    public static function getDefaultStreamMountPoint()
-    {
-        return self::getValue('default_stream_mount_point');
-    }
-
-    public static function setDefaultStreamMountPoint($value)
-    {
-        self::setValue('default_stream_mount_point', $value);
-    }
-
     public static function getRadioPageDisplayLoginButton()
     {
         return self::getValue('radio_page_display_login_button');
@@ -1600,34 +1521,6 @@ class Application_Model_Preference
     }
 
     /**
-     * Getter for CORS URLs.
-     *
-     * @return string
-     */
-    public static function GetAllowedCorsUrls()
-    {
-        return self::getValue('allowed_cors_urls');
-    }
-
-    /**
-     * Setter for CORS URLs.
-     *
-     * @param string $value
-     */
-    public static function SetAllowedCorsUrls($value)
-    {
-        // Trim and strip trailing slash for each entry
-        $value = implode(PHP_EOL, array_map(
-            function ($v) {
-                return rtrim(trim($v), '/');
-            },
-            explode(PHP_EOL, $value)
-        ));
-
-        self::setValue('allowed_cors_urls', $value);
-    }
-
-    /**
      * Getter for feature preview mode.
      *
      * @return bool
@@ -1645,5 +1538,43 @@ class Application_Model_Preference
     public static function SetFeaturePreviewMode($value)
     {
         return self::setValue('feature_preview_mode', $value);
+    }
+
+    /*
+     * Stores liquidsoap status if $boot_time > save time.
+     * save time is the time that user clicked save on stream setting page
+     */
+    public static function setLiquidsoapError($stream_id, $msg, $boot_time = null)
+    {
+        $update_time = Application_Model_Preference::GetStreamUpdateTimestemp();
+
+        if ($boot_time == null || $boot_time > $update_time) {
+            $stream_id = trim($stream_id, 's');
+            self::setValue("stream_liquidsoap_status:{$stream_id}", $msg);
+        }
+    }
+
+    public static function getLiquidsoapError($stream_id)
+    {
+        $result = self::getValue("stream_liquidsoap_status:{$stream_id}");
+
+        return ($result !== false) ? $result : null;
+    }
+
+    public static function GetAllListenerStatErrors()
+    {
+        $sql = <<<'SQL'
+SELECT *
+FROM cc_pref
+WHERE keystr LIKE 'stream_stats_status:%'
+SQL;
+
+        return Application_Common_Database::prepareAndExecute($sql, []);
+    }
+
+    public static function SetListenerStatError($stream_id, $value)
+    {
+        $stream_id = trim($stream_id, 's');
+        self::setValue("stream_stats_status:{$stream_id}", $value);
     }
 }

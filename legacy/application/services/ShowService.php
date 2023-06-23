@@ -302,7 +302,7 @@ class Application_Service_ShowService
      * Adjusts the items in cc_schedule to reflect the
      * new (if one) start and end time of the show getting updated.
      *
-     * @param $showData
+     * @param mixed $showData
      */
     private function adjustSchedule($showData)
     {
@@ -529,8 +529,6 @@ SQL;
      * - Update start and end time
      *
      * @param $showData edit show form values in raw form
-     * @param $isRecorded value computed from the edit show form
-     * @param $repeatType value computed from the edit show form
      */
     private function delegateInstanceCleanup($showData)
     {
@@ -597,7 +595,7 @@ SQL;
                 $this->deleteAllInstances($showId);
                 $this->deleteAllShowDays($showId);
 
-            // when repeating by day of the month (1st, 2nd, etc.) we do not store the repeat week days
+                // when repeating by day of the month (1st, 2nd, etc.) we do not store the repeat week days
             } elseif ($currentRepeatType != 2) {
                 // repeat type is the same, check if the days of the week are the same
                 $repeatingDaysChanged = false;
@@ -755,11 +753,11 @@ SQL;
     /**
      * Enter description here ...
      *
-     * @param $daysRemoved array of days (days of the week) removed
-     *     (days of the week are represented numerically
-     *      0=>sunday, 1=>monday, 2=>tuesday, etc.)
-     * @param $showDays array of ccShowDays objects
-     * @param $showId
+     * @param       $daysRemoved array of days (days of the week) removed
+     *                           (days of the week are represented numerically
+     *                           0=>sunday, 1=>monday, 2=>tuesday, etc.)
+     * @param       $showDays    array of ccShowDays objects
+     * @param mixed $showId
      */
     private function deleteRemovedShowDayInstances($daysRemoved, $showDays, $showId)
     {
@@ -883,10 +881,10 @@ SQL;
             CcShowQuery::create()
                 ->filterByDbId($showId)
                 ->delete();
-        // There is only one cc_show_instance if the user selects 'Delete This Instance'
-        // There is more than one cc_show_instance if the user selects 'Delete This
-        // Instance and All Following'. We only need to set the last_show value
-        // when 'Delete This Instance and All Following' has been selected
+            // There is only one cc_show_instance if the user selects 'Delete This Instance'
+            // There is more than one cc_show_instance if the user selects 'Delete This
+            // Instance and All Following'. We only need to set the last_show value
+            // when 'Delete This Instance and All Following' has been selected
         } elseif (count($ccShowInstances) > 1) {
             $this->setLastRepeatingShowDate($showId);
         }
@@ -1088,7 +1086,6 @@ SQL;
     /**
      * Updates the start and end time for cc_show_instances.
      *
-     * @param $showData edit show form data
      * @param mixed $diff
      */
     private function updateInstanceStartEndTime($diff)
@@ -1116,7 +1113,7 @@ SQL;
      *
      * @param ccShowDays $showDay
      * @param DateTime   $showStartDate user's local time
-     * @param $instanceId
+     * @param mixed      $instanceId
      */
     private function createRebroadcastInstances($showDay, $showStartDate, $instanceId)
     {
@@ -1157,8 +1154,8 @@ SQL;
     /**
      * Sets a single cc_show_instance table row.
      *
-     * @param $showDay
-     * @param $populateUntil
+     * @param mixed $showDay
+     * @param mixed $populateUntil
      */
     private function createNonRepeatingInstance($showDay, $populateUntil)
     {
@@ -1205,7 +1202,6 @@ SQL;
      * @param unknown_type $showDay
      * @param unknown_type $populateUntil
      * @param unknown_type $repeatInterval
-     * @param unknown_type $isRebroadcast
      * @param mixed        $repeatType
      * @param null|mixed   $daysAdded
      */
@@ -1426,7 +1422,6 @@ SQL;
      * i.e. second monday of each month.
      *
      * @param string $showStart
-     * @param string $timezone  user's local timezone
      */
     public static function getMonthlyWeeklyRepeatInterval($showStart)
     {
@@ -1480,7 +1475,7 @@ SQL;
     /**
      * Enter description here ...
      *
-     * @param $start user's local time
+     * @param       $start     user's local time
      * @param mixed $timezone
      * @param mixed $startTime
      */
@@ -1646,8 +1641,7 @@ SQL;
     /**
      * Sets the fields for a cc_show table row.
      *
-     * @param $ccShow
-     * @param $showData
+     * @param mixed $showData
      */
     public function setCcShow($showData)
     {
@@ -1691,12 +1685,7 @@ SQL;
     /**
      * Sets the fields for a cc_show_days table row.
      *
-     * @param $showData
-     * @param $showId
-     * @param $userId
-     * @param $repeatType
-     * @param $isRecorded
-     * @param $showDay ccShowDay object we are setting values on
+     * @param mixed $showData
      */
     private function setCcShowDays($showData)
     {
@@ -1824,10 +1813,7 @@ SQL;
     /**
      * Sets the fields for a cc_show_rebroadcast table row.
      *
-     * @param $showData
-     * @param $showId
-     * @param $repeatType
-     * @param $isRecorded
+     * @param mixed $showData
      */
     private function setCcShowRebroadcasts($showData)
     {
@@ -1873,8 +1859,7 @@ SQL;
     /**
      * Sets the fields for a cc_show_hosts table row.
      *
-     * @param $showData
-     * @param $showId
+     * @param mixed $showData
      */
     private function setCcShowHosts($showData)
     {
@@ -1911,7 +1896,6 @@ SQL;
      *
      * @param DateTime $showStart user's local time
      * @param string   $duration  time interval (h)h:(m)m(:ss)
-     * @param string   $timezone  "Europe/Prague"
      * @param array    $offset    (days, hours, mins) used for rebroadcast shows
      *
      * @return array of 2 DateTime objects, start/end time of the show in UTC
@@ -1946,9 +1930,9 @@ SQL;
      * date for when the next repeating show instance should be created
      * as the user browses the calendar further.
      *
-     * @param $nextDate
-     * @param $showId
-     * @param $day
+     * @param mixed $nextDate
+     * @param mixed $day
+     * @param mixed $showId
      */
     private function setNextRepeatingShowDate($nextDate, $day, $showId)
     {

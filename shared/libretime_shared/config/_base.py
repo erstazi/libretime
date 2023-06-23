@@ -1,15 +1,15 @@
+import logging
 import sys
-from os import environ
+from itertools import zip_longest
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
-from loguru import logger
-
-# pylint: disable=no-name-in-module
 from pydantic import BaseModel, ValidationError
-from pydantic.fields import ModelField
-from pydantic.utils import deep_update
 from yaml import YAMLError, safe_load
+
+from ._env import EnvLoader
+
+logger = logging.getLogger(__name__)
 
 DEFAULT_ENV_PREFIX = "LIBRETIME"
 DEFAULT_CONFIG_FILEPATH = Path("/etc/libretime/config.yml")
@@ -26,63 +26,31 @@ class BaseConfig(BaseModel):
     :returns: configuration class
     """
 
+    # pylint: disable=no-self-argument
     def __init__(
-        self,
+        _self,
+        _filepath: Optional[Union[Path, str]] = None,
         *,
-        env_prefix: str = DEFAULT_ENV_PREFIX,
-        env_delimiter: str = "_",
-        filepath: Optional[Union[Path, str]] = None,
+        _env_prefix: str = DEFAULT_ENV_PREFIX,
+        _env_delimiter: str = "_",
+        **kwargs: Any,
     ) -> None:
-        if filepath is not None:
-            filepath = Path(filepath)
+        if _filepath is not None:
+            _filepath = Path(_filepath)
 
-        file_values = self._load_file_values(filepath)
-        env_values = self._load_env_values(env_prefix, env_delimiter)
+        env_loader = EnvLoader(_self.schema(), _env_prefix, _env_delimiter)
+
+        values = deep_merge_dict(
+            kwargs,
+            _self._load_file_values(_filepath),
+            env_loader.load(),
+        )
 
         try:
-            super().__init__(**deep_update(file_values, env_values))
+            super().__init__(**values)
         except ValidationError as error:
             logger.critical(error)
             sys.exit(1)
-
-    def _load_env_values(self, env_prefix: str, env_delimiter: str) -> Dict[str, Any]:
-        return self._get_fields_from_env(env_prefix, env_delimiter, self.__fields__)
-
-    def _get_fields_from_env(
-        self,
-        env_prefix: str,
-        env_delimiter: str,
-        fields: Dict[str, ModelField],
-    ) -> Dict[str, Any]:
-        result: Dict[str, Any] = {}
-
-        if env_prefix != "":
-            env_prefix += env_delimiter
-
-        for field in fields.values():
-            env_name = (env_prefix + field.name).upper()
-
-            if field.is_complex():
-                children: Union[List[Any], Dict[str, Any]] = []
-
-                if field.sub_fields:
-                    if env_name in environ:
-                        children = [v.strip() for v in environ[env_name].split(",")]
-
-                else:
-                    children = self._get_fields_from_env(
-                        env_name,
-                        env_delimiter,
-                        field.type_.__fields__,
-                    )
-
-                if len(children) != 0:
-                    result[field.name] = children
-            else:
-                if env_name in environ:
-                    result[field.name] = environ[env_name]
-
-        return result
 
     def _load_file_values(
         self,
@@ -93,12 +61,52 @@ class BaseConfig(BaseModel):
             return {}
 
         if not filepath.is_file():
-            logger.warning(f"provided config filepath '{filepath}' is not a file")
+            logger.warning("provided config filepath '%s' is not a file", filepath)
             return {}
 
         try:
             return safe_load(filepath.read_text(encoding="utf-8"))
-        except YAMLError as error:
-            logger.error(f"config file '{filepath}' is not a valid yaml file: {error}")
+        except YAMLError as exception:
+            logger.error(
+                "config file '%s' is not a valid yaml file: %s", filepath, exception
+            )
 
         return {}
+
+
+def deep_merge_dict(base: Dict[str, Any], *elements: Dict[str, Any]) -> Dict[str, Any]:
+    result = base.copy()
+
+    for element in elements:
+        for key, value in element.items():
+            if key in result:
+                if isinstance(result[key], dict) and isinstance(value, dict):
+                    result[key] = deep_merge_dict(result[key], value)
+                    continue
+
+                if isinstance(result[key], list) and isinstance(value, list):
+                    result[key] = deep_merge_list(result[key], value)
+                    continue
+
+            if value:
+                result[key] = value
+
+    return result
+
+
+def deep_merge_list(base: List[Any], *elements: List[Any]) -> List[Any]:
+    result: List[Any] = []
+    for element in elements:
+        for base_item, next_item in zip_longest(base, element):
+            if isinstance(base_item, list) and isinstance(next_item, list):
+                result.append(deep_merge_list(base_item, next_item))
+                continue
+
+            if isinstance(base_item, dict) and isinstance(next_item, dict):
+                result.append(deep_merge_dict(base_item, next_item))
+                continue
+
+            if next_item:
+                result.append(next_item)
+
+    return result

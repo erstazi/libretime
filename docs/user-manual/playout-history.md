@@ -30,7 +30,7 @@ The **History Templates** page on the History menu enables you to prepare report
 
 ![](./playout-history-new-hist-temp.png)
 
-Either of these actions opens a page in which you can name the new template, and add or remove elements from the list on the left. To add a new element from the list on the right, click the plus icon for the item you require. If the element you require is not listed, you can use the **Add New Field** box at the lower end of the right side column. Select _string_, _boolean_, _integer_, or _float_, depending on the type of data that you wish to log, and then click the **+ Add** button.
+Either of these actions opens a page in which you can name the new template, and add or remove elements from the list on the left. To add a new element from the list on the right, click the plus icon for the item you require. If the element you require isn't listed, you can use the **Add New Field** box at the lower end of the right side column. Select _string_, _boolean_, _integer_, or _float_, depending on the type of data that you wish to log, and then click the **+ Add** button.
 
 When the template is in the format you require, click the **Save** button, and **Set Default Template** if you wish. The new template will now be listed on the History Templates page. If you have set a new default template, any changes will be visible on the tabs of the Playout History page.
 
@@ -42,10 +42,10 @@ Instead, your public-facing web server can retrieve the schedule information fro
 
 There are two kinds of information that can be retrieved remotely from the LibreTime API without authentication; the metadata for the current show plus the following show (live-info), or the schedule for the current week and the week ahead (week-info). The week-info metadata includes show names, times, and individual show URLs on your public website. That way, the audience for your station can click through from the schedule information to find out more about a particular show, or download a previous show recording that you might have made available.
 
-If your LibreTime server was accessible at https://libretime.example.com the live show information could be retrieved by your web server using this URL:
+If your LibreTime server was accessible at https://libretime.example.org the live show information could be retrieved by your web server using this URL:
 
 ```
-https://libretime.example.com/api/live-info/?callback
+https://libretime.example.org/api/live-info/?callback
 ```
 
 The comma-separated text metadata returned to your web server might be something like this:
@@ -130,7 +130,7 @@ The comma-separated text metadata returned to your web server might be something
 The information for the current week's schedule could be retrieved using the URL:
 
 ```
-https://libretime.example.com/api/week-info/?callback
+https://libretime.example.org/api/week-info/?callback
 ```
 
 In this case, the metadata returned would be in a different format from the above example, something like the following. To keep the example short, this particular schedule export only contains four shows on a Monday. A full weekly schedule export would contain a great deal more text.
@@ -197,7 +197,7 @@ In this case, the metadata returned would be in a different format from the abov
 }
 ```
 
-If you see the message _You are not allowed to access this resource_ when attempting to display schedule information in your web browser, log in to the LibreTime administration interface, click _System_ in the main menu, then _Preferences_. Set **Allow Remote Websites To Access "Schedule" Info?** to **Enabled**, click the **Save** button, then refresh the browser window opened on the schedule export URL. If you do not wish to make schedule information available to the public, set this option to **Disabled** instead.
+If you see the message _You aren't allowed to access this resource_ when attempting to display schedule information in your web browser, log in to the LibreTime administration interface, click _System_ in the main menu, then _Preferences_. Set **Allow Remote Websites To Access "Schedule" Info?** to **Enabled**, click the **Save** button, then refresh the browser window opened on the schedule export URL. If you don't wish to make schedule information available to the public, set this option to **Disabled** instead.
 
 ### Caching schedule information
 
@@ -205,20 +205,20 @@ If the LibreTime server is behind a firewall, or you want to protect the LibreTi
 
 Your system administrator can set up schedule caching on a standard Apache and PHP enabled web server with the _curl_ program installed, using the following steps:
 
-1. Create a shell script on the schedule server (schedule.example.com) that polls the remote LibreTime server (libretime.example.com), and writes the metadata returned into a pair of local temporary files:
+1. Create a shell script on the schedule server (schedule.example.com) that polls the remote LibreTime server (libretime.example.org), and writes the metadata returned into a pair of local temporary files:
 
 ```
 sudo nano /usr/local/bin/libretime-schedule.sh
 ```
 
-The content of this file should be like the following script, replacing libretime.example.com with the name of your LibreTime server:
+The content of this file should be like the following script, replacing libretime.example.org with the name of your LibreTime server:
 
 ```bash
 #!/bin/sh
 
-curl -s "https://libretime.example.com/api/live-info/?callback=***" > /tmp/live-info
+curl -s "https://libretime.example.org/api/live-info/?callback=***" > /tmp/live-info
 
-curl -s "https://libretime.example.com/api/week-info/?callback=***" > /tmp/week-info
+curl -s "https://libretime.example.org/api/week-info/?callback=***" > /tmp/week-info
 ```
 
 2. Make the script executable:

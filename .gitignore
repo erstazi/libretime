@@ -1,11 +1,19 @@
 ## Custom .gitignore
 ################################################################################
 
+.docker/
 .DS_Store
 .idea/
 .vagrant/
 *~
 VERSION
+
+/dev/certs/*
+/dev/playout/*
+
+/website/
+
+!.gitkeep
 
 ## Github Python .gitignore
 ## See https://github.com/github/gitignore/blob/master/Python.gitignore

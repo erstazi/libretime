@@ -51,15 +51,13 @@ jobs:
       fail-fast: false
       matrix:
         release:
-          - buster
-          - bullseye
-          - bionic
           - focal
+          - bullseye
           - jammy
 
     container:
       image: ghcr.io/libretime/libretime-dev:${{ matrix.release }}
-      options: --user 1001
+      options: --user 1001:1001
     defaults:
       run:
         shell: bash
@@ -75,7 +73,7 @@ jobs:
             ${{ matrix.release }}-pip-${{ inputs.context }}
 
       - name: Test
-        run: make test
+        run: make test-coverage
         working-directory: ${{ inputs.context }}
 
       - name: Report coverage

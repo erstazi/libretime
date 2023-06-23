@@ -16,15 +16,15 @@ from ..fixtures import FILE_INVALID_DRM, FILES
     map(lambda i: str(i.path), FILES),
 )
 def test_analyze_playability(filepath):
-    analyze_playability(filepath, dict())
+    analyze_playability(filepath, {})
 
 
 def test_analyze_playability_missing_liquidsoap():
     with patch(
-        "libretime_analyzer.pipeline.analyze_playability.LIQUIDSOAP_EXECUTABLE",
+        "libretime_analyzer.pipeline._liquidsoap.LIQUIDSOAP",
         "foobar",
     ):
-        analyze_playability(str(FILES[0].path), dict())
+        analyze_playability(str(FILES[0].path), {})
 
 
 def test_analyze_playability_invalid_filepath():
@@ -33,8 +33,8 @@ def test_analyze_playability_invalid_filepath():
 
 
 def test_analyze_playability_invalid_wma():
-    # Liquisoap does not fail with wma files on buster, bullseye, focal, jammy
-    if distro.codename() in ("buster", "bullseye", "focal", "jammy"):
+    # Liquisoap does not fail with wma files on focal, bullseye, jammy
+    if distro.codename() in ("focal", "bullseye", "jammy"):
         return
 
     with pytest.raises(UnplayableFileError):

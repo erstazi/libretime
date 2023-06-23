@@ -1,21 +1,29 @@
 name: Playout
 
 on:
+  workflow_dispatch:
   push:
-    branches: [main]
+    branches: [main, stable]
     paths:
-      - .github/workflows/**
+      - .github/workflows/_python.yml
+      - .github/workflows/playout.yml
       - playout/**
       - api-client/**
       - shared/**
+      - tools/python*
 
   pull_request:
-    branches: [main]
+    branches: [main, stable]
     paths:
-      - .github/workflows/**
+      - .github/workflows/_python.yml
+      - .github/workflows/playout.yml
       - playout/**
       - api-client/**
       - shared/**
+      - tools/python*
+
+  schedule:
+    - cron: 0 1 * * 1
 
 jobs:
   python:

@@ -1,134 +1,138 @@
 import hashlib
+import logging
 import os
-import stat
 import time
-import traceback
-from queue import Empty
+from queue import Empty, Queue
 from threading import Thread
+from typing import Optional
 
+import requests
 from libretime_api_client.v2 import ApiClient
-from loguru import logger
-from requests.exceptions import ConnectionError, HTTPError, Timeout
+
+from .events import FileEvent, FileEvents
+
+logger = logging.getLogger(__name__)
 
 
 class PypoFile(Thread):
-    def __init__(self, schedule_queue, api_client: ApiClient):
+    name = "file"
+    daemon = True
+
+    file_events_queue: "Queue[FileEvents]"
+    file_events: FileEvents
+
+    def __init__(
+        self,
+        file_queue: "Queue[FileEvents]",
+        api_client: ApiClient,
+    ):
         Thread.__init__(self)
-        self.media_queue = schedule_queue
-        self.media = None
+        self.file_events_queue = file_queue
+        self.file_events = {}
         self.api_client = api_client
 
-    def copy_file(self, media_item):
+    def copy_file(self, file_event: FileEvent):
         """
-        Copy media_item from local library directory to local cache directory.
+        Copy file_event from local library directory to local cache directory.
         """
-        file_id = media_item["id"]
-        dst = media_item["dst"]
+        if file_event.local_filepath.is_file():
+            logger.debug(
+                "found file %s in cache %s",
+                file_event.id,
+                file_event.local_filepath,
+            )
+            file_event.file_ready = True
+            return
 
-        dst_exists = True
+        logger.info(
+            "copying file %s to cache %s",
+            file_event.id,
+            file_event.local_filepath,
+        )
         try:
-            dst_size = os.path.getsize(dst)
-            if dst_size == 0:
-                dst_exists = False
-        except Exception as e:
-            dst_exists = False
+            with file_event.local_filepath.open("wb") as file_fd:
+                try:
+                    response = self.api_client.download_file(file_event.id, stream=True)
+                    for chunk in response.iter_content(chunk_size=2048):
+                        file_fd.write(chunk)
 
-        do_copy = False
-        if dst_exists:
-            # TODO: Check if the locally cached variant of the file is sane.
-            # This used to be a filesize check that didn't end up working.
-            # Once we have watched folders updated files from them might
-            # become an issue here... This needs proper cache management.
-            # https://github.com/libretime/libretime/issues/756#issuecomment-477853018
-            # https://github.com/libretime/libretime/pull/845
-            logger.debug(f"found file {file_id} in cache {dst}, skipping copy...")
-        else:
-            do_copy = True
+                except requests.exceptions.HTTPError as exception:
+                    raise RuntimeError(
+                        f"could not download file {file_event.id}"
+                    ) from exception
 
-        media_item["file_ready"] = not do_copy
+            # make file world readable and owner writable
+            file_event.local_filepath.chmod(0o644)
 
-        if do_copy:
-            logger.info(f"copying file {file_id} to cache {dst}")
-            try:
-                with open(dst, "wb") as handle:
-                    logger.info(media_item)
-                    try:
-                        response = self.api_client.download_file(file_id)
-                        for chunk in response.iter_content(chunk_size=1024):
-                            handle.write(chunk)
+            if file_event.filesize == 0:
+                file_event.filesize = self.report_file_size_and_md5_to_api(
+                    str(file_event.local_filepath),
+                    file_event.id,
+                )
 
-                    except HTTPError as exception:
-                        raise Exception(
-                            f"could not download file {media_item['id']}"
-                        ) from exception
+            file_event.file_ready = True
+        except Exception as exception:  # pylint: disable=broad-exception-caught
+            logger.exception(
+                "could not copy file %s to %s: %s",
+                file_event.id,
+                file_event.local_filepath,
+                exception,
+            )
 
-                # make file world readable and owner writable
-                os.chmod(dst, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
-
-                if media_item["filesize"] == 0:
-                    file_size = self.report_file_size_and_md5_to_api(
-                        dst, media_item["id"]
-                    )
-                    media_item["filesize"] = file_size
-
-                media_item["file_ready"] = True
-            except Exception as e:
-                logger.error(f"could not copy file {file_id} to {dst}")
-                logger.error(e)
-
-    def report_file_size_and_md5_to_api(self, file_path, file_id):
+    def report_file_size_and_md5_to_api(self, file_path: str, file_id: int) -> int:
         try:
             file_size = os.path.getsize(file_path)
 
-            with open(file_path, "rb") as fh:
-                m = hashlib.md5()
+            with open(file_path, "rb") as file_fd:
+                hasher = hashlib.md5(usedforsecurity=False)
                 while True:
-                    data = fh.read(8192)
+                    data = file_fd.read(8192)
                     if not data:
                         break
-                    m.update(data)
-                md5_hash = m.hexdigest()
-        except OSError as e:
+                    hasher.update(data)
+                md5_hash = hasher.hexdigest()
+        except OSError as exception:
             file_size = 0
-            logger.error(
-                "Error getting file size and md5 hash for file id %s" % file_id
+            logger.exception(
+                "Error getting file size and md5 hash for file id %s: %s",
+                file_id,
+                exception,
             )
-            logger.error(e)
 
         # Make PUT request to LibreTime to update the file size and hash
-        error_msg = (
-            "Could not update media file %s with file size and md5 hash:" % file_id
-        )
+        error_msg = f"Could not update media file {file_id} with file size and md5 hash"
         try:
             self.api_client.update_file(
                 file_id,
                 json={"filesize": file_size, "md5": md5_hash},
             )
-        except (ConnectionError, Timeout):
-            logger.error(error_msg)
-        except Exception as e:
-            logger.error(error_msg)
-            logger.error(e)
+        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+            logger.exception(error_msg)
+        except Exception as exception:  # pylint: disable=broad-exception-caught
+            logger.exception("%s: %s", error_msg, exception)
 
         return file_size
 
-    def get_highest_priority_media_item(self, schedule):
+    def get_highest_priority_file_event(
+        self,
+        file_events: FileEvents,
+    ) -> Optional[FileEvent]:
         """
-        Get highest priority media_item in the queue. Currently the highest
+        Get highest priority file event in the queue. Currently the highest
         priority is decided by how close the start time is to "now".
         """
-        if schedule is None or len(schedule) == 0:
+        if file_events is None or len(file_events) == 0:
             return None
 
-        sorted_keys = sorted(schedule.keys())
+        sorted_keys = sorted(file_events.keys())
 
         if len(sorted_keys) == 0:
             return None
 
         highest_priority = sorted_keys[0]
-        media_item = schedule[highest_priority]
+        file_event = file_events[highest_priority]
 
-        logger.debug("Highest priority item: %s" % highest_priority)
+        logger.debug("Highest priority item: %s", highest_priority)
 
         # Remove this media_item from the dictionary. On the next iteration
         # (from the main function) we won't consider it for prioritization
@@ -136,37 +140,33 @@ class PypoFile(Thread):
         # it is very possible we will have to deal with the same media_items
         # again. In this situation, the worst possible case is that we try to
         # copy the file again and realize we already have it (thus aborting the copy).
-        del schedule[highest_priority]
+        del file_events[highest_priority]
 
-        return media_item
+        return file_event
 
     def main(self):
         while True:
             try:
-                if self.media is None or len(self.media) == 0:
+                if self.file_events is None or len(self.file_events) == 0:
                     # We have no schedule, so we have nothing else to do. Let's
                     # do a blocked wait on the queue
-                    self.media = self.media_queue.get(block=True)
+                    self.file_events = self.file_events_queue.get(block=True)
                 else:
                     # We have a schedule we need to process, but we also want
                     # to check if a newer schedule is available. In this case
                     # do a non-blocking queue.get and in either case (we get something
                     # or we don't), get back to work on preparing getting files.
                     try:
-                        self.media = self.media_queue.get_nowait()
-                    except Empty as e:
+                        self.file_events = self.file_events_queue.get_nowait()
+                    except Empty:
                         pass
 
-                media_item = self.get_highest_priority_media_item(self.media)
-                if media_item is not None:
-                    self.copy_file(media_item)
-            except Exception as e:
-                import traceback
-
-                top = traceback.format_exc()
-                logger.error(str(e))
-                logger.error(top)
-                raise
+                file_event = self.get_highest_priority_file_event(self.file_events)
+                if file_event is not None:
+                    self.copy_file(file_event)
+            except Exception as exception:  # pylint: disable=broad-exception-caught
+                logger.exception(exception)
+                raise exception
 
     def run(self):
         """
@@ -174,8 +174,8 @@ class PypoFile(Thread):
         """
         try:
             self.main()
-        except Exception as e:
-            top = traceback.format_exc()
-            logger.error("PypoFile Exception: %s", top)
+        except Exception as exception:  # pylint: disable=broad-exception-caught
+            logger.exception(exception)
             time.sleep(5)
+
         logger.info("PypoFile thread exiting")

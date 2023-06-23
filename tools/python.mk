@@ -1,8 +1,6 @@
-.ONESHELL:
-
-.DEFAULT_GOAL = install
-SHELL = bash
-CPU_CORES = $(shell nproc)
+.DEFAULT_GOAL := install
+SHELL := bash
+CPU_CORES := $(shell N=$$(nproc); echo $$(( $$N > 4 ? 4 : $$N )))
 
 # PIP_INSTALL = --editable .
 # PYLINT_ARG =
@@ -10,67 +8,72 @@ CPU_CORES = $(shell nproc)
 # BANDIT_ARG =
 # PYTEST_ARG =
 
-SHARED_DEV_REQUIREMENTS = \
-	bandit \
-	black \
-	flake8 \
-	isort \
-	mypy \
-	pylint \
-	pytest \
-	pytest-cov \
-	pytest-xdist
-
+# SETUPTOOLS_ENABLE_FEATURES=legacy-editable is required to work
+# around https://github.com/PyCQA/pylint/issues/7306
 VENV = .venv
+install: $(VENV)
 $(VENV):
 	python3 -m venv $(VENV)
-	source $(VENV)/bin/activate
-	$(MAKE) install
+	$(VENV)/bin/pip install --upgrade pip setuptools wheel
 
-install: $(VENV)
-	source $(VENV)/bin/activate
-	pip install --upgrade pip setuptools wheel
-	pip install $(SHARED_DEV_REQUIREMENTS)
-	[[ -z "$(PIP_INSTALL)" ]] || pip install $(PIP_INSTALL)
+	SETUPTOOLS_ENABLE_FEATURES=legacy-editable \
+	$(VENV)/bin/pip install \
+		--requirement ../tools/python-requirements.txt \
+		$(PIP_INSTALL)
 
 .PHONY: .format
 .format: $(VENV)
-	source $(VENV)/bin/activate
-	black .
-	isort . --combine-as --profile black
+	$(VENV)/bin/black .
+	$(VENV)/bin/isort .
 
 .PHONY: .format-check
 .format-check: $(VENV)
-	source $(VENV)/bin/activate
-	black . --check
-	isort . --combine-as --profile black --check
+	$(VENV)/bin/black . --check
+	$(VENV)/bin/isort . --check
 
 .PHONY: .pylint
 .pylint: $(VENV)
-	source $(VENV)/bin/activate
-	pylint --jobs=$(CPU_CORES) --output-format=colorized --recursive=true $(PYLINT_ARG)
+	$(VENV)/bin/pylint --jobs=$(CPU_CORES) --output-format=colorized --recursive=true $(PYLINT_ARG)
 
 .PHONY: .mypy
 .mypy: $(VENV)
-	source $(VENV)/bin/activate
-	mypy $(MYPY_ARG)
+	$(VENV)/bin/mypy $(MYPY_ARG)
 
 .PHONY: .bandit
 .bandit: $(VENV)
-	source $(VENV)/bin/activate
-	bandit -r $(BANDIT_ARG)
+	$(VENV)/bin/bandit -r $(BANDIT_ARG)
 
 .PHONY: .pytest
 .pytest: $(VENV)
-	source $(VENV)/bin/activate
-	pytest -v \
+	$(VENV)/bin/pytest \
 		--numprocesses=$(CPU_CORES) \
-		--color=yes \
+		--color=yes
+
+.PHONY: .coverage
+.coverage: $(VENV)
+	$(VENV)/bin/pytest \
+		--numprocesses=$(CPU_CORES) \
+		--cov \
 		--cov-config=pyproject.toml \
 		--cov-report=term \
-		--cov-report=xml:./coverage.xml \
-		$(PYTEST_ARG)
+		--cov-report=xml
 
 .PHONY: .clean
 .clean:
 	rm -Rf $(VENV)
+
+DISTRO ?= bullseye
+DOCKER_RUN = docker run -it --rm \
+			--user $$(id -u):$$(id -g) \
+			--env HOME=/src/.docker/$(DISTRO) \
+			--volume $$(pwd)/..:/src \
+			--workdir /src/$(APP) \
+			ghcr.io/libretime/libretime-dev:$(DISTRO)
+
+docker-dev:
+	$(MAKE) clean
+	$(DOCKER_RUN) bash
+
+docker-test:
+	$(MAKE) clean
+	$(DOCKER_RUN) make test

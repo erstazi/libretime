@@ -1,10 +1,12 @@
+import logging
 from datetime import timedelta
 from pathlib import Path
 from typing import Any, Dict
 
 import mutagen
 from libretime_shared.files import compute_md5
-from loguru import logger
+
+logger = logging.getLogger(__name__)
 
 
 def analyze_metadata(filepath_: str, metadata: Dict[str, Any]):
@@ -24,7 +26,7 @@ def analyze_metadata(filepath_: str, metadata: Dict[str, Any]):
     # Get audio file metadata
     extracted = mutagen.File(filepath, easy=True)
     if extracted is None:
-        logger.warning(f"no metadata were extracted for {filepath}")
+        logger.warning("no metadata were extracted for %s", filepath)
         return metadata
 
     metadata["mime"] = extracted.mime[0]
