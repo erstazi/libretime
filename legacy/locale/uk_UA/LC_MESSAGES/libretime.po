@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LibreTime\n"
 "Report-Msgid-Bugs-To: https://github.com/libretime/libretime/issues\n"
-"POT-Creation-Date: 2023-05-29 02:11+0000\n"
-"PO-Revision-Date: 2023-02-25 18:39+0000\n"
+"POT-Creation-Date: 2023-08-21 01:45+0000\n"
+"PO-Revision-Date: 2023-07-11 20:49+0000\n"
 "Last-Translator: Ihor Hordiichuk <igor_ck@outlook.com>\n"
 "Language-Team: Ukrainian <https://hosted.weblate.org/projects/libretime/legacy/uk/>\n"
 "Language: uk_UA\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.16-dev\n"
+"X-Generator: Weblate 5.0-dev\n"
 
 #: application/common/DateHelper.php:216
 #, php-format
@@ -2824,11 +2824,11 @@ msgstr "Налаштування успішно оновлено!"
 msgid "Untitled Webstream"
 msgstr "Веб-потік без назви"
 
-#: application/controllers/WebstreamController.php:156
+#: application/controllers/WebstreamController.php:158
 msgid "Webstream saved."
 msgstr "Веб-потік збережено."
 
-#: application/controllers/WebstreamController.php:164
+#: application/controllers/WebstreamController.php:166
 msgid "Invalid form values."
 msgstr "Недійсні значення форми."
 
@@ -3428,7 +3428,7 @@ msgstr "Зараз грає"
 
 #: application/forms/Player.php:25
 msgid "Select Stream:"
-msgstr "Виберіть потік:"
+msgstr "Виберіть стрим:"
 
 #: application/forms/Player.php:28
 msgid "Auto detect the most appropriate stream to use."
@@ -3436,7 +3436,7 @@ msgstr "Автоматичне визначення потоку, який на�
 
 #: application/forms/Player.php:29
 msgid "Select a stream:"
-msgstr "Виберіть потік:"
+msgstr "Виберіть стрим:"
 
 #: application/forms/Player.php:41
 msgid " - Mobile friendly"
@@ -3924,7 +3924,7 @@ msgstr "Оберіть Країну"
 
 #: application/models/Schedule.php:211
 msgid "livestream"
-msgstr "Наживо"
+msgstr "наживо"
 
 #: application/models/Scheduler.php:79
 msgid "Cannot move items out of linked shows"

@@ -24,7 +24,7 @@ setup(
         ]
     },
     install_requires=[
-        "django-cors-headers>=3.14.0,<4.1",
+        "django-cors-headers>=3.14.0,<4.3",
         "django-filter>=2.4.0,<23.3",
         "django>=4.2.0,<4.3",
         "djangorestframework>=3.14.0,<3.15",
@@ -33,22 +33,22 @@ setup(
     ],
     extras_require={
         "prod": [
-            "gunicorn>=20.1.0,<20.2",
+            "gunicorn>=20.1.0,<21.3",
             "psycopg[c]>=3.1.8,<3.2",
-            "uvicorn[standard]>=0.17.6,<0.23.0",
+            "uvicorn[standard]>=0.17.6,<0.24.0",
         ],
         "dev": [
-            "django-coverage-plugin>=3.0.0,<3.1",
+            "django-coverage-plugin>=3.0.0,<3.2",
             "django-stubs>=1.14.0,<4.3",
             "djangorestframework-stubs>=1.8.0,<3.15",
-            "model_bakery>=1.10.1,<1.13",
+            "model_bakery>=1.10.1,<1.16",
             "psycopg[binary]>=3.1.8,<3.2",
             "pylint-django>=2.5.3,<2.6",
             "pytest-django>=4.5.2,<4.6",
             "requests-mock>=1.10.0,<1.12",
         ],
         "sentry": [
-            "sentry-sdk[django]>=1.15.0,<1.26",
+            "sentry-sdk[django]>=1.15.0,<1.30",
         ],
     },
 )
