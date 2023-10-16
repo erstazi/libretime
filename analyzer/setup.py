@@ -20,18 +20,18 @@ setup(
     },
     python_requires=">=3.8",
     install_requires=[
-        "mutagen>=1.45.1,<1.47",
+        "mutagen>=1.45.1,<1.48",
         "pika>=1.0.0,<1.4",
         "requests>=2.31.0,<2.32",
         "typing_extensions",
     ],
     extras_require={
         "dev": [
-            "distro>=1.8.0,<1.9",
-            "types-requests>=2.31.0,<2.32",
+            "distro>=1.8.0,<2",
+            "types-requests>=2.31.0,<3",
         ],
         "sentry": [
-            "sentry-sdk>=1.15.0,<1.30",
+            "sentry-sdk>=1.15.0,<2",
         ],
     },
     zip_safe=False,
