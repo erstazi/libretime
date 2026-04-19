@@ -1,8 +1,10 @@
 from setuptools import find_packages, setup
 
+version = "4.5.0"  # x-release-please-version
+
 setup(
     name="libretime-api-client",
-    version="3.1.0",
+    version=version,
     description="LibreTime API Client",
     author="LibreTime Contributors",
     url="https://github.com/libretime/libretime",
@@ -16,8 +18,8 @@ setup(
     package_data={"": ["py.typed"]},
     python_requires=">=3.8",
     install_requires=[
-        "python-dateutil>=2.8.1,<2.9",
-        "requests>=2.31.0,<2.32",
+        "python-dateutil>=2.8.1,<2.10",
+        "requests>=2.32.2,<2.33",
     ],
     extras_require={
         "dev": [

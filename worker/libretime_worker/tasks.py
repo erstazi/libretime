@@ -9,7 +9,9 @@ from urllib.parse import urlsplit
 import mutagen
 import requests
 from celery import Celery, signals
+from celery.schedules import crontab
 from celery.utils.log import get_task_logger
+from libretime_api_client.v1 import ApiClient as LegacyClient
 from mutagen import MutagenError
 from requests import RequestException, Response
 
@@ -18,6 +20,11 @@ from .config import config
 
 worker = Celery()
 logger = get_task_logger(__name__)
+
+legacy_client = LegacyClient(
+    base_url=config.general.public_url,
+    api_key=config.general.api_key,
+)
 
 
 @signals.worker_init.connect
@@ -35,6 +42,28 @@ def init_sentry(**_kwargs):
                 CeleryIntegration(),
             ],
         )
+
+
+worker.conf.beat_schedule = {
+    "legacy-trigger-task-manager": {
+        "task": "libretime_worker.tasks.legacy_trigger_task_manager",
+        "schedule": crontab(minute="*/5"),
+    },
+}
+
+
+@worker.task()
+def legacy_trigger_task_manager():
+    """
+    Trigger the legacy task manager to perform background tasks.
+    """
+    legacy_client.trigger_task_manager()
+
+
+class PodcastDownloadException(Exception):
+    """
+    An error occurred during the podcast download task.
+    """
 
 
 @worker.task(name="podcast-download", acks_late=True)
@@ -59,11 +88,15 @@ def podcast_download(
         Status of the podcast download as JSON string.
     """
     result: Dict[str, Any] = {"episodeid": episode_id}
+    tmp_file = None
 
     try:
         # Download podcast episode file
         try:
-            with requests.get(episode_url, stream=True, timeout=30) as resp:
+            headers = {"User-Agent": f"LibreTime/{VERSION}"}
+            with requests.get(
+                episode_url, headers=headers, stream=True, timeout=30
+            ) as resp:
                 resp.raise_for_status()
 
                 filename = extract_filename(resp)
@@ -74,15 +107,16 @@ def podcast_download(
                         tmp_file.write(chunk)
 
         except RequestException as exception:
-            logger.exception("could not download podcast episode %s", episode_id)
-            raise exception
+            raise PodcastDownloadException(
+                f"could not download podcast episode {episode_id}: {exception}"
+            ) from exception
 
         # Save metadata to podcast episode file
         try:
             metadata = mutagen.File(tmp_file.name, easy=True)
             if metadata is None:
-                raise MutagenError(
-                    f"could not determine episode {episode_id} file type"
+                raise PodcastDownloadException(
+                    f"could not determine podcast episode {episode_id} file type"
                 )
 
             if override_album:
@@ -98,9 +132,10 @@ def podcast_download(
             metadata.save()
             logger.debug("saved metadata %s", metadata)
 
-        except MutagenError as exception:
-            logger.exception("could not save episode %s metadata", episode_id)
-            raise exception
+        except (MutagenError, TypeError) as exception:
+            raise PodcastDownloadException(
+                f"could not save podcast episode {episode_id} metadata: {exception}"
+            ) from exception
 
         # Upload podcast episode file
         try:
@@ -117,10 +152,12 @@ def podcast_download(
                 result["status"] = 1
 
         except RequestException as exception:
-            logger.exception("could not upload episode %s", episode_id)
-            raise exception
+            raise PodcastDownloadException(
+                f"could not upload podcast episode {episode_id}: {exception}"
+            ) from exception
 
-    except (RequestException, MutagenError) as exception:
+    except PodcastDownloadException as exception:
+        logger.exception(exception)
         result["status"] = 0
         result["error"] = str(exception)
 

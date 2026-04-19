@@ -49,7 +49,9 @@ class PreferenceController extends Zend_Controller_Action
                 Application_Model_Preference::SetAllow3rdPartyApi($values['thirdPartyApi']);
                 Application_Model_Preference::SetDefaultLocale($values['locale']);
                 Application_Model_Preference::SetWeekStartDay($values['weekStartDay']);
+                Application_Model_Preference::setScheduleTrimOverbooked($values['scheduleTrimOverbooked']);
                 Application_Model_Preference::setRadioPageDisplayLoginButton($values['radioPageLoginButton']);
+                Application_Model_Preference::setRadioPageDisabled($values['radioPageDisabled']);
                 Application_Model_Preference::SetFeaturePreviewMode($values['featurePreviewMode']);
 
                 $logoUploadElement = $form->getSubForm('preferences_general')->getElement('stationLogo');
@@ -69,7 +71,7 @@ class PreferenceController extends Zend_Controller_Action
                 $this->view->statusMsg = "<div class='success'>" . _('Preferences updated.') . '</div>';
                 $form = new Application_Form_Preferences();
                 $this->view->form = $form;
-                // $this->_helper->json->sendJson(array("valid"=>"true", "html"=>$this->view->render('preference/index.phtml')));
+            // $this->_helper->json->sendJson(array("valid"=>"true", "html"=>$this->view->render('preference/index.phtml')));
             } else {
                 $this->view->form = $form;
                 // $this->_helper->json->sendJson(array("valid"=>"false", "html"=>$this->view->render('preference/index.phtml')));
@@ -95,8 +97,9 @@ class PreferenceController extends Zend_Controller_Action
         // Append sharing token (download key) to Station podcast URL
         $stationPodcast = PodcastQuery::create()->findOneByDbId(Application_Model_Preference::getStationPodcastId());
         $key = Application_Model_Preference::getStationPodcastDownloadKey();
-        $url = Config::getPublicUrl() .
-            (((int) $values->stationPodcastPrivacy) ? "feeds/station-rss?sharing_token={$key}" : 'feeds/station-rss');
+        $url = Config::getPublicUrl() . (((int) $values->stationPodcastPrivacy)
+            ? "feeds/station-rss?sharing_token={$key}"
+            : 'feeds/station-rss');
         $stationPodcast->setDbUrl($url)->save();
         Application_Model_Preference::setStationPodcastPrivacy($values->stationPodcastPrivacy);
 
@@ -156,6 +159,11 @@ class PreferenceController extends Zend_Controller_Action
         $setting = Application_Model_StreamSetting::getStreamSetting();
         $form->setSetting($setting);
 
+        if ($num_of_stream > MAX_NUM_STREAMS) {
+            Logging::error('Your streams count (' . $num_of_stream . ') exceed the maximum, some of them will not be displayed');
+            $num_of_stream = MAX_NUM_STREAMS;
+        }
+
         for ($i = 1; $i <= $num_of_stream; ++$i) {
             $subform = new Application_Form_StreamSettingSubForm();
             $subform->setPrefix($i);
@@ -190,8 +198,10 @@ class PreferenceController extends Zend_Controller_Action
                 if ($changeRGenabled || $changeRGmodifier) {
                     Application_Model_Preference::SetEnableReplayGain($values['enableReplayGain']);
                     Application_Model_Preference::setReplayGainModifier($values['replayGainModifier']);
-                    $md = ['schedule' => Application_Model_Schedule::getSchedule()];
-                    Application_Model_RabbitMq::SendMessageToPypo('update_schedule', $md);
+                    // The side effects of this function are still required to fill the schedule, we
+                    // don't use the returned schedule.
+                    Application_Model_Schedule::getSchedule();
+                    Application_Model_RabbitMq::SendMessageToPypo('update_schedule', []);
                     // Application_Model_RabbitMq::PushSchedule();
                 }
 

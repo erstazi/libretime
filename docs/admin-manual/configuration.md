@@ -42,8 +42,8 @@ general:
   # The internal API authentication key.
   # > this field is REQUIRED
   api_key: "some_random_generated_secret!"
-  # The Django API secret key. If not defined, the value of [general.api_key] will be
-  # used as fallback.
+  # The Django API secret key.
+  # > this field is REQUIRED
   secret_key: "some_random_generated_secret!"
 
   # List of origins allowed to access resources on the server,
@@ -72,16 +72,37 @@ The `storage` section configure the project storage.
 
 ```yml
 storage:
-  # Path of the storage directory.
+  # Path of the storage directory. Make sure to update the Nginx configuration after
+  # updating the storage path.
   # > default is /srv/libretime
   path: "/srv/libretime"
 ```
+
+:::warning
+
+After editing the `storage.path` field, make sure to update the LibreTime Nginx configuration file with the new value.
+
+In the example below, we are changing the path from `/srv/libretime` to `/mnt/data`:
+
+```patch
+  ...
+
+  # Internal path for serving media files from the API.
+  location /api/_media {
+    internal;
+    # This alias path must match the 'storage.path' configuration field.
+-   alias /srv/libretime;
++   alias /mnt/data;
+  }
+```
+
+:::
 
 ## Database
 
 The `database` section configure the PostgreSQL connection.
 
-:::caution
+:::warning
 
 Before editing this section be sure to update the PostgreSQL server with the desired values.
 
@@ -118,7 +139,7 @@ database:
 
 The `rabbitmq` section configure the RabbitMQ connection.
 
-:::caution
+:::warning
 
 Before editing this section be sure to update the RabbitMQ server with the desired values.
 
@@ -214,7 +235,7 @@ email:
 
 The `playout` section configure anything related to the playout service.
 
-:::caution
+:::warning
 
 When changing the `playout.liquidsoap_*` entries, make sure to also configure the `liquidsoap.server_listen_*` entries accordingly.
 
@@ -251,7 +272,7 @@ playout:
 
 The `liquidsoap` section configure anything related to the liquidsoap service.
 
-:::caution
+:::warning
 
 When changing the `liquidsoap.server_listen_*` entries, make sure to also configure the `playout.liquidsoap_*` entries accordingly.
 
@@ -378,7 +399,7 @@ stream:
 
 The `stream.outputs.icecast` section configures the icecast output streams.
 
-:::warning
+:::danger
 
 If you configure more than 2 icecast stream on a **single icecast server**, make sure to raise the icecast sources limit:
 
@@ -526,11 +547,15 @@ stream:
     system:
       - # Whether the output is enabled.
         # > default is false
-        enabled: false
+        enabled: true
         # System output kind.
         # > must be one of (alsa, ao, oss, portaudio, pulseaudio)
-        # > default is alsa
-        kind: "alsa"
+        # > default is pulseaudio
+        kind: "pulseaudio"
+
+        # System output device.
+        # > only available for kind=(alsa, pulseaudio)
+        device: "alsa_output.pci-0000_00_1f.3-platform-skl_hda_dsp_generic.HiFi__hw_sofhdadsp__sink"
 ```
 
 ## LDAP

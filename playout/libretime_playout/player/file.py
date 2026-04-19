@@ -50,16 +50,18 @@ class PypoFile(Thread):
             file_event.local_filepath,
         )
         try:
-            with file_event.local_filepath.open("wb") as file_fd:
-                try:
+            try:
+                with file_event.local_filepath.open("wb") as file_fd:
                     response = self.api_client.download_file(file_event.id, stream=True)
-                    for chunk in response.iter_content(chunk_size=2048):
+                    for chunk in response.iter_content(chunk_size=8192):
                         file_fd.write(chunk)
 
-                except requests.exceptions.HTTPError as exception:
-                    raise RuntimeError(
-                        f"could not download file {file_event.id}"
-                    ) from exception
+            except requests.exceptions.HTTPError as exception:
+                file_event.local_filepath.unlink(missing_ok=True)
+
+                raise RuntimeError(
+                    f"could not download file {file_event.id}"
+                ) from exception
 
             # make file world readable and owner writable
             file_event.local_filepath.chmod(0o644)
@@ -84,7 +86,7 @@ class PypoFile(Thread):
             file_size = os.path.getsize(file_path)
 
             with open(file_path, "rb") as file_fd:
-                hasher = hashlib.md5(usedforsecurity=False)
+                hasher = hashlib.new("md5", usedforsecurity=False)
                 while True:
                     data = file_fd.read(8192)
                     if not data:

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "99a8bfaf51b5e36bb702f789ce200fea",
+    "content-hash": "3664fa9473d4b70e3c383b59ca794c82",
     "packages": [
         {
             "name": "adbario/php-dot-notation",
@@ -62,24 +62,24 @@
         },
         {
             "name": "composer/semver",
-            "version": "3.4.0",
+            "version": "3.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/semver.git",
-                "reference": "35e8d0af4486141bc745f23a29cc2091eb624a32"
+                "reference": "4313d26ada5e0c4edfbd1dc481a92ff7bff91f12"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/semver/zipball/35e8d0af4486141bc745f23a29cc2091eb624a32",
-                "reference": "35e8d0af4486141bc745f23a29cc2091eb624a32",
+                "url": "https://api.github.com/repos/composer/semver/zipball/4313d26ada5e0c4edfbd1dc481a92ff7bff91f12",
+                "reference": "4313d26ada5e0c4edfbd1dc481a92ff7bff91f12",
                 "shasum": ""
             },
             "require": {
                 "php": "^5.3.2 || ^7.0 || ^8.0"
             },
             "require-dev": {
-                "phpstan/phpstan": "^1.4",
-                "symfony/phpunit-bridge": "^4.2 || ^5"
+                "phpstan/phpstan": "^1.11",
+                "symfony/phpunit-bridge": "^3 || ^7"
             },
             "type": "library",
             "extra": {
@@ -123,7 +123,7 @@
             "support": {
                 "irc": "ircs://irc.libera.chat:6697/composer",
                 "issues": "https://github.com/composer/semver/issues",
-                "source": "https://github.com/composer/semver/tree/3.4.0"
+                "source": "https://github.com/composer/semver/tree/3.4.3"
             },
             "funding": [
                 {
@@ -139,20 +139,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-08-31T09:50:34+00:00"
+            "time": "2024-09-19T14:15:21+00:00"
         },
         {
             "name": "james-heinrich/getid3",
-            "version": "v1.9.22",
+            "version": "v1.9.23",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JamesHeinrich/getID3.git",
-                "reference": "45f20faa0f0a24489740392c5b512ddcc36deccd"
+                "reference": "06c7482532ff2b3f9111b011d880ca6699c8542b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JamesHeinrich/getID3/zipball/45f20faa0f0a24489740392c5b512ddcc36deccd",
-                "reference": "45f20faa0f0a24489740392c5b512ddcc36deccd",
+                "url": "https://api.github.com/repos/JamesHeinrich/getID3/zipball/06c7482532ff2b3f9111b011d880ca6699c8542b",
+                "reference": "06c7482532ff2b3f9111b011d880ca6699c8542b",
                 "shasum": ""
             },
             "require": {
@@ -204,9 +204,9 @@
             ],
             "support": {
                 "issues": "https://github.com/JamesHeinrich/getID3/issues",
-                "source": "https://github.com/JamesHeinrich/getID3/tree/v1.9.22"
+                "source": "https://github.com/JamesHeinrich/getID3/tree/v1.9.23"
             },
-            "time": "2022-09-29T16:41:13+00:00"
+            "time": "2023-10-19T13:18:49+00:00"
         },
         {
             "name": "league/uri",
@@ -531,16 +531,16 @@
         },
         {
             "name": "paragonie/constant_time_encoding",
-            "version": "v2.6.3",
+            "version": "v2.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paragonie/constant_time_encoding.git",
-                "reference": "58c3f47f650c94ec05a151692652a868995d2938"
+                "reference": "52a0d99e69f56b9ec27ace92ba56897fe6993105"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paragonie/constant_time_encoding/zipball/58c3f47f650c94ec05a151692652a868995d2938",
-                "reference": "58c3f47f650c94ec05a151692652a868995d2938",
+                "url": "https://api.github.com/repos/paragonie/constant_time_encoding/zipball/52a0d99e69f56b9ec27ace92ba56897fe6993105",
+                "reference": "52a0d99e69f56b9ec27ace92ba56897fe6993105",
                 "shasum": ""
             },
             "require": {
@@ -594,7 +594,7 @@
                 "issues": "https://github.com/paragonie/constant_time_encoding/issues",
                 "source": "https://github.com/paragonie/constant_time_encoding"
             },
-            "time": "2022-06-14T06:56:20+00:00"
+            "time": "2024-05-08T12:18:48+00:00"
         },
         {
             "name": "paragonie/random_compat",
@@ -760,22 +760,22 @@
         },
         {
             "name": "php-amqplib/php-amqplib",
-            "version": "v3.5.4",
+            "version": "v3.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-amqplib/php-amqplib.git",
-                "reference": "1aecbd182b35eb039667c50d7d92d71f105be779"
+                "reference": "738a73eb0019b6c99d9bc25d7a0c0dd8f56a5199"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-amqplib/php-amqplib/zipball/1aecbd182b35eb039667c50d7d92d71f105be779",
-                "reference": "1aecbd182b35eb039667c50d7d92d71f105be779",
+                "url": "https://api.github.com/repos/php-amqplib/php-amqplib/zipball/738a73eb0019b6c99d9bc25d7a0c0dd8f56a5199",
+                "reference": "738a73eb0019b6c99d9bc25d7a0c0dd8f56a5199",
                 "shasum": ""
             },
             "require": {
                 "ext-mbstring": "*",
                 "ext-sockets": "*",
-                "php": "^7.1||^8.0",
+                "php": "^7.2||^8.0",
                 "phpseclib/phpseclib": "^2.0|^3.0"
             },
             "conflict": {
@@ -835,26 +835,26 @@
             ],
             "support": {
                 "issues": "https://github.com/php-amqplib/php-amqplib/issues",
-                "source": "https://github.com/php-amqplib/php-amqplib/tree/v3.5.4"
+                "source": "https://github.com/php-amqplib/php-amqplib/tree/v3.7.2"
             },
-            "time": "2023-07-01T11:25:08+00:00"
+            "time": "2024-11-21T09:21:41+00:00"
         },
         {
             "name": "phpseclib/phpseclib",
-            "version": "3.0.23",
+            "version": "3.0.42",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "866cc78fbd82462ffd880e3f65692afe928bed50"
+                "reference": "db92f1b1987b12b13f248fe76c3a52cadb67bb98"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/866cc78fbd82462ffd880e3f65692afe928bed50",
-                "reference": "866cc78fbd82462ffd880e3f65692afe928bed50",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/db92f1b1987b12b13f248fe76c3a52cadb67bb98",
+                "reference": "db92f1b1987b12b13f248fe76c3a52cadb67bb98",
                 "shasum": ""
             },
             "require": {
-                "paragonie/constant_time_encoding": "^1|^2",
+                "paragonie/constant_time_encoding": "^1|^2|^3",
                 "paragonie/random_compat": "^1.4|^2.0|^9.99.99",
                 "php": ">=5.6.1"
             },
@@ -931,7 +931,7 @@
             ],
             "support": {
                 "issues": "https://github.com/phpseclib/phpseclib/issues",
-                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.23"
+                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.42"
             },
             "funding": [
                 {
@@ -947,7 +947,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-09-18T17:22:01+00:00"
+            "time": "2024-09-16T03:06:04+00:00"
         },
         {
             "name": "psr/http-message",
@@ -1004,16 +1004,16 @@
         },
         {
             "name": "simplepie/simplepie",
-            "version": "1.8.0",
+            "version": "1.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/simplepie/simplepie.git",
-                "reference": "65b095d87bc00898d8fa7737bdbcda93a3fbcc55"
+                "reference": "a567b8ab9b6145a23e6a9ec2b6b74f56d52f7ad1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/simplepie/simplepie/zipball/65b095d87bc00898d8fa7737bdbcda93a3fbcc55",
-                "reference": "65b095d87bc00898d8fa7737bdbcda93a3fbcc55",
+                "url": "https://api.github.com/repos/simplepie/simplepie/zipball/a567b8ab9b6145a23e6a9ec2b6b74f56d52f7ad1",
+                "reference": "a567b8ab9b6145a23e6a9ec2b6b74f56d52f7ad1",
                 "shasum": ""
             },
             "require": {
@@ -1074,22 +1074,22 @@
             ],
             "support": {
                 "issues": "https://github.com/simplepie/simplepie/issues",
-                "source": "https://github.com/simplepie/simplepie/tree/1.8.0"
+                "source": "https://github.com/simplepie/simplepie/tree/1.8.1"
             },
-            "time": "2023-01-20T08:37:35+00:00"
+            "time": "2024-11-22T16:33:20+00:00"
         },
         {
             "name": "symfony/config",
-            "version": "v5.4.26",
+            "version": "v5.4.46",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/config.git",
-                "reference": "8109892f27beed9252bd1f1c1880aeb4ad842650"
+                "reference": "977c88a02d7d3f16904a81907531b19666a08e78"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/config/zipball/8109892f27beed9252bd1f1c1880aeb4ad842650",
-                "reference": "8109892f27beed9252bd1f1c1880aeb4ad842650",
+                "url": "https://api.github.com/repos/symfony/config/zipball/977c88a02d7d3f16904a81907531b19666a08e78",
+                "reference": "977c88a02d7d3f16904a81907531b19666a08e78",
                 "shasum": ""
             },
             "require": {
@@ -1139,7 +1139,7 @@
             "description": "Helps you find, load, combine, autofill and validate configuration values of any kind",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/config/tree/v5.4.26"
+                "source": "https://github.com/symfony/config/tree/v5.4.46"
             },
             "funding": [
                 {
@@ -1155,20 +1155,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-07-19T20:21:11+00:00"
+            "time": "2024-10-30T07:58:02+00:00"
         },
         {
             "name": "symfony/deprecation-contracts",
-            "version": "v2.5.2",
+            "version": "v2.5.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/deprecation-contracts.git",
-                "reference": "e8b495ea28c1d97b5e0c121748d6f9b53d075c66"
+                "reference": "605389f2a7e5625f273b53960dc46aeaf9c62918"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/deprecation-contracts/zipball/e8b495ea28c1d97b5e0c121748d6f9b53d075c66",
-                "reference": "e8b495ea28c1d97b5e0c121748d6f9b53d075c66",
+                "url": "https://api.github.com/repos/symfony/deprecation-contracts/zipball/605389f2a7e5625f273b53960dc46aeaf9c62918",
+                "reference": "605389f2a7e5625f273b53960dc46aeaf9c62918",
                 "shasum": ""
             },
             "require": {
@@ -1206,7 +1206,7 @@
             "description": "A generic function and convention to trigger deprecation notices",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/deprecation-contracts/tree/v2.5.2"
+                "source": "https://github.com/symfony/deprecation-contracts/tree/v2.5.4"
             },
             "funding": [
                 {
@@ -1222,20 +1222,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-01-02T09:53:40+00:00"
+            "time": "2024-09-25T14:11:13+00:00"
         },
         {
             "name": "symfony/filesystem",
-            "version": "v5.4.25",
+            "version": "v5.4.45",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",
-                "reference": "0ce3a62c9579a53358d3a7eb6b3dfb79789a6364"
+                "reference": "57c8294ed37d4a055b77057827c67f9558c95c54"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/filesystem/zipball/0ce3a62c9579a53358d3a7eb6b3dfb79789a6364",
-                "reference": "0ce3a62c9579a53358d3a7eb6b3dfb79789a6364",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/57c8294ed37d4a055b77057827c67f9558c95c54",
+                "reference": "57c8294ed37d4a055b77057827c67f9558c95c54",
                 "shasum": ""
             },
             "require": {
@@ -1243,6 +1243,9 @@
                 "symfony/polyfill-ctype": "~1.8",
                 "symfony/polyfill-mbstring": "~1.8",
                 "symfony/polyfill-php80": "^1.16"
+            },
+            "require-dev": {
+                "symfony/process": "^5.4|^6.4"
             },
             "type": "library",
             "autoload": {
@@ -1270,7 +1273,7 @@
             "description": "Provides basic utilities for the filesystem",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/filesystem/tree/v5.4.25"
+                "source": "https://github.com/symfony/filesystem/tree/v5.4.45"
             },
             "funding": [
                 {
@@ -1286,24 +1289,24 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-05-31T13:04:02+00:00"
+            "time": "2024-10-22T13:05:35+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
-            "version": "v1.28.0",
+            "version": "v1.31.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-ctype.git",
-                "reference": "ea208ce43cbb04af6867b4fdddb1bdbf84cc28cb"
+                "reference": "a3cc8b044a6ea513310cbd48ef7333b384945638"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/ea208ce43cbb04af6867b4fdddb1bdbf84cc28cb",
-                "reference": "ea208ce43cbb04af6867b4fdddb1bdbf84cc28cb",
+                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/a3cc8b044a6ea513310cbd48ef7333b384945638",
+                "reference": "a3cc8b044a6ea513310cbd48ef7333b384945638",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.1"
+                "php": ">=7.2"
             },
             "provide": {
                 "ext-ctype": "*"
@@ -1313,9 +1316,6 @@
             },
             "type": "library",
             "extra": {
-                "branch-alias": {
-                    "dev-main": "1.28-dev"
-                },
                 "thanks": {
                     "name": "symfony/polyfill",
                     "url": "https://github.com/symfony/polyfill"
@@ -1352,7 +1352,7 @@
                 "portable"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-ctype/tree/v1.28.0"
+                "source": "https://github.com/symfony/polyfill-ctype/tree/v1.31.0"
             },
             "funding": [
                 {
@@ -1368,24 +1368,24 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-01-26T09:26:14+00:00"
+            "time": "2024-09-09T11:45:10+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.28.0",
+            "version": "v1.31.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "42292d99c55abe617799667f454222c54c60e229"
+                "reference": "85181ba99b2345b0ef10ce42ecac37612d9fd341"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/42292d99c55abe617799667f454222c54c60e229",
-                "reference": "42292d99c55abe617799667f454222c54c60e229",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/85181ba99b2345b0ef10ce42ecac37612d9fd341",
+                "reference": "85181ba99b2345b0ef10ce42ecac37612d9fd341",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.1"
+                "php": ">=7.2"
             },
             "provide": {
                 "ext-mbstring": "*"
@@ -1395,9 +1395,6 @@
             },
             "type": "library",
             "extra": {
-                "branch-alias": {
-                    "dev-main": "1.28-dev"
-                },
                 "thanks": {
                     "name": "symfony/polyfill",
                     "url": "https://github.com/symfony/polyfill"
@@ -1435,7 +1432,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.28.0"
+                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.31.0"
             },
             "funding": [
                 {
@@ -1451,30 +1448,27 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-07-28T09:04:16+00:00"
+            "time": "2024-09-09T11:45:10+00:00"
         },
         {
             "name": "symfony/polyfill-php80",
-            "version": "v1.28.0",
+            "version": "v1.31.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php80.git",
-                "reference": "6caa57379c4aec19c0a12a38b59b26487dcfe4b5"
+                "reference": "60328e362d4c2c802a54fcbf04f9d3fb892b4cf8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php80/zipball/6caa57379c4aec19c0a12a38b59b26487dcfe4b5",
-                "reference": "6caa57379c4aec19c0a12a38b59b26487dcfe4b5",
+                "url": "https://api.github.com/repos/symfony/polyfill-php80/zipball/60328e362d4c2c802a54fcbf04f9d3fb892b4cf8",
+                "reference": "60328e362d4c2c802a54fcbf04f9d3fb892b4cf8",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.1"
+                "php": ">=7.2"
             },
             "type": "library",
             "extra": {
-                "branch-alias": {
-                    "dev-main": "1.28-dev"
-                },
                 "thanks": {
                     "name": "symfony/polyfill",
                     "url": "https://github.com/symfony/polyfill"
@@ -1518,7 +1512,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-php80/tree/v1.28.0"
+                "source": "https://github.com/symfony/polyfill-php80/tree/v1.31.0"
             },
             "funding": [
                 {
@@ -1534,30 +1528,27 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-01-26T09:26:14+00:00"
+            "time": "2024-09-09T11:45:10+00:00"
         },
         {
             "name": "symfony/polyfill-php81",
-            "version": "v1.28.0",
+            "version": "v1.31.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php81.git",
-                "reference": "7581cd600fa9fd681b797d00b02f068e2f13263b"
+                "reference": "4a4cfc2d253c21a5ad0e53071df248ed48c6ce5c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php81/zipball/7581cd600fa9fd681b797d00b02f068e2f13263b",
-                "reference": "7581cd600fa9fd681b797d00b02f068e2f13263b",
+                "url": "https://api.github.com/repos/symfony/polyfill-php81/zipball/4a4cfc2d253c21a5ad0e53071df248ed48c6ce5c",
+                "reference": "4a4cfc2d253c21a5ad0e53071df248ed48c6ce5c",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.1"
+                "php": ">=7.2"
             },
             "type": "library",
             "extra": {
-                "branch-alias": {
-                    "dev-main": "1.28-dev"
-                },
                 "thanks": {
                     "name": "symfony/polyfill",
                     "url": "https://github.com/symfony/polyfill"
@@ -1597,7 +1588,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-php81/tree/v1.28.0"
+                "source": "https://github.com/symfony/polyfill-php81/tree/v1.31.0"
             },
             "funding": [
                 {
@@ -1613,25 +1604,25 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-01-26T09:26:14+00:00"
+            "time": "2024-09-09T11:45:10+00:00"
         },
         {
             "name": "zf1s/zend-acl",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-acl.git",
-                "reference": "439a09ff1be5582482704242f34329edb59642bd"
+                "reference": "d2dd76b961689570eba84a980f33b282868f3862"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-acl/zipball/439a09ff1be5582482704242f34329edb59642bd",
-                "reference": "439a09ff1be5582482704242f34329edb59642bd",
+                "url": "https://api.github.com/repos/zf1s/zend-acl/zipball/d2dd76b961689570eba84a980f33b282868f3862",
+                "reference": "d2dd76b961689570eba84a980f33b282868f3862",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3",
-                "zf1s/zend-exception": "^1.15.2"
+                "zf1s/zend-exception": "^1.15.5"
             },
             "replace": {
                 "zf1/zend-acl": "^1.12"
@@ -1660,35 +1651,49 @@
                 "zend"
             ],
             "support": {
-                "source": "https://github.com/zf1s/zend-acl/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-acl/tree/1.15.5"
             },
-            "time": "2023-02-19T21:29:30+00:00"
+            "time": "2024-04-18T08:48:59+00:00"
         },
         {
             "name": "zf1s/zend-application",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-application.git",
-                "reference": "181d76810047443641b68d808bcad16361935dfb"
+                "reference": "a7c187f79859479fc2dd26b63e0a0deecddc804d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-application/zipball/181d76810047443641b68d808bcad16361935dfb",
-                "reference": "181d76810047443641b68d808bcad16361935dfb",
+                "url": "https://api.github.com/repos/zf1s/zend-application/zipball/a7c187f79859479fc2dd26b63e0a0deecddc804d",
+                "reference": "a7c187f79859479fc2dd26b63e0a0deecddc804d",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3",
-                "zf1s/zend-controller": "^1.15.2",
-                "zf1s/zend-exception": "^1.15.2"
+                "zf1s/zend-config": "^1.15.5",
+                "zf1s/zend-controller": "^1.15.5",
+                "zf1s/zend-exception": "^1.15.5",
+                "zf1s/zend-loader": "^1.15.5",
+                "zf1s/zend-registry": "^1.15.5"
             },
             "replace": {
                 "zf1/zend-application": "^1.12"
             },
             "suggest": {
                 "ext-date": "Used in special situations or with special adapters",
-                "zf1s/zend-config": "Used in special situations or with special adapters"
+                "zf1s/zend-cache": "Used in special situations or with special adapters",
+                "zf1s/zend-db": "Used in special situations or with special adapters",
+                "zf1s/zend-dojo": "Used in special situations or with special adapters",
+                "zf1s/zend-http": "Used in special situations or with special adapters",
+                "zf1s/zend-layout": "Used in special situations or with special adapters",
+                "zf1s/zend-locale": "Used in special situations or with special adapters",
+                "zf1s/zend-log": "Used in special situations or with special adapters",
+                "zf1s/zend-mail": "Used in special situations or with special adapters",
+                "zf1s/zend-navigation": "Used in special situations or with special adapters",
+                "zf1s/zend-session": "Used in special situations or with special adapters",
+                "zf1s/zend-translate": "Used in special situations or with special adapters",
+                "zf1s/zend-view": "Used in special situations or with special adapters"
             },
             "type": "library",
             "extra": {
@@ -1715,35 +1720,37 @@
             ],
             "support": {
                 "issues": "https://github.com/zf1s/zend-application/issues",
-                "source": "https://github.com/zf1s/zend-application/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-application/tree/1.15.5"
             },
-            "time": "2023-02-19T21:29:30+00:00"
+            "time": "2024-04-18T08:48:59+00:00"
         },
         {
             "name": "zf1s/zend-auth",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-auth.git",
-                "reference": "ba4d47ecfd6abffd5b85c696b825d85f64bdd21b"
+                "reference": "36518df1154dfa10507ebd0cb676f6d871dcf54a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-auth/zipball/ba4d47ecfd6abffd5b85c696b825d85f64bdd21b",
-                "reference": "ba4d47ecfd6abffd5b85c696b825d85f64bdd21b",
+                "url": "https://api.github.com/repos/zf1s/zend-auth/zipball/36518df1154dfa10507ebd0cb676f6d871dcf54a",
+                "reference": "36518df1154dfa10507ebd0cb676f6d871dcf54a",
                 "shasum": ""
             },
             "require": {
                 "ext-ctype": "*",
                 "php": ">=5.3.3",
-                "zf1s/zend-exception": "^1.15.2"
+                "zf1s/zend-exception": "^1.15.5"
             },
             "replace": {
                 "zf1/zend-auth": "^1.12"
             },
             "suggest": {
                 "ext-hash": "Used in special situations or with special adapters",
+                "zf1s/zend-controller": "Used in special situations or with special adapters",
                 "zf1s/zend-db": "Used in special situations or with special adapters",
+                "zf1s/zend-http": "Used in special situations or with special adapters",
                 "zf1s/zend-ldap": "Used in special situations or with special adapters",
                 "zf1s/zend-openid": "Used in special situations or with special adapters",
                 "zf1s/zend-session": "Used in special situations or with special adapters"
@@ -1772,27 +1779,27 @@
                 "zend"
             ],
             "support": {
-                "source": "https://github.com/zf1s/zend-auth/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-auth/tree/1.15.5"
             },
-            "time": "2023-02-19T21:29:30+00:00"
+            "time": "2024-04-18T08:48:59+00:00"
         },
         {
             "name": "zf1s/zend-cache",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-cache.git",
-                "reference": "f2816f52752e6135b9d3c2ca28b6f233960d4f24"
+                "reference": "af9ad663cc471b70b76140eda95501188ac4d6d4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-cache/zipball/f2816f52752e6135b9d3c2ca28b6f233960d4f24",
-                "reference": "f2816f52752e6135b9d3c2ca28b6f233960d4f24",
+                "url": "https://api.github.com/repos/zf1s/zend-cache/zipball/af9ad663cc471b70b76140eda95501188ac4d6d4",
+                "reference": "af9ad663cc471b70b76140eda95501188ac4d6d4",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3",
-                "zf1s/zend-exception": "^1.15.2"
+                "zf1s/zend-exception": "^1.15.5"
             },
             "replace": {
                 "zf1/zend-cache": "^1.12"
@@ -1829,28 +1836,28 @@
             ],
             "support": {
                 "issues": "https://github.com/zf1s/zend-cache/issues",
-                "source": "https://github.com/zf1s/zend-cache/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-cache/tree/1.15.5"
             },
-            "time": "2023-02-19T21:29:30+00:00"
+            "time": "2024-04-18T08:48:59+00:00"
         },
         {
             "name": "zf1s/zend-config",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-config.git",
-                "reference": "4df2e559fd1871b7539912d6b84c2ddd82663dd0"
+                "reference": "0366990d33f8a06f38291c6d0cbdf98a370a1560"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-config/zipball/4df2e559fd1871b7539912d6b84c2ddd82663dd0",
-                "reference": "4df2e559fd1871b7539912d6b84c2ddd82663dd0",
+                "url": "https://api.github.com/repos/zf1s/zend-config/zipball/0366990d33f8a06f38291c6d0cbdf98a370a1560",
+                "reference": "0366990d33f8a06f38291c6d0cbdf98a370a1560",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3",
-                "zf1s/zend-exception": "^1.15.2",
-                "zf1s/zend-xml": "^1.15.2"
+                "zf1s/zend-exception": "^1.15.5",
+                "zf1s/zend-xml": "^1.15.5"
             },
             "replace": {
                 "zf1/zend-config": "^1.12"
@@ -1882,44 +1889,47 @@
                 "zend"
             ],
             "support": {
-                "source": "https://github.com/zf1s/zend-config/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-config/tree/1.15.5"
             },
-            "time": "2023-02-19T21:29:30+00:00"
+            "time": "2024-04-18T08:48:59+00:00"
         },
         {
             "name": "zf1s/zend-controller",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-controller.git",
-                "reference": "47b5e1feb049e1cb0ecebbf292b6cfe8d9d95534"
+                "reference": "b21b10ab41c6b49bf4f8560de6bced8fd5a08ca4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-controller/zipball/47b5e1feb049e1cb0ecebbf292b6cfe8d9d95534",
-                "reference": "47b5e1feb049e1cb0ecebbf292b6cfe8d9d95534",
+                "url": "https://api.github.com/repos/zf1s/zend-controller/zipball/b21b10ab41c6b49bf4f8560de6bced8fd5a08ca4",
+                "reference": "b21b10ab41c6b49bf4f8560de6bced8fd5a08ca4",
                 "shasum": ""
             },
             "require": {
                 "ext-reflection": "*",
                 "ext-session": "*",
                 "php": ">=5.3.3",
-                "zf1s/zend-config": "^1.15.2",
-                "zf1s/zend-exception": "^1.15.2",
-                "zf1s/zend-loader": "^1.15.2",
-                "zf1s/zend-registry": "^1.15.2",
-                "zf1s/zend-uri": "^1.15.2",
-                "zf1s/zend-view": "^1.15.2",
-                "zf1s/zend-xml": "^1.15.2"
+                "zf1s/zend-config": "^1.15.5",
+                "zf1s/zend-exception": "^1.15.5",
+                "zf1s/zend-filter": "^1.15.5",
+                "zf1s/zend-loader": "^1.15.5",
+                "zf1s/zend-registry": "^1.15.5",
+                "zf1s/zend-uri": "^1.15.5",
+                "zf1s/zend-view": "^1.15.5"
             },
             "replace": {
                 "zf1/zend-controller": "^1.12"
             },
             "suggest": {
+                "zf1s/zend-cache": "Used in special situations or with special adapters",
                 "zf1s/zend-dojo": "Used in special situations or with special adapters",
-                "zf1s/zend-filter": "Used in special situations or with special adapters",
                 "zf1s/zend-json": "Used in special situations or with special adapters",
-                "zf1s/zend-layout": "Used in special situations or with special adapters"
+                "zf1s/zend-layout": "Used in special situations or with special adapters",
+                "zf1s/zend-locale": "Used in special situations or with special adapters",
+                "zf1s/zend-session": "Used in special situations or with special adapters",
+                "zf1s/zend-translate": "Used in special situations or with special adapters"
             },
             "type": "library",
             "extra": {
@@ -1945,27 +1955,27 @@
                 "zend"
             ],
             "support": {
-                "source": "https://github.com/zf1s/zend-controller/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-controller/tree/1.15.5"
             },
-            "time": "2023-02-19T21:29:30+00:00"
+            "time": "2024-04-18T08:48:59+00:00"
         },
         {
             "name": "zf1s/zend-crypt",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-crypt.git",
-                "reference": "5541ba3ca33a118cf024e08cbe372200685dfab1"
+                "reference": "e095929fd59744d4d77a9ab3b13ae60a357043c7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-crypt/zipball/5541ba3ca33a118cf024e08cbe372200685dfab1",
-                "reference": "5541ba3ca33a118cf024e08cbe372200685dfab1",
+                "url": "https://api.github.com/repos/zf1s/zend-crypt/zipball/e095929fd59744d4d77a9ab3b13ae60a357043c7",
+                "reference": "e095929fd59744d4d77a9ab3b13ae60a357043c7",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3",
-                "zf1s/zend-exception": "^1.15.2"
+                "zf1s/zend-exception": "^1.15.5"
             },
             "replace": {
                 "zf1/zend-crypt": "^1.12"
@@ -1994,28 +2004,28 @@
                 "zend"
             ],
             "support": {
-                "source": "https://github.com/zf1s/zend-crypt/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-crypt/tree/1.15.5"
             },
-            "time": "2023-02-19T21:29:30+00:00"
+            "time": "2024-04-18T08:48:59+00:00"
         },
         {
             "name": "zf1s/zend-date",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-date.git",
-                "reference": "573cf6165e656713b8a4d868730fd96ce6032fda"
+                "reference": "c3c55611f7aa5e795322e1f0db086058dadae3e5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-date/zipball/573cf6165e656713b8a4d868730fd96ce6032fda",
-                "reference": "573cf6165e656713b8a4d868730fd96ce6032fda",
+                "url": "https://api.github.com/repos/zf1s/zend-date/zipball/c3c55611f7aa5e795322e1f0db086058dadae3e5",
+                "reference": "c3c55611f7aa5e795322e1f0db086058dadae3e5",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3",
-                "zf1s/zend-exception": "^1.15.2",
-                "zf1s/zend-locale": "^1.15.2"
+                "zf1s/zend-exception": "^1.15.5",
+                "zf1s/zend-locale": "^1.15.5"
             },
             "replace": {
                 "zf1/zend-date": "^1.12"
@@ -2044,28 +2054,28 @@
                 "zend"
             ],
             "support": {
-                "source": "https://github.com/zf1s/zend-date/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-date/tree/1.15.5"
             },
-            "time": "2023-02-19T21:29:30+00:00"
+            "time": "2024-04-18T08:48:59+00:00"
         },
         {
             "name": "zf1s/zend-db",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-db.git",
-                "reference": "7410c7b66d069f883804b6fe210c3040886c12ae"
+                "reference": "05d5e53a61c6bac32b1430ad16c22c80996a606c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-db/zipball/7410c7b66d069f883804b6fe210c3040886c12ae",
-                "reference": "7410c7b66d069f883804b6fe210c3040886c12ae",
+                "url": "https://api.github.com/repos/zf1s/zend-db/zipball/05d5e53a61c6bac32b1430ad16c22c80996a606c",
+                "reference": "05d5e53a61c6bac32b1430ad16c22c80996a606c",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3",
-                "zf1s/zend-exception": "^1.15.2",
-                "zf1s/zend-loader": "^1.15.2"
+                "zf1s/zend-exception": "^1.15.5",
+                "zf1s/zend-loader": "^1.15.5"
             },
             "replace": {
                 "zf1/zend-db": "^1.12"
@@ -2102,22 +2112,22 @@
                 "zend"
             ],
             "support": {
-                "source": "https://github.com/zf1s/zend-db/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-db/tree/1.15.5"
             },
-            "time": "2023-02-19T21:29:30+00:00"
+            "time": "2024-04-18T08:48:59+00:00"
         },
         {
             "name": "zf1s/zend-exception",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-exception.git",
-                "reference": "f101c1834d08d470ff0acdaf4e1482c37607e15c"
+                "reference": "2b0ab0dd6f615207f28c927123c9b8d9562a577a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-exception/zipball/f101c1834d08d470ff0acdaf4e1482c37607e15c",
-                "reference": "f101c1834d08d470ff0acdaf4e1482c37607e15c",
+                "url": "https://api.github.com/repos/zf1s/zend-exception/zipball/2b0ab0dd6f615207f28c927123c9b8d9562a577a",
+                "reference": "2b0ab0dd6f615207f28c927123c9b8d9562a577a",
                 "shasum": ""
             },
             "require": {
@@ -2150,22 +2160,22 @@
                 "zend"
             ],
             "support": {
-                "source": "https://github.com/zf1s/zend-exception/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-exception/tree/1.15.5"
             },
-            "time": "2022-12-12T15:05:04+00:00"
+            "time": "2024-01-04T13:33:07+00:00"
         },
         {
             "name": "zf1s/zend-file",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-file.git",
-                "reference": "f9439a7e9a4548ecfb0d4ab58c9c65e446624a70"
+                "reference": "9e934c1e6cb48d0a30c3ecb75d9233df0ab29345"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-file/zipball/f9439a7e9a4548ecfb0d4ab58c9c65e446624a70",
-                "reference": "f9439a7e9a4548ecfb0d4ab58c9c65e446624a70",
+                "url": "https://api.github.com/repos/zf1s/zend-file/zipball/9e934c1e6cb48d0a30c3ecb75d9233df0ab29345",
+                "reference": "9e934c1e6cb48d0a30c3ecb75d9233df0ab29345",
                 "shasum": ""
             },
             "require": {
@@ -2201,27 +2211,27 @@
                 "zend"
             ],
             "support": {
-                "source": "https://github.com/zf1s/zend-file/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-file/tree/1.15.5"
             },
-            "time": "2022-12-12T15:05:04+00:00"
+            "time": "2024-01-04T13:33:07+00:00"
         },
         {
             "name": "zf1s/zend-file-transfer",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-file-transfer.git",
-                "reference": "59ef92f7acc8617805d7e1d5579dc14eecb16d6f"
+                "reference": "9d7b88aa88b86480ba3b18ddfaee16b3924fe4ff"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-file-transfer/zipball/59ef92f7acc8617805d7e1d5579dc14eecb16d6f",
-                "reference": "59ef92f7acc8617805d7e1d5579dc14eecb16d6f",
+                "url": "https://api.github.com/repos/zf1s/zend-file-transfer/zipball/9d7b88aa88b86480ba3b18ddfaee16b3924fe4ff",
+                "reference": "9d7b88aa88b86480ba3b18ddfaee16b3924fe4ff",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3",
-                "zf1s/zend-exception": "^1.15.2"
+                "zf1s/zend-exception": "^1.15.5"
             },
             "replace": {
                 "zf1/zend-file-transfer": "^1.12"
@@ -2255,31 +2265,31 @@
                 "zend"
             ],
             "support": {
-                "source": "https://github.com/zf1s/zend-file-transfer/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-file-transfer/tree/1.15.5"
             },
-            "time": "2023-02-19T21:29:30+00:00"
+            "time": "2024-04-18T08:48:59+00:00"
         },
         {
             "name": "zf1s/zend-filter",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-filter.git",
-                "reference": "413303d20450ca8ce5bf3a9b4d3d34bfaefab94e"
+                "reference": "c07fa8a1852dd99b90c6f98f4c5c9ebabb82f310"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-filter/zipball/413303d20450ca8ce5bf3a9b4d3d34bfaefab94e",
-                "reference": "413303d20450ca8ce5bf3a9b4d3d34bfaefab94e",
+                "url": "https://api.github.com/repos/zf1s/zend-filter/zipball/c07fa8a1852dd99b90c6f98f4c5c9ebabb82f310",
+                "reference": "c07fa8a1852dd99b90c6f98f4c5c9ebabb82f310",
                 "shasum": ""
             },
             "require": {
                 "ext-reflection": "*",
                 "php": ">=5.3.3",
-                "zf1s/zend-crypt": "^1.15.2",
-                "zf1s/zend-exception": "^1.15.2",
-                "zf1s/zend-loader": "^1.15.2",
-                "zf1s/zend-validate": "^1.15.2"
+                "zf1s/zend-crypt": "^1.15.5",
+                "zf1s/zend-exception": "^1.15.5",
+                "zf1s/zend-loader": "^1.15.5",
+                "zf1s/zend-validate": "^1.15.5"
             },
             "replace": {
                 "zf1/zend-filter": "^1.12"
@@ -2312,29 +2322,29 @@
                 "zend"
             ],
             "support": {
-                "source": "https://github.com/zf1s/zend-filter/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-filter/tree/1.15.5"
             },
-            "time": "2023-02-19T21:29:30+00:00"
+            "time": "2024-04-18T08:48:59+00:00"
         },
         {
             "name": "zf1s/zend-form",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-form.git",
-                "reference": "e4500ac06d50d7b74e6062d0fed547fb25580fa8"
+                "reference": "2a902a4b12b9a774ff5b829e27b386c2388fc3c4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-form/zipball/e4500ac06d50d7b74e6062d0fed547fb25580fa8",
-                "reference": "e4500ac06d50d7b74e6062d0fed547fb25580fa8",
+                "url": "https://api.github.com/repos/zf1s/zend-form/zipball/2a902a4b12b9a774ff5b829e27b386c2388fc3c4",
+                "reference": "2a902a4b12b9a774ff5b829e27b386c2388fc3c4",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3",
-                "zf1s/zend-exception": "^1.15.2",
-                "zf1s/zend-filter": "^1.15.2",
-                "zf1s/zend-validate": "^1.15.2"
+                "zf1s/zend-exception": "^1.15.5",
+                "zf1s/zend-filter": "^1.15.5",
+                "zf1s/zend-validate": "^1.15.5"
             },
             "replace": {
                 "zf1/zend-form": "^1.12"
@@ -2371,30 +2381,30 @@
                 "zend"
             ],
             "support": {
-                "source": "https://github.com/zf1s/zend-form/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-form/tree/1.15.5"
             },
-            "time": "2023-02-19T21:29:30+00:00"
+            "time": "2024-04-18T08:48:59+00:00"
         },
         {
             "name": "zf1s/zend-http",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-http.git",
-                "reference": "67e9776dfaceff96c63e77d75793bda3a6961302"
+                "reference": "241ebb7411cf31e696404f196965675e66a9ffb4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-http/zipball/67e9776dfaceff96c63e77d75793bda3a6961302",
-                "reference": "67e9776dfaceff96c63e77d75793bda3a6961302",
+                "url": "https://api.github.com/repos/zf1s/zend-http/zipball/241ebb7411cf31e696404f196965675e66a9ffb4",
+                "reference": "241ebb7411cf31e696404f196965675e66a9ffb4",
                 "shasum": ""
             },
             "require": {
                 "ext-ctype": "*",
                 "php": ">=5.3.3",
-                "zf1s/zend-exception": "^1.15.2",
-                "zf1s/zend-loader": "^1.15.2",
-                "zf1s/zend-uri": "^1.15.2"
+                "zf1s/zend-exception": "^1.15.5",
+                "zf1s/zend-loader": "^1.15.5",
+                "zf1s/zend-uri": "^1.15.5"
             },
             "replace": {
                 "zf1/zend-http": "^1.12"
@@ -2427,31 +2437,30 @@
                 "zend"
             ],
             "support": {
-                "source": "https://github.com/zf1s/zend-http/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-http/tree/1.15.5"
             },
-            "time": "2023-02-19T21:29:30+00:00"
+            "time": "2024-04-18T08:48:59+00:00"
         },
         {
             "name": "zf1s/zend-json",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-json.git",
-                "reference": "b82c8f1b78ce4395188b131b2afec978577c3e96"
+                "reference": "dd864525de54645374227ca463df24e675a2cbce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-json/zipball/b82c8f1b78ce4395188b131b2afec978577c3e96",
-                "reference": "b82c8f1b78ce4395188b131b2afec978577c3e96",
+                "url": "https://api.github.com/repos/zf1s/zend-json/zipball/dd864525de54645374227ca463df24e675a2cbce",
+                "reference": "dd864525de54645374227ca463df24e675a2cbce",
                 "shasum": ""
             },
             "require": {
                 "ext-reflection": "*",
                 "php": ">=5.3.3",
-                "zf1s/zend-exception": "^1.15.2",
-                "zf1s/zend-loader": "^1.15.2",
-                "zf1s/zend-server": "^1.15.2",
-                "zf1s/zend-xml": "^1.15.2"
+                "zf1s/zend-exception": "^1.15.5",
+                "zf1s/zend-server": "^1.15.5",
+                "zf1s/zend-xml": "^1.15.5"
             },
             "replace": {
                 "zf1/zend-json": "^1.12"
@@ -2483,36 +2492,37 @@
                 "zend"
             ],
             "support": {
-                "source": "https://github.com/zf1s/zend-json/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-json/tree/1.15.5"
             },
-            "time": "2023-02-19T21:29:30+00:00"
+            "time": "2024-04-18T08:48:59+00:00"
         },
         {
             "name": "zf1s/zend-layout",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-layout.git",
-                "reference": "71d660cbc07b47a41bde3c121c7975294b3655ce"
+                "reference": "1561347143abf0430264b4683c03da1786dad896"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-layout/zipball/71d660cbc07b47a41bde3c121c7975294b3655ce",
-                "reference": "71d660cbc07b47a41bde3c121c7975294b3655ce",
+                "url": "https://api.github.com/repos/zf1s/zend-layout/zipball/1561347143abf0430264b4683c03da1786dad896",
+                "reference": "1561347143abf0430264b4683c03da1786dad896",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3",
-                "zf1s/zend-exception": "^1.15.2"
+                "zf1s/zend-controller": "^1.15.5",
+                "zf1s/zend-exception": "^1.15.5",
+                "zf1s/zend-filter": "^1.15.5",
+                "zf1s/zend-loader": "^1.15.5",
+                "zf1s/zend-view": "^1.15.5"
             },
             "replace": {
                 "zf1/zend-layout": "^1.12"
             },
             "suggest": {
-                "zf1s/zend-controller": "Used in special situations or with special adapters",
-                "zf1s/zend-filter": "Used in special situations or with special adapters",
-                "zf1s/zend-loader": "Used in special situations or with special adapters",
-                "zf1s/zend-view": "Used in special situations or with special adapters"
+                "zf1s/zend-config": "Used in special situations or with special adapters"
             },
             "type": "library",
             "extra": {
@@ -2538,27 +2548,27 @@
                 "zend"
             ],
             "support": {
-                "source": "https://github.com/zf1s/zend-layout/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-layout/tree/1.15.5"
             },
-            "time": "2023-02-19T21:29:30+00:00"
+            "time": "2024-04-18T08:48:59+00:00"
         },
         {
             "name": "zf1s/zend-loader",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-loader.git",
-                "reference": "573f48ad32c6628f442e73a2d54e63a92dd07d8b"
+                "reference": "6790a58a51b249e191a4bd3aeeaecab0bc50fdb8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-loader/zipball/573f48ad32c6628f442e73a2d54e63a92dd07d8b",
-                "reference": "573f48ad32c6628f442e73a2d54e63a92dd07d8b",
+                "url": "https://api.github.com/repos/zf1s/zend-loader/zipball/6790a58a51b249e191a4bd3aeeaecab0bc50fdb8",
+                "reference": "6790a58a51b249e191a4bd3aeeaecab0bc50fdb8",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3",
-                "zf1s/zend-exception": "^1.15.2"
+                "zf1s/zend-exception": "^1.15.5"
             },
             "replace": {
                 "zf1/zend-loader": "^1.12"
@@ -2587,31 +2597,31 @@
                 "zend"
             ],
             "support": {
-                "source": "https://github.com/zf1s/zend-loader/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-loader/tree/1.15.5"
             },
-            "time": "2023-02-19T21:29:30+00:00"
+            "time": "2024-04-18T08:48:59+00:00"
         },
         {
             "name": "zf1s/zend-locale",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-locale.git",
-                "reference": "47b85b18554c3b92c612e54b704c7580135b9152"
+                "reference": "d56b7d53b7e45da4fa0428ada2c607e97f9002e4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-locale/zipball/47b85b18554c3b92c612e54b704c7580135b9152",
-                "reference": "47b85b18554c3b92c612e54b704c7580135b9152",
+                "url": "https://api.github.com/repos/zf1s/zend-locale/zipball/d56b7d53b7e45da4fa0428ada2c607e97f9002e4",
+                "reference": "d56b7d53b7e45da4fa0428ada2c607e97f9002e4",
                 "shasum": ""
             },
             "require": {
                 "ext-iconv": "*",
                 "php": ">=5.3.3",
-                "zf1s/zend-cache": "^1.15.2",
-                "zf1s/zend-exception": "^1.15.2",
-                "zf1s/zend-registry": "^1.15.2",
-                "zf1s/zend-xml": "^1.15.2"
+                "zf1s/zend-cache": "^1.15.5",
+                "zf1s/zend-exception": "^1.15.5",
+                "zf1s/zend-registry": "^1.15.5",
+                "zf1s/zend-xml": "^1.15.5"
             },
             "replace": {
                 "zf1/zend-locale": "^1.12"
@@ -2643,28 +2653,28 @@
                 "zend"
             ],
             "support": {
-                "source": "https://github.com/zf1s/zend-locale/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-locale/tree/1.15.5"
             },
-            "time": "2023-02-19T21:29:30+00:00"
+            "time": "2024-04-18T08:48:59+00:00"
         },
         {
             "name": "zf1s/zend-log",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-log.git",
-                "reference": "edb13ea8127d8d83ee4f65a48724230e942ae676"
+                "reference": "d4b19f8b76367597c7deca54479bf3249f6bbf33"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-log/zipball/edb13ea8127d8d83ee4f65a48724230e942ae676",
-                "reference": "edb13ea8127d8d83ee4f65a48724230e942ae676",
+                "url": "https://api.github.com/repos/zf1s/zend-log/zipball/d4b19f8b76367597c7deca54479bf3249f6bbf33",
+                "reference": "d4b19f8b76367597c7deca54479bf3249f6bbf33",
                 "shasum": ""
             },
             "require": {
                 "ext-reflection": "*",
                 "php": ">=5.3.3",
-                "zf1s/zend-exception": "^1.15.2"
+                "zf1s/zend-exception": "^1.15.5"
             },
             "replace": {
                 "zf1/zend-log": "^1.12"
@@ -2697,28 +2707,28 @@
                 "zend"
             ],
             "support": {
-                "source": "https://github.com/zf1s/zend-log/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-log/tree/1.15.5"
             },
-            "time": "2023-02-19T21:29:30+00:00"
+            "time": "2024-04-18T08:48:59+00:00"
         },
         {
             "name": "zf1s/zend-navigation",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-navigation.git",
-                "reference": "6a3c07fafcd516b4e8f8b0dbce9af356e8bf307d"
+                "reference": "148c269f0611b68f848507715cb5e583a60586c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-navigation/zipball/6a3c07fafcd516b4e8f8b0dbce9af356e8bf307d",
-                "reference": "6a3c07fafcd516b4e8f8b0dbce9af356e8bf307d",
+                "url": "https://api.github.com/repos/zf1s/zend-navigation/zipball/148c269f0611b68f848507715cb5e583a60586c0",
+                "reference": "148c269f0611b68f848507715cb5e583a60586c0",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3",
-                "zf1s/zend-controller": "^1.15.2",
-                "zf1s/zend-exception": "^1.15.2"
+                "zf1s/zend-controller": "^1.15.5",
+                "zf1s/zend-exception": "^1.15.5"
             },
             "replace": {
                 "zf1/zend-navigation": "^1.12"
@@ -2752,27 +2762,27 @@
                 "zend"
             ],
             "support": {
-                "source": "https://github.com/zf1s/zend-navigation/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-navigation/tree/1.15.5"
             },
-            "time": "2023-02-19T21:29:30+00:00"
+            "time": "2024-04-18T08:48:59+00:00"
         },
         {
             "name": "zf1s/zend-registry",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-registry.git",
-                "reference": "2559f2ccb999d50c38c2144f2506e3c5a6cdbb2a"
+                "reference": "010e559222894c4101ae2e71b75be9251531dbca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-registry/zipball/2559f2ccb999d50c38c2144f2506e3c5a6cdbb2a",
-                "reference": "2559f2ccb999d50c38c2144f2506e3c5a6cdbb2a",
+                "url": "https://api.github.com/repos/zf1s/zend-registry/zipball/010e559222894c4101ae2e71b75be9251531dbca",
+                "reference": "010e559222894c4101ae2e71b75be9251531dbca",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3",
-                "zf1s/zend-exception": "^1.15.2"
+                "zf1s/zend-exception": "^1.15.5"
             },
             "replace": {
                 "zf1/zend-registry": "^1.12"
@@ -2804,22 +2814,22 @@
                 "zend"
             ],
             "support": {
-                "source": "https://github.com/zf1s/zend-registry/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-registry/tree/1.15.5"
             },
-            "time": "2023-02-19T21:29:30+00:00"
+            "time": "2024-04-18T08:48:59+00:00"
         },
         {
             "name": "zf1s/zend-rest",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-rest.git",
-                "reference": "c12897ba466bbb0cde2b99321767703026c067a2"
+                "reference": "c0bfaced45d4c73a122ef13a5a5dd7e874a43b29"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-rest/zipball/c12897ba466bbb0cde2b99321767703026c067a2",
-                "reference": "c12897ba466bbb0cde2b99321767703026c067a2",
+                "url": "https://api.github.com/repos/zf1s/zend-rest/zipball/c0bfaced45d4c73a122ef13a5a5dd7e874a43b29",
+                "reference": "c0bfaced45d4c73a122ef13a5a5dd7e874a43b29",
                 "shasum": ""
             },
             "require": {
@@ -2828,11 +2838,11 @@
                 "ext-reflection": "*",
                 "ext-simplexml": "*",
                 "php": ">=5.3.3",
-                "zf1s/zend-exception": "^1.15.2",
-                "zf1s/zend-server": "^1.15.2",
-                "zf1s/zend-service": "^1.15.2",
-                "zf1s/zend-uri": "^1.15.2",
-                "zf1s/zend-xml": "^1.15.2"
+                "zf1s/zend-exception": "^1.15.5",
+                "zf1s/zend-server": "^1.15.5",
+                "zf1s/zend-service": "^1.15.5",
+                "zf1s/zend-uri": "^1.15.5",
+                "zf1s/zend-xml": "^1.15.5"
             },
             "replace": {
                 "zf1/zend-rest": "^1.12"
@@ -2861,29 +2871,29 @@
                 "zend"
             ],
             "support": {
-                "source": "https://github.com/zf1s/zend-rest/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-rest/tree/1.15.5"
             },
-            "time": "2023-02-19T21:29:30+00:00"
+            "time": "2024-04-18T08:48:59+00:00"
         },
         {
             "name": "zf1s/zend-server",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-server.git",
-                "reference": "007e15b38f860ebf25736c9592aa4db53a4f573b"
+                "reference": "6528fc51e49f9739410637b1f68f15a3ea1dbb89"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-server/zipball/007e15b38f860ebf25736c9592aa4db53a4f573b",
-                "reference": "007e15b38f860ebf25736c9592aa4db53a4f573b",
+                "url": "https://api.github.com/repos/zf1s/zend-server/zipball/6528fc51e49f9739410637b1f68f15a3ea1dbb89",
+                "reference": "6528fc51e49f9739410637b1f68f15a3ea1dbb89",
                 "shasum": ""
             },
             "require": {
                 "ext-reflection": "*",
                 "ext-spl": "*",
                 "php": ">=5.3.3",
-                "zf1s/zend-exception": "^1.15.2"
+                "zf1s/zend-exception": "^1.15.5"
             },
             "replace": {
                 "zf1/zend-server": "^1.12"
@@ -2912,28 +2922,28 @@
                 "zend"
             ],
             "support": {
-                "source": "https://github.com/zf1s/zend-server/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-server/tree/1.15.5"
             },
-            "time": "2023-02-19T21:29:30+00:00"
+            "time": "2024-04-18T08:48:59+00:00"
         },
         {
             "name": "zf1s/zend-service",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-service.git",
-                "reference": "9ee795f10e89e59f652aa17cfd1bd6c13e8a304f"
+                "reference": "9a1d7953688c8caac715ef922d2bded81587df8e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-service/zipball/9ee795f10e89e59f652aa17cfd1bd6c13e8a304f",
-                "reference": "9ee795f10e89e59f652aa17cfd1bd6c13e8a304f",
+                "url": "https://api.github.com/repos/zf1s/zend-service/zipball/9a1d7953688c8caac715ef922d2bded81587df8e",
+                "reference": "9a1d7953688c8caac715ef922d2bded81587df8e",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3",
-                "zf1s/zend-exception": "^1.15.2",
-                "zf1s/zend-http": "^1.15.2"
+                "zf1s/zend-exception": "^1.15.5",
+                "zf1s/zend-http": "^1.15.5"
             },
             "replace": {
                 "zf1/zend-service": "^1.12"
@@ -2962,28 +2972,28 @@
                 "zend"
             ],
             "support": {
-                "source": "https://github.com/zf1s/zend-service/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-service/tree/1.15.5"
             },
-            "time": "2023-02-19T21:29:30+00:00"
+            "time": "2024-04-18T08:48:59+00:00"
         },
         {
             "name": "zf1s/zend-session",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-session.git",
-                "reference": "f33edeaabeda8def65e18cfb13be2c12664f03c3"
+                "reference": "cb4174363968131fa5229e0a0190515333be6a65"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-session/zipball/f33edeaabeda8def65e18cfb13be2c12664f03c3",
-                "reference": "f33edeaabeda8def65e18cfb13be2c12664f03c3",
+                "url": "https://api.github.com/repos/zf1s/zend-session/zipball/cb4174363968131fa5229e0a0190515333be6a65",
+                "reference": "cb4174363968131fa5229e0a0190515333be6a65",
                 "shasum": ""
             },
             "require": {
                 "ext-session": "*",
                 "php": ">=5.3.3",
-                "zf1s/zend-exception": "^1.15.2"
+                "zf1s/zend-exception": "^1.15.5"
             },
             "replace": {
                 "zf1/zend-session": "^1.12"
@@ -3017,39 +3027,37 @@
                 "zend"
             ],
             "support": {
-                "source": "https://github.com/zf1s/zend-session/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-session/tree/1.15.5"
             },
-            "time": "2023-02-19T21:29:30+00:00"
+            "time": "2024-04-18T08:48:59+00:00"
         },
         {
             "name": "zf1s/zend-uri",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-uri.git",
-                "reference": "227f679d3192b393bcde290dc7656192a40ddcd5"
+                "reference": "cd87e4df7036db31e8de706f03af30d8130f2598"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-uri/zipball/227f679d3192b393bcde290dc7656192a40ddcd5",
-                "reference": "227f679d3192b393bcde290dc7656192a40ddcd5",
+                "url": "https://api.github.com/repos/zf1s/zend-uri/zipball/cd87e4df7036db31e8de706f03af30d8130f2598",
+                "reference": "cd87e4df7036db31e8de706f03af30d8130f2598",
                 "shasum": ""
             },
             "require": {
                 "ext-ctype": "*",
                 "php": ">=5.3.3",
-                "zf1s/zend-exception": "^1.15.2",
-                "zf1s/zend-loader": "^1.15.2",
-                "zf1s/zend-locale": "^1.15.2",
-                "zf1s/zend-validate": "^1.15.2"
+                "zf1s/zend-exception": "^1.15.5",
+                "zf1s/zend-loader": "^1.15.5",
+                "zf1s/zend-validate": "^1.15.5"
             },
             "replace": {
                 "zf1/zend-uri": "^1.12"
             },
             "suggest": {
-                "zf1s/zend-date": "Used in special situations or with special adapters",
-                "zf1s/zend-filter": "Used in special situations or with special adapters",
-                "zf1s/zend-registry": "Used in special situations or with special adapters"
+                "zf1s/zend-config": "Used in special situations or with special adapters",
+                "zf1s/zend-filter": "Used in special situations or with special adapters"
             },
             "type": "library",
             "extra": {
@@ -3075,39 +3083,45 @@
                 "zend"
             ],
             "support": {
-                "source": "https://github.com/zf1s/zend-uri/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-uri/tree/1.15.5"
             },
-            "time": "2023-02-19T21:29:30+00:00"
+            "time": "2024-04-18T08:48:59+00:00"
         },
         {
             "name": "zf1s/zend-validate",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-validate.git",
-                "reference": "48673303dca6fc0727ff0313e180ae8122583f04"
+                "reference": "057121967ad8aecdee0c8b2184a20c67554e96a4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-validate/zipball/48673303dca6fc0727ff0313e180ae8122583f04",
-                "reference": "48673303dca6fc0727ff0313e180ae8122583f04",
+                "url": "https://api.github.com/repos/zf1s/zend-validate/zipball/057121967ad8aecdee0c8b2184a20c67554e96a4",
+                "reference": "057121967ad8aecdee0c8b2184a20c67554e96a4",
                 "shasum": ""
             },
             "require": {
                 "ext-ctype": "*",
                 "ext-reflection": "*",
                 "php": ">=5.3.3",
-                "zf1s/zend-exception": "^1.15.2",
-                "zf1s/zend-loader": "^1.15.2",
-                "zf1s/zend-locale": "^1.15.2"
+                "zf1s/zend-exception": "^1.15.5",
+                "zf1s/zend-registry": "^1.15.5"
             },
             "replace": {
                 "zf1/zend-validate": "^1.12"
             },
             "suggest": {
+                "zf1s/zend-config": "Used in special situations or with special adapters",
                 "zf1s/zend-date": "Used in special situations or with special adapters",
+                "zf1s/zend-db": "Used in special situations or with special adapters",
+                "zf1s/zend-file": "Used in special situations or with special adapters",
                 "zf1s/zend-filter": "Used in special situations or with special adapters",
-                "zf1s/zend-registry": "Used in special situations or with special adapters"
+                "zf1s/zend-ldap": "Used in special situations or with special adapters",
+                "zf1s/zend-loader": "Used in special situations or with special adapters",
+                "zf1s/zend-locale": "Used in special situations or with special adapters",
+                "zf1s/zend-translate": "Used in special situations or with special adapters",
+                "zf1s/zend-uri": "Used in special situations or with special adapters"
             },
             "type": "library",
             "extra": {
@@ -3134,22 +3148,22 @@
             ],
             "support": {
                 "issues": "https://github.com/zf1s/zend-validate/issues",
-                "source": "https://github.com/zf1s/zend-validate/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-validate/tree/1.15.5"
             },
-            "time": "2023-02-19T21:29:30+00:00"
+            "time": "2024-04-18T08:48:59+00:00"
         },
         {
             "name": "zf1s/zend-version",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-version.git",
-                "reference": "4c55018b15f959f476f9b650afc91f6de2bae975"
+                "reference": "ccb2aba00702fbaa45c90fc4c7d56d49e65c5853"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-version/zipball/4c55018b15f959f476f9b650afc91f6de2bae975",
-                "reference": "4c55018b15f959f476f9b650afc91f6de2bae975",
+                "url": "https://api.github.com/repos/zf1s/zend-version/zipball/ccb2aba00702fbaa45c90fc4c7d56d49e65c5853",
+                "reference": "ccb2aba00702fbaa45c90fc4c7d56d49e65c5853",
                 "shasum": ""
             },
             "require": {
@@ -3182,39 +3196,48 @@
                 "zend"
             ],
             "support": {
-                "source": "https://github.com/zf1s/zend-version/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-version/tree/1.15.5"
             },
-            "time": "2022-12-12T15:05:04+00:00"
+            "time": "2024-01-04T13:33:07+00:00"
         },
         {
             "name": "zf1s/zend-view",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-view.git",
-                "reference": "fb290fb9170f23b51f4b63745777253efff02b6f"
+                "reference": "825bf6400c4aebc7cfb28672a229676d81de9fac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-view/zipball/fb290fb9170f23b51f4b63745777253efff02b6f",
-                "reference": "fb290fb9170f23b51f4b63745777253efff02b6f",
+                "url": "https://api.github.com/repos/zf1s/zend-view/zipball/825bf6400c4aebc7cfb28672a229676d81de9fac",
+                "reference": "825bf6400c4aebc7cfb28672a229676d81de9fac",
                 "shasum": ""
             },
             "require": {
                 "ext-reflection": "*",
                 "php": ">=5.3.3",
-                "zf1s/zend-controller": "^1.15.2",
-                "zf1s/zend-exception": "^1.15.2",
-                "zf1s/zend-loader": "^1.15.2",
-                "zf1s/zend-locale": "^1.15.2",
-                "zf1s/zend-registry": "^1.15.2"
+                "zf1s/zend-exception": "^1.15.5",
+                "zf1s/zend-loader": "^1.15.5",
+                "zf1s/zend-registry": "^1.15.5"
             },
             "replace": {
                 "zf1/zend-view": "^1.12"
             },
             "suggest": {
+                "zf1s/zend-config": "Used in special situations or with special adapters",
+                "zf1s/zend-controller": "Used in special situations or with special adapters",
+                "zf1s/zend-currency": "Used in special situations or with special adapters",
+                "zf1s/zend-filter": "Used in special situations or with special adapters",
+                "zf1s/zend-http": "Used in special situations or with special adapters",
                 "zf1s/zend-json": "Used in special situations or with special adapters",
-                "zf1s/zend-layout": "Used in special situations or with special adapters"
+                "zf1s/zend-layout": "Used in special situations or with special adapters",
+                "zf1s/zend-locale": "Used in special situations or with special adapters",
+                "zf1s/zend-navigation": "Used in special situations or with special adapters",
+                "zf1s/zend-paginator": "Used in special situations or with special adapters",
+                "zf1s/zend-translate": "Used in special situations or with special adapters",
+                "zf1s/zend-uri": "Used in special situations or with special adapters",
+                "zf1s/zend-validate": "Used in special situations or with special adapters"
             },
             "type": "library",
             "extra": {
@@ -3240,22 +3263,22 @@
                 "zend"
             ],
             "support": {
-                "source": "https://github.com/zf1s/zend-view/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-view/tree/1.15.5"
             },
-            "time": "2023-02-19T21:29:30+00:00"
+            "time": "2024-04-18T08:48:59+00:00"
         },
         {
             "name": "zf1s/zend-xml",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-xml.git",
-                "reference": "59bc3c113a8de0295d959a899c9a8e771f333fb4"
+                "reference": "76cb4bd8f0f55f2c0fffb6fef7a5fb195a024cf8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-xml/zipball/59bc3c113a8de0295d959a899c9a8e771f333fb4",
-                "reference": "59bc3c113a8de0295d959a899c9a8e771f333fb4",
+                "url": "https://api.github.com/repos/zf1s/zend-xml/zipball/76cb4bd8f0f55f2c0fffb6fef7a5fb195a024cf8",
+                "reference": "76cb4bd8f0f55f2c0fffb6fef7a5fb195a024cf8",
                 "shasum": ""
             },
             "require": {
@@ -3263,7 +3286,7 @@
                 "ext-simplexml": "*",
                 "ext-xml": "*",
                 "php": ">=5.3.3",
-                "zf1s/zend-exception": "^1.15.2"
+                "zf1s/zend-exception": "^1.15.5"
             },
             "replace": {
                 "zf1/zend-xml": "^1.12"
@@ -3292,24 +3315,24 @@
                 "zend"
             ],
             "support": {
-                "source": "https://github.com/zf1s/zend-xml/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-xml/tree/1.15.5"
             },
-            "time": "2023-02-19T21:29:30+00:00"
+            "time": "2024-04-18T08:48:59+00:00"
         }
     ],
     "packages-dev": [
         {
             "name": "doctrine/deprecations",
-            "version": "1.1.2",
+            "version": "1.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/deprecations.git",
-                "reference": "4f2d4f2836e7ec4e7a8625e75c6aa916004db931"
+                "reference": "dfbaa3c2d2e9a9df1118213f3b8b0c597bb99fab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/deprecations/zipball/4f2d4f2836e7ec4e7a8625e75c6aa916004db931",
-                "reference": "4f2d4f2836e7ec4e7a8625e75c6aa916004db931",
+                "url": "https://api.github.com/repos/doctrine/deprecations/zipball/dfbaa3c2d2e9a9df1118213f3b8b0c597bb99fab",
+                "reference": "dfbaa3c2d2e9a9df1118213f3b8b0c597bb99fab",
                 "shasum": ""
             },
             "require": {
@@ -3341,9 +3364,9 @@
             "homepage": "https://www.doctrine-project.org/",
             "support": {
                 "issues": "https://github.com/doctrine/deprecations/issues",
-                "source": "https://github.com/doctrine/deprecations/tree/1.1.2"
+                "source": "https://github.com/doctrine/deprecations/tree/1.1.3"
             },
-            "time": "2023-09-27T20:04:15+00:00"
+            "time": "2024-01-30T19:34:25+00:00"
         },
         {
             "name": "doctrine/instantiator",
@@ -3417,16 +3440,16 @@
         },
         {
             "name": "myclabs/deep-copy",
-            "version": "1.11.1",
+            "version": "1.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/myclabs/DeepCopy.git",
-                "reference": "7284c22080590fb39f2ffa3e9057f10a4ddd0e0c"
+                "reference": "123267b2c49fbf30d78a7b2d333f6be754b94845"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/7284c22080590fb39f2ffa3e9057f10a4ddd0e0c",
-                "reference": "7284c22080590fb39f2ffa3e9057f10a4ddd0e0c",
+                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/123267b2c49fbf30d78a7b2d333f6be754b94845",
+                "reference": "123267b2c49fbf30d78a7b2d333f6be754b94845",
                 "shasum": ""
             },
             "require": {
@@ -3434,11 +3457,12 @@
             },
             "conflict": {
                 "doctrine/collections": "<1.6.8",
-                "doctrine/common": "<2.13.3 || >=3,<3.2.2"
+                "doctrine/common": "<2.13.3 || >=3 <3.2.2"
             },
             "require-dev": {
                 "doctrine/collections": "^1.6.8",
                 "doctrine/common": "^2.13.3 || ^3.2.2",
+                "phpspec/prophecy": "^1.10",
                 "phpunit/phpunit": "^7.5.20 || ^8.5.23 || ^9.5.13"
             },
             "type": "library",
@@ -3464,7 +3488,7 @@
             ],
             "support": {
                 "issues": "https://github.com/myclabs/DeepCopy/issues",
-                "source": "https://github.com/myclabs/DeepCopy/tree/1.11.1"
+                "source": "https://github.com/myclabs/DeepCopy/tree/1.12.1"
             },
             "funding": [
                 {
@@ -3472,7 +3496,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-03-08T13:26:56+00:00"
+            "time": "2024-11-08T17:47:46+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",
@@ -3529,28 +3553,35 @@
         },
         {
             "name": "phpdocumentor/reflection-docblock",
-            "version": "5.3.0",
+            "version": "5.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
-                "reference": "622548b623e81ca6d78b721c5e029f4ce664f170"
+                "reference": "f3558a4c23426d12bffeaab463f8a8d8b681193c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/622548b623e81ca6d78b721c5e029f4ce664f170",
-                "reference": "622548b623e81ca6d78b721c5e029f4ce664f170",
+                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/f3558a4c23426d12bffeaab463f8a8d8b681193c",
+                "reference": "f3558a4c23426d12bffeaab463f8a8d8b681193c",
                 "shasum": ""
             },
             "require": {
+                "doctrine/deprecations": "^1.1",
                 "ext-filter": "*",
-                "php": "^7.2 || ^8.0",
+                "php": "^7.4 || ^8.0",
                 "phpdocumentor/reflection-common": "^2.2",
-                "phpdocumentor/type-resolver": "^1.3",
+                "phpdocumentor/type-resolver": "^1.7",
+                "phpstan/phpdoc-parser": "^1.7|^2.0",
                 "webmozart/assert": "^1.9.1"
             },
             "require-dev": {
-                "mockery/mockery": "~1.3.2",
-                "psalm/phar": "^4.8"
+                "mockery/mockery": "~1.3.5 || ~1.6.0",
+                "phpstan/extension-installer": "^1.1",
+                "phpstan/phpstan": "^1.8",
+                "phpstan/phpstan-mockery": "^1.1",
+                "phpstan/phpstan-webmozart-assert": "^1.2",
+                "phpunit/phpunit": "^9.5",
+                "psalm/phar": "^5.26"
             },
             "type": "library",
             "extra": {
@@ -3574,35 +3605,35 @@
                 },
                 {
                     "name": "Jaap van Otterdijk",
-                    "email": "account@ijaap.nl"
+                    "email": "opensource@ijaap.nl"
                 }
             ],
             "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
             "support": {
                 "issues": "https://github.com/phpDocumentor/ReflectionDocBlock/issues",
-                "source": "https://github.com/phpDocumentor/ReflectionDocBlock/tree/5.3.0"
+                "source": "https://github.com/phpDocumentor/ReflectionDocBlock/tree/5.6.0"
             },
-            "time": "2021-10-19T17:43:47+00:00"
+            "time": "2024-11-12T11:25:25+00:00"
         },
         {
             "name": "phpdocumentor/type-resolver",
-            "version": "1.7.3",
+            "version": "1.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/TypeResolver.git",
-                "reference": "3219c6ee25c9ea71e3d9bbaf39c67c9ebd499419"
+                "reference": "679e3ce485b99e84c775d28e2e96fade9a7fb50a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/3219c6ee25c9ea71e3d9bbaf39c67c9ebd499419",
-                "reference": "3219c6ee25c9ea71e3d9bbaf39c67c9ebd499419",
+                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/679e3ce485b99e84c775d28e2e96fade9a7fb50a",
+                "reference": "679e3ce485b99e84c775d28e2e96fade9a7fb50a",
                 "shasum": ""
             },
             "require": {
                 "doctrine/deprecations": "^1.0",
-                "php": "^7.4 || ^8.0",
+                "php": "^7.3 || ^8.0",
                 "phpdocumentor/reflection-common": "^2.0",
-                "phpstan/phpdoc-parser": "^1.13"
+                "phpstan/phpdoc-parser": "^1.18|^2.0"
             },
             "require-dev": {
                 "ext-tokenizer": "*",
@@ -3638,9 +3669,9 @@
             "description": "A PSR-5 based resolver of Class names, Types and Structural Element Names",
             "support": {
                 "issues": "https://github.com/phpDocumentor/TypeResolver/issues",
-                "source": "https://github.com/phpDocumentor/TypeResolver/tree/1.7.3"
+                "source": "https://github.com/phpDocumentor/TypeResolver/tree/1.10.0"
             },
-            "time": "2023-08-12T11:01:26+00:00"
+            "time": "2024-11-09T15:12:26+00:00"
         },
         {
             "name": "phpspec/prophecy",
@@ -3711,30 +3742,30 @@
         },
         {
             "name": "phpstan/phpdoc-parser",
-            "version": "1.24.2",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpdoc-parser.git",
-                "reference": "bcad8d995980440892759db0c32acae7c8e79442"
+                "reference": "c00d78fb6b29658347f9d37ebe104bffadf36299"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/bcad8d995980440892759db0c32acae7c8e79442",
-                "reference": "bcad8d995980440892759db0c32acae7c8e79442",
+                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/c00d78fb6b29658347f9d37ebe104bffadf36299",
+                "reference": "c00d78fb6b29658347f9d37ebe104bffadf36299",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.2 || ^8.0"
+                "php": "^7.4 || ^8.0"
             },
             "require-dev": {
                 "doctrine/annotations": "^2.0",
-                "nikic/php-parser": "^4.15",
+                "nikic/php-parser": "^5.3.0",
                 "php-parallel-lint/php-parallel-lint": "^1.2",
                 "phpstan/extension-installer": "^1.0",
-                "phpstan/phpstan": "^1.5",
-                "phpstan/phpstan-phpunit": "^1.1",
-                "phpstan/phpstan-strict-rules": "^1.0",
-                "phpunit/phpunit": "^9.5",
+                "phpstan/phpstan": "^2.0",
+                "phpstan/phpstan-phpunit": "^2.0",
+                "phpstan/phpstan-strict-rules": "^2.0",
+                "phpunit/phpunit": "^9.6",
                 "symfony/process": "^5.2"
             },
             "type": "library",
@@ -3752,9 +3783,9 @@
             "description": "PHPDoc parser with support for nullable, intersection and generic types",
             "support": {
                 "issues": "https://github.com/phpstan/phpdoc-parser/issues",
-                "source": "https://github.com/phpstan/phpdoc-parser/tree/1.24.2"
+                "source": "https://github.com/phpstan/phpdoc-parser/tree/2.0.0"
             },
-            "time": "2023-09-26T12:28:12+00:00"
+            "time": "2024-10-13T11:29:49+00:00"
         },
         {
             "name": "phpunit/dbunit",
@@ -4242,16 +4273,16 @@
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
-            "version": "1.0.2",
+            "version": "1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/code-unit-reverse-lookup.git",
-                "reference": "1de8cd5c010cb153fcd68b8d0f64606f523f7619"
+                "reference": "92a1a52e86d34cde6caa54f1b5ffa9fda18e5d54"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/code-unit-reverse-lookup/zipball/1de8cd5c010cb153fcd68b8d0f64606f523f7619",
-                "reference": "1de8cd5c010cb153fcd68b8d0f64606f523f7619",
+                "url": "https://api.github.com/repos/sebastianbergmann/code-unit-reverse-lookup/zipball/92a1a52e86d34cde6caa54f1b5ffa9fda18e5d54",
+                "reference": "92a1a52e86d34cde6caa54f1b5ffa9fda18e5d54",
                 "shasum": ""
             },
             "require": {
@@ -4285,7 +4316,7 @@
             "homepage": "https://github.com/sebastianbergmann/code-unit-reverse-lookup/",
             "support": {
                 "issues": "https://github.com/sebastianbergmann/code-unit-reverse-lookup/issues",
-                "source": "https://github.com/sebastianbergmann/code-unit-reverse-lookup/tree/1.0.2"
+                "source": "https://github.com/sebastianbergmann/code-unit-reverse-lookup/tree/1.0.3"
             },
             "funding": [
                 {
@@ -4293,7 +4324,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-11-30T08:15:22+00:00"
+            "time": "2024-03-01T13:45:45+00:00"
         },
         {
             "name": "sebastian/comparator",
@@ -4930,23 +4961,23 @@
         },
         {
             "name": "zf1s/zend-dom",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-dom.git",
-                "reference": "71544f03d8e4c68986c89efbb5bc921f33375465"
+                "reference": "648289682c7a01dff42d40f43ecb47f57e15982c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-dom/zipball/71544f03d8e4c68986c89efbb5bc921f33375465",
-                "reference": "71544f03d8e4c68986c89efbb5bc921f33375465",
+                "url": "https://api.github.com/repos/zf1s/zend-dom/zipball/648289682c7a01dff42d40f43ecb47f57e15982c",
+                "reference": "648289682c7a01dff42d40f43ecb47f57e15982c",
                 "shasum": ""
             },
             "require": {
                 "ext-dom": "*",
                 "php": ">=5.3.3",
-                "zf1s/zend-exception": "^1.15.2",
-                "zf1s/zend-xml": "^1.15.2"
+                "zf1s/zend-exception": "^1.15.5",
+                "zf1s/zend-xml": "^1.15.5"
             },
             "replace": {
                 "zf1/zend-dom": "^1.12"
@@ -4975,32 +5006,32 @@
                 "zend"
             ],
             "support": {
-                "source": "https://github.com/zf1s/zend-dom/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-dom/tree/1.15.5"
             },
-            "time": "2023-02-19T21:29:30+00:00"
+            "time": "2024-04-18T08:48:59+00:00"
         },
         {
             "name": "zf1s/zend-test",
-            "version": "1.15.2",
+            "version": "1.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zf1s/zend-test.git",
-                "reference": "0852bf7232548b0bc89665a4eb304f3954c34e9e"
+                "reference": "15ffd60599e793555167a0f7bbb801f91da718cb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zf1s/zend-test/zipball/0852bf7232548b0bc89665a4eb304f3954c34e9e",
-                "reference": "0852bf7232548b0bc89665a4eb304f3954c34e9e",
+                "url": "https://api.github.com/repos/zf1s/zend-test/zipball/15ffd60599e793555167a0f7bbb801f91da718cb",
+                "reference": "15ffd60599e793555167a0f7bbb801f91da718cb",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3",
-                "zf1s/zend-controller": "^1.15.2",
-                "zf1s/zend-dom": "^1.15.2",
-                "zf1s/zend-exception": "^1.15.2",
-                "zf1s/zend-layout": "^1.15.2",
-                "zf1s/zend-registry": "^1.15.2",
-                "zf1s/zend-session": "^1.15.2"
+                "zf1s/zend-controller": "^1.15.5",
+                "zf1s/zend-dom": "^1.15.5",
+                "zf1s/zend-exception": "^1.15.5",
+                "zf1s/zend-layout": "^1.15.5",
+                "zf1s/zend-registry": "^1.15.5",
+                "zf1s/zend-session": "^1.15.5"
             },
             "replace": {
                 "zf1/zend-test": "^1.12"
@@ -5032,9 +5063,9 @@
                 "zend"
             ],
             "support": {
-                "source": "https://github.com/zf1s/zend-test/tree/1.15.2"
+                "source": "https://github.com/zf1s/zend-test/tree/1.15.5"
             },
-            "time": "2023-02-19T21:29:30+00:00"
+            "time": "2024-04-18T08:48:59+00:00"
         }
     ],
     "aliases": [],
@@ -5048,6 +5079,6 @@
     "platform": {
         "php": "^7.4"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }

@@ -11,6 +11,7 @@ define('REPEAT_QUAD_WEEKLY', 5);
 
 class Application_Service_ShowService
 {
+    protected $linkedShowContent;
     private $ccShow;
     private $isRecorded;
     private $isRebroadcast;
@@ -77,8 +78,9 @@ class Application_Service_ShowService
 
             // DateTime in shows's local time
             $newStartDateTime = new DateTime(
-                $showData['add_show_start_date'] . ' ' .
-                    $showData['add_show_start_time'],
+                $showData['add_show_start_date']
+                . ' '
+                . $showData['add_show_start_time'],
                 new DateTimeZone($showData['add_show_timezone'])
             );
 
@@ -595,7 +597,7 @@ SQL;
                 $this->deleteAllInstances($showId);
                 $this->deleteAllShowDays($showId);
 
-                // when repeating by day of the month (1st, 2nd, etc.) we do not store the repeat week days
+            // when repeating by day of the month (1st, 2nd, etc.) we do not store the repeat week days
             } elseif ($currentRepeatType != 2) {
                 // repeat type is the same, check if the days of the week are the same
                 $repeatingDaysChanged = false;
@@ -754,8 +756,8 @@ SQL;
      * Enter description here ...
      *
      * @param       $daysRemoved array of days (days of the week) removed
-     *                           (days of the week are represented numerically
-     *                           0=>sunday, 1=>monday, 2=>tuesday, etc.)
+     *                          (days of the week are represented numerically
+     *                          0=>sunday, 1=>monday, 2=>tuesday, etc.)
      * @param       $showDays    array of ccShowDays objects
      * @param mixed $showId
      */
@@ -881,10 +883,10 @@ SQL;
             CcShowQuery::create()
                 ->filterByDbId($showId)
                 ->delete();
-            // There is only one cc_show_instance if the user selects 'Delete This Instance'
-            // There is more than one cc_show_instance if the user selects 'Delete This
-            // Instance and All Following'. We only need to set the last_show value
-            // when 'Delete This Instance and All Following' has been selected
+        // There is only one cc_show_instance if the user selects 'Delete This Instance'
+        // There is more than one cc_show_instance if the user selects 'Delete This
+        // Instance and All Following'. We only need to set the last_show value
+        // when 'Delete This Instance and All Following' has been selected
         } elseif (count($ccShowInstances) > 1) {
             $this->setLastRepeatingShowDate($showId);
         }
@@ -1055,8 +1057,9 @@ SQL;
         $showId = $this->ccShow->getDbId();
         // DateTime in show's local time
         $newStartDateTime = new DateTime(
-            $showData['add_show_start_date'] . ' ' .
-                $showData['add_show_start_time'],
+            $showData['add_show_start_date']
+            . ' '
+            . $showData['add_show_start_time'],
             new DateTimeZone($showData['add_show_timezone'])
         );
 
@@ -1333,10 +1336,9 @@ SQL;
         }
 
         // We will only need this if the repeat type is MONTHLY_WEEKLY
-        [$weekNumberOfMonth, $dayOfWeek] =
-            self::getMonthlyWeeklyRepeatInterval(
-                new DateTime($first_show, new DateTimeZone($timezone))
-            );
+        [$weekNumberOfMonth, $dayOfWeek] = self::getMonthlyWeeklyRepeatInterval(
+            new DateTime($first_show, new DateTimeZone($timezone))
+        );
 
         $this->repeatType = $showDay->getDbRepeatType();
 
@@ -1520,8 +1522,8 @@ SQL;
         $tempDT = clone $dt;
         $fifthWeekExists = false;
         do {
-            $nextDT = date_create($weekNumberOfMonth . ' ' . $dayOfWeek .
-                ' of ' . $tempDT->format('F') . ' ' . $tempDT->format('Y'));
+            $nextDT = date_create($weekNumberOfMonth . ' ' . $dayOfWeek
+                . ' of ' . $tempDT->format('F') . ' ' . $tempDT->format('Y'));
             $nextDT->setTimezone(new DateTimeZone($timezone));
 
             /* We have to check if the next date is in the same month in case
@@ -1666,6 +1668,16 @@ SQL;
         // added to prevent errors with insert due to a lack of data
         if ($showData['add_show_autoplaylist_id'] != '') {
             $ccShow->setDbAutoPlaylistId($showData['add_show_autoplaylist_id']);
+        }
+
+        $ccShow->setDbOverrideIntroPlaylist($showData['add_show_intro_playlist_id'] != 0);
+        if ($showData['add_show_intro_playlist_id'] != '') {
+            $ccShow->setDbIntroPlaylistId($showData['add_show_intro_playlist_id']);
+        }
+
+        $ccShow->setDbOverrideOutroPlaylist($showData['add_show_outro_playlist_id'] != 0);
+        if ($showData['add_show_outro_playlist_id'] != '') {
+            $ccShow->setDbOutroPlaylistId($showData['add_show_outro_playlist_id']);
         }
 
         // Here a user has edited a show and linked it.
@@ -1908,8 +1920,8 @@ SQL;
         if (isset($offset)) {
             // $offset["hours"] and $offset["mins"] represents the start time
             // of a rebroadcast show
-            $startDateTime = new DateTime($startDateTime->format('Y-m-d') . ' ' .
-                $offset['hours'] . ':' . $offset['mins'], $timezone);
+            $startDateTime = new DateTime($startDateTime->format('Y-m-d') . ' '
+                . $offset['hours'] . ':' . $offset['mins'], $timezone);
             $startDateTime->add(new DateInterval("P{$offset['days']}D"));
         }
 

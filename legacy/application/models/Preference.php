@@ -63,8 +63,10 @@ class Application_Model_Preference
             $paramMap = [];
             if ($result > 1) {
                 // this case should not happen.
-                throw new Exception('Invalid number of results returned. Should be ' .
-                    "0 or 1, but is '{$result}' instead");
+                $caller = debug_backtrace()[1]['function'];
+
+                throw new Exception('Invalid number of results returned. Should be '
+                    . "0 or 1, but is '{$result}' instead, caller={$caller}");
             }
             if ($result == 1) {
                 // result found
@@ -894,9 +896,9 @@ class Application_Model_Preference
 
     public static function SetLatestLink($link)
     {
-        $pattern = '#^(http|https|ftp)://' .
-            '([a-zA-Z0-9]+\.)*[a-zA-Z0-9]+' .
-            '(/[a-zA-Z0-9\-\.\_\~\:\?\#\[\]\@\!\$\&\'\(\)\*\+\,\;\=]+)*/?$#';
+        $pattern = '#^(http|https|ftp)://'
+            . '([a-zA-Z0-9]+\.)*[a-zA-Z0-9]+'
+            . '(/[a-zA-Z0-9\-\.\_\~\:\?\#\[\]\@\!\$\&\'\(\)\*\+\,\;\=]+)*/?$#';
         if (preg_match($pattern, $link)) {
             self::setValue('latest_link', $link);
         }
@@ -1263,7 +1265,7 @@ class Application_Model_Preference
 
     public static function setReplayGainModifier($rg_modifier)
     {
-        self::setValue('replay_gain_modifier', $rg_modifier, true);
+        self::setValue('replay_gain_modifier', $rg_modifier, false);
     }
 
     public static function SetHistoryItemTemplate($value)
@@ -1395,6 +1397,26 @@ class Application_Model_Preference
     public static function setRadioPageDisplayLoginButton($value)
     {
         self::setValue('radio_page_display_login_button', $value);
+    }
+
+    public static function getScheduleTrimOverbooked()
+    {
+        return boolval(self::getValue('schedule_trim_overbooked', false));
+    }
+
+    public static function setScheduleTrimOverbooked($value)
+    {
+        self::setValue('schedule_trim_overbooked', $value);
+    }
+
+    public static function getRadioPageDisabled()
+    {
+        return boolval(self::getValue('radio_page_disabled', false));
+    }
+
+    public static function setRadioPageDisabled($value)
+    {
+        self::setValue('radio_page_disabled', $value);
     }
 
     public static function getLangTimezoneSetupComplete()

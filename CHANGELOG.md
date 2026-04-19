@@ -1,4 +1,205 @@
-<a name="3.1.0"></a>
+# Changelog
+
+## [4.5.0](https://github.com/libretime/libretime/compare/4.4.0...4.5.0) (2025-07-16)
+
+
+### Features
+
+* **legacy:** add config option for group separator in header auth ([#3181](https://github.com/libretime/libretime/issues/3181)) ([f780994](https://github.com/libretime/libretime/commit/f78099499617f556ebb1f0bb79bcca000d284b6e))
+* **playout:** don't clear liquidsoap queue on liquidsoap startup ([#3163](https://github.com/libretime/libretime/issues/3163)) ([0b02ebf](https://github.com/libretime/libretime/commit/0b02ebf1b6786cc051fdd1b518be8e5e38bc9a9f))
+* rename `airtime-pypo` exchange to `playout` ([#3170](https://github.com/libretime/libretime/issues/3170)) ([63ff50b](https://github.com/libretime/libretime/commit/63ff50b82c810567e2a6035fc73eb0e62135517e))
+* use fanout queue type for playout queue ([#3161](https://github.com/libretime/libretime/issues/3161)) ([9e55d3b](https://github.com/libretime/libretime/commit/9e55d3bb6f2fa0f9a4dc858359a99e9d50c826a4))
+
+
+### Bug Fixes
+
+* **playout:** invalid input source disconnect command send to liquidsoap ([#3166](https://github.com/libretime/libretime/issues/3166)) ([908d548](https://github.com/libretime/libretime/commit/908d54805aa559a44f759f5872ac2cf09bc44c9c))
+* **playout:** remove potential deadlock in liquidsoap client ([#3165](https://github.com/libretime/libretime/issues/3165)) ([f33518d](https://github.com/libretime/libretime/commit/f33518d63757fed6ce87e5b16090c77b43913908))
+* **playout:** when metadata has a newline playout stops ([#3160](https://github.com/libretime/libretime/issues/3160)) ([d7987bb](https://github.com/libretime/libretime/commit/d7987bb4ef6d0aa1e7735a857c6e09863aac8354))
+* **worker:** catch mutagen `TypeError` when saving metadata ([#3182](https://github.com/libretime/libretime/issues/3182)) ([107bacf](https://github.com/libretime/libretime/commit/107bacf296d6445a67874a5b355bf67398f87e0e))
+
+## [4.4.0](https://github.com/libretime/libretime/compare/4.3.0...4.4.0) (2025-05-29)
+
+
+### Features
+
+* build and run custom nginx container ([#3155](https://github.com/libretime/libretime/issues/3155)) ([658ce15](https://github.com/libretime/libretime/commit/658ce15185a02902dbab7dc8b789709a8f3bd46d))
+* include nginx config inside libretime-nginx container ([#3157](https://github.com/libretime/libretime/issues/3157)) ([659ac7a](https://github.com/libretime/libretime/commit/659ac7aa77a8c72d642147afe9c59ae3fcb86fd3))
+
+
+### Bug Fixes
+
+* **legacy:** now macro should use station timezone ([#3143](https://github.com/libretime/libretime/issues/3143)) ([c554863](https://github.com/libretime/libretime/commit/c5548632e4f7067d594d611f6cf78cedc4dfce9e))
+* **legacy:** scheduled show length should not add track fade times ([#3144](https://github.com/libretime/libretime/issues/3144)) ([5743a0f](https://github.com/libretime/libretime/commit/5743a0f5824c7f0a2d401cfec31df2b706316db1))
+
+## [4.3.0](https://github.com/libretime/libretime/compare/4.2.0...4.3.0) (2025-03-12)
+
+
+### Features
+
+* add flac support to Web player ([#3128](https://github.com/libretime/libretime/issues/3128)) ([203c927](https://github.com/libretime/libretime/commit/203c9275540289fa670b4e9ec62f41e5ea27e4fa))
+* add Norwegian Bokmål locale ([#3073](https://github.com/libretime/libretime/issues/3073)) ([e614fbc](https://github.com/libretime/libretime/commit/e614fbcf6cfc52e236135a5529bf4d05bdd5fa43))
+* **analyzer:** parse comment fields from mp3 files ([#3082](https://github.com/libretime/libretime/issues/3082)) ([02a779b](https://github.com/libretime/libretime/commit/02a779b4134e8e4121a49d1c213640117157ae8f))
+* **api:** added filters on genre & md5 for files api ([#3127](https://github.com/libretime/libretime/issues/3127)) ([b1bdd6d](https://github.com/libretime/libretime/commit/b1bdd6d9bee3a545e7f65e39ffbf2fa84f241b11))
+* **api:** enable writes to schedule table ([#3109](https://github.com/libretime/libretime/issues/3109)) ([2ac7e8a](https://github.com/libretime/libretime/commit/2ac7e8a50606e64f3c0db54717388576e95c0b4e))
+* **legacy:** implement subset sum solution to show scheduling ([#3019](https://github.com/libretime/libretime/issues/3019)) ([5b5c68c](https://github.com/libretime/libretime/commit/5b5c68c6281326d55bd777cf926aa58027e20e1b)), closes [#3018](https://github.com/libretime/libretime/issues/3018)
+* **legacy:** order by filename when lptime is null ([#3069](https://github.com/libretime/libretime/issues/3069)) ([8c26505](https://github.com/libretime/libretime/commit/8c2650562289bc790f994b2a2bd2d0d9e97957cb))
+* **legacy:** show filename and size on edit page and add filename datatable column ([#3083](https://github.com/libretime/libretime/issues/3083)) ([16deaf0](https://github.com/libretime/libretime/commit/16deaf08c6fb49bc66b704e1672cbc047697cb00)), closes [#3053](https://github.com/libretime/libretime/issues/3053)
+* **legacy:** trused header sso auth ([#3095](https://github.com/libretime/libretime/issues/3095)) ([2985d85](https://github.com/libretime/libretime/commit/2985d8554aca8d8c81f8a8ca214e483a4ba1de9c))
+* **legacy:** update deprecated PHP code ([#2789](https://github.com/libretime/libretime/issues/2789)) ([3a8dcbc](https://github.com/libretime/libretime/commit/3a8dcbce60d52ac7e9ce991817fea8a1b18f9de7))
+* **playout:** add Liquidsoap 2.0 support ([#2786](https://github.com/libretime/libretime/issues/2786)) ([f9c0bd5](https://github.com/libretime/libretime/commit/f9c0bd5a05dede8ea8fb779a5f67c604e0e3360d))
+* use custom intro/outro playlists per show ([#2941](https://github.com/libretime/libretime/issues/2941)) ([299be3c](https://github.com/libretime/libretime/commit/299be3c142875e2a0c19c2712494b861800b67ef))
+
+
+### Bug Fixes
+
+* add missing file for nb_NO locale ([#3075](https://github.com/libretime/libretime/issues/3075)) ([a3865aa](https://github.com/libretime/libretime/commit/a3865aa6eed914b1604fe4a933a9be7b4d2cbb40))
+* **analyzer:** make ffmpeg filters less aggressive ([#3086](https://github.com/libretime/libretime/issues/3086)) ([32cad0f](https://github.com/libretime/libretime/commit/32cad0faa495d4c6058ca75c4aee74b95b73b08e)), closes [#2629](https://github.com/libretime/libretime/issues/2629)
+* docker warnings "keywords casing do not match" ([#3048](https://github.com/libretime/libretime/issues/3048)) ([e095cb2](https://github.com/libretime/libretime/commit/e095cb2a5f6b0b62613b7a6bab9a820d5a4a85f3))
+* intro/outro playlist unset was impossible ([#3101](https://github.com/libretime/libretime/issues/3101)) ([7992a9b](https://github.com/libretime/libretime/commit/7992a9be2d0d9882de63d9c0a04e396271bcfe8b))
+* **legacy:** additional specifics added to CSVexport.js for RFC 4180 ([#3131](https://github.com/libretime/libretime/issues/3131)) ([644d2b9](https://github.com/libretime/libretime/commit/644d2b9ce51321b8219a9902b8bfcac8b9443506)), closes [#2477](https://github.com/libretime/libretime/issues/2477)
+* **legacy:** fix filename criteria searching ([#3068](https://github.com/libretime/libretime/issues/3068)) ([c883d0f](https://github.com/libretime/libretime/commit/c883d0f2d570dc502dbec99c0f1d2e53fd2e3419))
+* **legacy:** migrations from airtime 2.5.1 ([#3123](https://github.com/libretime/libretime/issues/3123)) ([82d5af2](https://github.com/libretime/libretime/commit/82d5af2dfbcb7fbebb58de64228b1c4eeed984e6))
+* **legacy:** support Postgresql 12 syntax ([#3103](https://github.com/libretime/libretime/issues/3103)) ([0b221f4](https://github.com/libretime/libretime/commit/0b221f4fff9ccb55203ddaf7231f5f9b98d135bf)), closes [#3102](https://github.com/libretime/libretime/issues/3102)
+* **playout:** improve the way hashlib is called in libretime_playout/player ([#3135](https://github.com/libretime/libretime/issues/3135)) ([5b4c720](https://github.com/libretime/libretime/commit/5b4c720e10037e39b3405d6a55eb835a60e339a2)), closes [#3134](https://github.com/libretime/libretime/issues/3134)
+* regenerate API schema ([38a0bf9](https://github.com/libretime/libretime/commit/38a0bf98b2a5b1024714686f9ca9a5ac30052227))
+* regenerate API schema ([ce257a1](https://github.com/libretime/libretime/commit/ce257a1f35d938990bcaa89d52e0d2b07489c1cf))
+
+## [4.2.0](https://github.com/libretime/libretime/compare/4.1.0...4.2.0) (2024-06-22)
+
+
+### Features
+
+* **legacy:** add current date macro to string block criteria ([#3013](https://github.com/libretime/libretime/issues/3013)) ([451652b](https://github.com/libretime/libretime/commit/451652bc4002b142ab9cf33ae517451c4966134f))
+* **legacy:** add filename block criteria ([#3015](https://github.com/libretime/libretime/issues/3015)) ([4642b6c](https://github.com/libretime/libretime/commit/4642b6c08ef813ab5dc7354f73141239f5c145e0))
+
+
+### Bug Fixes
+
+* pin pip version to &lt;24.1 to allow installing pytz (celery) ([#3043](https://github.com/libretime/libretime/issues/3043)) ([646bc81](https://github.com/libretime/libretime/commit/646bc817246a1e3e0d8107c2b69d726681c643b6))
+* playlist allocates inaccurate time to smartblocks ([#3026](https://github.com/libretime/libretime/issues/3026)) ([2b43e51](https://github.com/libretime/libretime/commit/2b43e51ed140bf307e491f0fcb7b84f95709d604))
+
+
+### Performance Improvements
+
+* optimize the api image health check ([#3038](https://github.com/libretime/libretime/issues/3038)) ([d99d6e1](https://github.com/libretime/libretime/commit/d99d6e1a68f20b3f4255296cd22ac80a90adc020))
+* optimize the rabbitmq health check ([#3037](https://github.com/libretime/libretime/issues/3037)) ([9684214](https://github.com/libretime/libretime/commit/96842144257855df86085b052ed8ff87562bc049))
+
+## [4.1.0](https://github.com/libretime/libretime/compare/4.0.0...4.1.0) (2024-05-05)
+
+
+### Features
+
+* **api:** implement file deletion ([#2960](https://github.com/libretime/libretime/issues/2960)) ([9757b1b](https://github.com/libretime/libretime/commit/9757b1b78c98a33f233163c77eb1b2ad6e0f0efe))
+* build schedule events exclusively in playout ([#2946](https://github.com/libretime/libretime/issues/2946)) ([40b4fc7](https://github.com/libretime/libretime/commit/40b4fc7f66004ee3bcb61c9961ec2c48bbcbc6cb))
+* **legacy:** add aac/opus support to dashboard player ([#2881](https://github.com/libretime/libretime/issues/2881)) ([95283ef](https://github.com/libretime/libretime/commit/95283efc1f9a63376a99184ef69b699beba45802))
+* **legacy:** disable public radio page and redirect to login ([#2903](https://github.com/libretime/libretime/issues/2903)) ([170d095](https://github.com/libretime/libretime/commit/170d09545e4fcfeeb95f9fc5c355329764501854))
+* **legacy:** trim overbooked shows after autoloading a playlist ([#2897](https://github.com/libretime/libretime/issues/2897)) ([a95ce3d](https://github.com/libretime/libretime/commit/a95ce3d2296bb864b379dcce14090bd821c1dfc9))
+* **legacy:** visual cue point editor ([#2947](https://github.com/libretime/libretime/issues/2947)) ([da02e74](https://github.com/libretime/libretime/commit/da02e74f2115cb76a6435fab5ab2667a8c622b98))
+* start celery worker programmatically ([#2988](https://github.com/libretime/libretime/issues/2988)) ([9c548b3](https://github.com/libretime/libretime/commit/9c548b365ec114c6789d2a69e66cc721da6ae100))
+
+
+### Bug Fixes
+
+* **analyzer:** backslash non utf-8 data when probing replaygain ([#2931](https://github.com/libretime/libretime/issues/2931)) ([29f73e0](https://github.com/libretime/libretime/commit/29f73e0dcb1fd668a79a2ffedc33e16172277376)), closes [#2910](https://github.com/libretime/libretime/issues/2910)
+* apply replay gain preferences on scheduled files ([#2945](https://github.com/libretime/libretime/issues/2945)) ([35d0dec](https://github.com/libretime/libretime/commit/35d0dec4a887cdaea2d73dc9bee60eb6624a2aca))
+* **deps:** update dependency friendsofphp/php-cs-fixer to &lt;3.49.1 ([#2899](https://github.com/libretime/libretime/issues/2899)) ([3e05748](https://github.com/libretime/libretime/commit/3e05748d2d1180b8dad55b6f997e6aa7117735f1))
+* **deps:** update dependency friendsofphp/php-cs-fixer to &lt;3.51.1 ([#2963](https://github.com/libretime/libretime/issues/2963)) ([22c303c](https://github.com/libretime/libretime/commit/22c303cfffdc777177bd74273e2c24da58cf1682))
+* **deps:** update dependency friendsofphp/php-cs-fixer to &lt;3.53.1 ([#2972](https://github.com/libretime/libretime/issues/2972)) ([9192aaa](https://github.com/libretime/libretime/commit/9192aaa2bb2dada470e03537493160d9b14a42f4))
+* **deps:** update dependency gunicorn to v22 (security) ([#2993](https://github.com/libretime/libretime/issues/2993)) ([a2cf769](https://github.com/libretime/libretime/commit/a2cf7697a97bbc4faf89fd7bc9ba9ecc235bf873))
+* incorrect docker compose version ([#2975](https://github.com/libretime/libretime/issues/2975)) ([634e6e2](https://github.com/libretime/libretime/commit/634e6e236d908994d586c946bbe28bcba8a357fa))
+* **installer:** setup the worker entrypoint ([#2996](https://github.com/libretime/libretime/issues/2996)) ([71b20ae](https://github.com/libretime/libretime/commit/71b20ae3c974680d814062c5a0bfa51a105dde61))
+* **legacy:** allow deleting file with api token ([#2995](https://github.com/libretime/libretime/issues/2995)) ([86da46e](https://github.com/libretime/libretime/commit/86da46ee3a54676298e30301846be890d1ea93ae))
+* **legacy:** allow updating track types code ([#2955](https://github.com/libretime/libretime/issues/2955)) ([270aa08](https://github.com/libretime/libretime/commit/270aa08ae6c7207de1cc3ea552dabeb018bcfe0d))
+* **legacy:** avoid crash when lot of streams in configuration ([#2915](https://github.com/libretime/libretime/issues/2915)) ([12dd477](https://github.com/libretime/libretime/commit/12dd47731290bf539be7a2a81571f8ada223e9c4))
+* **legacy:** ensure validation is performed on the track type form ([#2985](https://github.com/libretime/libretime/issues/2985)) ([5ad69bf](https://github.com/libretime/libretime/commit/5ad69bf0b76ff2e5065551b6a7d154cb26834605))
+* **legacy:** fix hidden fields in edit file form ([#2932](https://github.com/libretime/libretime/issues/2932)) ([f4b260f](https://github.com/libretime/libretime/commit/f4b260fdf70c0dd1830166d3856239dae5366599))
+* **legacy:** replay_gain_modifier should be a system preference ([#2943](https://github.com/libretime/libretime/issues/2943)) ([37d1a76](https://github.com/libretime/libretime/commit/37d1a7685e37e45734553a0eb4a4da793ca858cb))
+* remove obsolete docker compose version ([#2982](https://github.com/libretime/libretime/issues/2982)) ([fb0584b](https://github.com/libretime/libretime/commit/fb0584b021fd1c966181c7ab3989938cdfe4e642))
+* trigger legacy tasks manager every 5m ([#2987](https://github.com/libretime/libretime/issues/2987)) ([7040d0e](https://github.com/libretime/libretime/commit/7040d0e4bd92911a9072226f49ad59ce575d6ed9))
+* **worker:** ensure celery beat is started ([#3007](https://github.com/libretime/libretime/issues/3007)) ([bfde17e](https://github.com/libretime/libretime/commit/bfde17edf7fcc2bfd55263756e6ec3e455f11740))
+
+## [4.0.0](https://github.com/libretime/libretime/compare/3.2.0...4.0.0) (2024-01-07)
+
+
+### ⚠ BREAKING CHANGES
+
+* The media file serving is now handled by Nginx instead of the API service. The `storage.path` field is now used in the Nginx configuration, so make sure to update the Nginx configuration file if you change it.
+* **installer:** The default listen port for the installer is now `8080`. We recommend that you put a reverse proxy in front of LibreTime.
+* **installer:** The `--update-nginx` flag was removed from the installer. The nginx configuration deployed by the installer will now always be overwritten. Make sure to move your customizations to a reverse proxy configuration.
+* The default system output (`stream.outputs.system[].kind`) changed from `alsa` to `pulseaudio`. Make sure to update your configuration file if you rely on the default system output.
+* The `general.secret_key` configuration field is now required. Make sure to update your configuration file and add a secret key.
+
+### Features
+
+* default system output is now `pulseaudio` ([#2842](https://github.com/libretime/libretime/issues/2842)) ([083ee3f](https://github.com/libretime/libretime/commit/083ee3f1dd74441e288b4d63178ae9cea12ba286)), closes [#2542](https://github.com/libretime/libretime/issues/2542)
+* disable uvicorn worker lifespan ([#2845](https://github.com/libretime/libretime/issues/2845)) ([8743c84](https://github.com/libretime/libretime/commit/8743c84d0f007a5430e9059c197a261e613cc642))
+* **installer:** add the `--storage-path` flag ([#2865](https://github.com/libretime/libretime/issues/2865)) ([5b23852](https://github.com/libretime/libretime/commit/5b23852f8d144f0c7cdeb62831f7b1a27872b40e))
+* **installer:** change default listen port to 8080 ([#2852](https://github.com/libretime/libretime/issues/2852)) ([f72b7f9](https://github.com/libretime/libretime/commit/f72b7f9c9727800a9d77d64c540c12f272bb0ae3))
+* **installer:** remove the `--update-nginx` flag ([#2851](https://github.com/libretime/libretime/issues/2851)) ([35d7eac](https://github.com/libretime/libretime/commit/35d7eace13c2b9667fdb41fec0788118e0c5e63f))
+* **playout:** configure device for alsa and pulseaudio system outputs ([#2654](https://github.com/libretime/libretime/issues/2654)) ([06af18b](https://github.com/libretime/libretime/commit/06af18b84e7dfaad95e3b55dda22ec1ddad27050))
+* rewrite cloud-init config ([#2853](https://github.com/libretime/libretime/issues/2853)) ([8406d52](https://github.com/libretime/libretime/commit/8406d520d7a7bea4060be8a00e360bcf413cb2d5))
+* run python in optimized mode ([#2874](https://github.com/libretime/libretime/issues/2874)) ([3f7fc99](https://github.com/libretime/libretime/commit/3f7fc99b6b343fbc8df319d8130ba8247aea96d8))
+* the `general.secret_key` configuration field is now required ([#2841](https://github.com/libretime/libretime/issues/2841)) ([0d2d1a2](https://github.com/libretime/libretime/commit/0d2d1a26731a2b41ce5e574ed6de9950eaae4153)), closes [#2426](https://github.com/libretime/libretime/issues/2426)
+* use nginx to serve media files ([#2860](https://github.com/libretime/libretime/issues/2860)) ([4603c17](https://github.com/libretime/libretime/commit/4603c1759f29b8a1adb3e83d610ca00e778d76bd))
+
+
+### Bug Fixes
+
+* add parent function name in setValue exception ([#2777](https://github.com/libretime/libretime/issues/2777)) ([c764a5a](https://github.com/libretime/libretime/commit/c764a5a648ac6cf6c1f63cd9be6de9fe07c40988))
+* **api:** ensure non ascii paths are handled by X-Accel-Redirect ([#2861](https://github.com/libretime/libretime/issues/2861)) ([0ce63f3](https://github.com/libretime/libretime/commit/0ce63f3bf0448580170024cdde96ee351ee5c358))
+* **api:** enum schema description ([#2803](https://github.com/libretime/libretime/issues/2803)) ([976b70e](https://github.com/libretime/libretime/commit/976b70ed32a0e774cc0b72b8332372be32799ed1))
+* **api:** let nginx handle the media file content type ([#2862](https://github.com/libretime/libretime/issues/2862)) ([72268ad](https://github.com/libretime/libretime/commit/72268ad9bb1a96b24efda7143b9371d6fd98ca03))
+* **api:** move gunicorn worker config to python file ([#2854](https://github.com/libretime/libretime/issues/2854)) ([43221d9](https://github.com/libretime/libretime/commit/43221d9d7f34ba98a14db9906e350cb494a86b25))
+* **api:** paths with question marks chars are handled by X-Accel-Redirect ([#2875](https://github.com/libretime/libretime/issues/2875)) ([b2c1ceb](https://github.com/libretime/libretime/commit/b2c1ceb89fafc76f18ec650d19ec0ff03e4a20b0))
+* **deps:** update dependency friendsofphp/php-cs-fixer to &lt;3.42.1 (main) ([#2765](https://github.com/libretime/libretime/issues/2765)) ([8ae4dce](https://github.com/libretime/libretime/commit/8ae4dce9e7c013c1f66f1b4d5da4a8c91d3419b7))
+* **deps:** update dependency friendsofphp/php-cs-fixer to &lt;3.43.2 (main) ([#2848](https://github.com/libretime/libretime/issues/2848)) ([62e5f4d](https://github.com/libretime/libretime/commit/62e5f4dfbb76ab1919c4905570cc34274c685cef))
+* **deps:** update dependency friendsofphp/php-cs-fixer to &lt;3.45.1 (main) ([#2855](https://github.com/libretime/libretime/issues/2855)) ([6f84328](https://github.com/libretime/libretime/commit/6f8432838058be6ef1cfa7858f17b8272929896e))
+* **deps:** update dependency friendsofphp/php-cs-fixer to &lt;3.46.1 (main) ([#2868](https://github.com/libretime/libretime/issues/2868)) ([4827dbc](https://github.com/libretime/libretime/commit/4827dbce711262e90238bb3b6c0a35b1ce3d6877))
+* **legacy:** allow uploading opus files ([#2804](https://github.com/libretime/libretime/issues/2804)) ([f252a16](https://github.com/libretime/libretime/commit/f252a16637e113ceb1dd340fb7aad31af9c23ff0))
+* **legacy:** declare previously undeclared variable ([#2793](https://github.com/libretime/libretime/issues/2793)) ([e2cfbf4](https://github.com/libretime/libretime/commit/e2cfbf4c038f28874a206df5805f04f69a40647b))
+* **legacy:** ensure last played criteria works with never played files ([#2840](https://github.com/libretime/libretime/issues/2840)) ([24ee383](https://github.com/libretime/libretime/commit/24ee3830c23f7147f82febe3d3c6743d5ae8d4e6))
+* **playout:** increase file download chunk size to 8192 bytes ([#2863](https://github.com/libretime/libretime/issues/2863)) ([7ed1be1](https://github.com/libretime/libretime/commit/7ed1be1816abef20b9ae59a8c66a9e48a34f37c5))
+* **playout:** remove empty file when the download request failed ([#2864](https://github.com/libretime/libretime/issues/2864)) ([2facbfa](https://github.com/libretime/libretime/commit/2facbfaff23d4df0e7531b82f04f932bb2c4c9a4))
+* **worker:** unbound variable when episode url returns HTTP 404 ([#2844](https://github.com/libretime/libretime/issues/2844)) ([3f39689](https://github.com/libretime/libretime/commit/3f396895e588e62183e01d17927d9bdbea512ee0))
+
+## [3.2.0](https://github.com/libretime/libretime/compare/3.1.0...3.2.0) (2023-10-16)
+
+- [Release note](https://libretime.org/docs/releases/3.2.0/)
+
+### Features
+
+- **legacy:** move session store to database ([#2523](https://github.com/libretime/libretime/issues/2523))
+- **api:** add email configuration
+- add mobile devices stream config field ([#2744](https://github.com/libretime/libretime/issues/2744))
+
+### Bug Fixes
+
+- **playout:** liquidsoap aac output syntax errors
+- **deps:** update dependency friendsofphp/php-cs-fixer to <3.20.1 (stable) ([#2602](https://github.com/libretime/libretime/issues/2602))
+- **deps:** update dependency friendsofphp/php-cs-fixer to <3.21.2 ([#2612](https://github.com/libretime/libretime/issues/2612))
+- libretime process leaks and lsof high cpu usage ([#2615](https://github.com/libretime/libretime/issues/2615))
+- **deps:** update dependency friendsofphp/php-cs-fixer to <3.22.1 ([#2633](https://github.com/libretime/libretime/issues/2633))
+- libretime process leaks and lsof high cpu usage ([#2615](https://github.com/libretime/libretime/issues/2615))
+- **deps:** update dependency friendsofphp/php-cs-fixer to <3.23.1 (stable) ([#2656](https://github.com/libretime/libretime/issues/2656))
+- **deps:** update dependency friendsofphp/php-cs-fixer to <3.26.1 (stable) ([#2678](https://github.com/libretime/libretime/issues/2678))
+- **deps:** update dependency friendsofphp/php-cs-fixer to <3.26.1 (main) ([#2677](https://github.com/libretime/libretime/issues/2677))
+- **deps:** update dependency friendsofphp/php-cs-fixer to <3.26.2 ([#2686](https://github.com/libretime/libretime/issues/2686))
+- **deps:** update dependency friendsofphp/php-cs-fixer to <3.26.2 ([#2687](https://github.com/libretime/libretime/issues/2687))
+- **deps:** update dependency friendsofphp/php-cs-fixer to <3.27.1 (main) ([#2714](https://github.com/libretime/libretime/issues/2714))
+- **deps:** update dependency friendsofphp/php-cs-fixer to <3.27.1 (stable) ([#2715](https://github.com/libretime/libretime/issues/2715))
+- **deps:** update dependency friendsofphp/php-cs-fixer to <3.34.1 ([#2723](https://github.com/libretime/libretime/issues/2723))
+- **deps:** update dependency friendsofphp/php-cs-fixer to <3.35.2 ([#2738](https://github.com/libretime/libretime/issues/2738))
+- **deps:** update dependency friendsofphp/php-cs-fixer to <3.35.2 ([#2722](https://github.com/libretime/libretime/issues/2722))
+
+### Documentation
+
+- update chat links to point to matrix ([#2571](https://github.com/libretime/libretime/issues/2571))
+- fix broken link ([#2616](https://github.com/libretime/libretime/issues/2616))
+
+### Tests
+
+- **playout:** check unsupported liquidsoap aac output
 
 ## [3.1.0](https://github.com/libretime/libretime/compare/3.0.2...3.1.0) (2023-05-26)
 
@@ -190,8 +391,6 @@
 
 - chore(api): install django-rest-framework from git ([#2518](https://github.com/libretime/libretime/issues/2518))
 
-<a name="3.0.2"></a>
-
 ## [3.0.2](https://github.com/libretime/libretime/compare/3.0.1...3.0.2) (2023-02-21)
 
 - [Release note](https://libretime.org/docs/releases/3.0.2/)
@@ -223,8 +422,6 @@
 - don't squash commits during docs sync
 - test project weekly
 
-<a name="3.0.1"></a>
-
 ## [3.0.1](https://github.com/libretime/libretime/compare/3.0.0...3.0.1) (2022-12-20)
 
 - [Release note](https://libretime.org/docs/releases/3.0.1/)
@@ -253,8 +450,6 @@
 - sync docs with libretime/website repository
 - pin vale version to v2.21.3
 
-<a name="3.0.0"></a>
-
 ## [3.0.0](https://github.com/libretime/libretime/compare/3.0.0-beta.2...3.0.0) (2022-10-10)
 
 - [Release note](https://libretime.org/docs/releases/3.0.0/)
@@ -274,8 +469,6 @@
 ### Tests
 
 - **analyzer:** fix wrong bit_rate values
-
-<a name="3.0.0-beta.2"></a>
 
 ## [3.0.0-beta.2](https://github.com/libretime/libretime/compare/3.0.0-beta.1...3.0.0-beta.2) (2022-10-03)
 
@@ -304,8 +497,6 @@
 
 - allow failure when linting /docs/releases
 - use github.ref_name to get tag
-
-<a name="3.0.0-beta.1"></a>
 
 ## [3.0.0-beta.1](https://github.com/libretime/libretime/compare/3.0.0-beta.0...3.0.0-beta.1) (2022-09-23)
 
@@ -338,8 +529,6 @@
 - ignore changelog for closed reference notifier
 - don't check github.com/libretime/libretime/(issues|pulls) links
 - run docs workflow on vale files changes
-
-<a name="3.0.0-beta.0"></a>
 
 ## [3.0.0-beta.0](https://github.com/libretime/libretime/compare/3.0.0-alpha.13...3.0.0-beta.0) (2022-09-16)
 
@@ -489,8 +678,6 @@
 - enable containers concurrency group
 - improve containers build caching
 - add container tags
-
-<a name="3.0.0-alpha.13"></a>
 
 ## [3.0.0-alpha.13](https://github.com/libretime/libretime/compare/3.0.0-alpha.12...3.0.0-alpha.13) (2022-07-15)
 
@@ -652,8 +839,6 @@
 - disable codecov project status check
 - disable codecov patch status check
 
-<a name="3.0.0-alpha.12"></a>
-
 ## [3.0.0-alpha.12](https://github.com/libretime/libretime/compare/3.0.0-alpha.11...3.0.0-alpha.12) (2022-03-29)
 
 - [Release note](https://libretime.org/docs/releases/3.0.0-alpha.12/)
@@ -667,8 +852,6 @@
 
 - add missing data to release note
 - fix and update links ([#1714](https://github.com/libretime/libretime/issues/1714))
-
-<a name="3.0.0-alpha.11"></a>
 
 ## [3.0.0-alpha.11](https://github.com/libretime/libretime/compare/3.0.0-alpha.10...3.0.0-alpha.11) (2022-03-28)
 

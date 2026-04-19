@@ -35,7 +35,7 @@ class Schema implements ConfigurationInterface
             ->arrayNode('general')->addDefaultsIfNotSet()->children()
             /**/->scalarNode('public_url')->cannotBeEmpty()->end()
             /**/->scalarNode('api_key')->cannotBeEmpty()->end()
-            /**/->scalarNode('secret_key')->end()
+            /**/->scalarNode('secret_key')->cannotBeEmpty()->end()
             /**/->arrayNode('allowed_cors_origins')->scalarPrototype()->defaultValue([])->end()->end()
             /**/->scalarNode('timezone')->cannotBeEmpty()->defaultValue("UTC")
             /*  */->validate()->ifNotInArray(DateTimeZone::listIdentifiers())
@@ -97,6 +97,23 @@ class Schema implements ConfigurationInterface
             /**/->scalarNode('groupmap_admin')->end()
             /**/->scalarNode('groupmap_superadmin')->end()
             /**/->scalarNode('filter_field')->end()
+            ->end()->end()
+
+            // Header Auth Schema
+            ->arrayNode('header_auth')->children()
+            /**/->scalarNode('user_header')->defaultValue('Remote-User')->end()
+            /**/->scalarNode('groups_header')->defaultValue('Remote-Groups')->end()
+            /**/->scalarNode('email_header')->defaultValue('Remote-Email')->end()
+            /**/->scalarNode('name_header')->defaultValue('Remote-Name')->end()
+            /**/->scalarNode('group_separator')->defaultValue(',')->end()
+            /**/->scalarNode('proxy_ip')->end()
+            /**/->scalarNode('locale')->defaultValue('en-US')->end()
+            /**/->arrayNode('group_map')->children()
+            /*  */->scalarNode('host')->end()
+            /*  */->scalarNode('program_manager')->end()
+            /*  */->scalarNode('admin')->end()
+            /*  */->scalarNode('superadmin')->end()
+            /**/->end()->end()
             ->end()->end()
 
             // Playout schema
@@ -207,10 +224,11 @@ class Schema implements ConfigurationInterface
             // System outputs
             /**/->arrayNode('system')->arrayPrototype()->children()
             /*  */->booleanNode('enabled')->defaultFalse()->end()
-            /*  */->scalarNode('kind')->defaultValue('alsa')
+            /*  */->scalarNode('kind')->defaultValue('pulseaudio')
             /*    */->validate()->ifNotInArray(["alsa", "ao", "oss", "portaudio", "pulseaudio"])
             /*    */->thenInvalid('invalid stream.outputs.system.kind %s')
             /*  */->end()->end()
+            /*  */->scalarNode('device')->end()
             /**/->end()->end()->end()
 
             ->end()->end()

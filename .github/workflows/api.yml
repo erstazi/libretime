@@ -3,18 +3,18 @@ name: API
 on:
   workflow_dispatch:
   push:
-    branches: [main, stable]
+    branches: [main, stable-*]
     paths:
-      - .github/workflows/_python.yml
+      - .github/workflows/_python-*.yml
       - .github/workflows/api.yml
       - api/**
       - shared/**
       - tools/python*
 
   pull_request:
-    branches: [main, stable]
+    branches: [main, stable-*]
     paths:
-      - .github/workflows/_python.yml
+      - .github/workflows/_python-*.yml
       - .github/workflows/api.yml
       - api/**
       - shared/**
@@ -24,11 +24,10 @@ on:
     - cron: 0 1 * * 1
 
 jobs:
-  python:
-    uses: ./.github/workflows/_python.yml
+  lint:
+    uses: ./.github/workflows/_python-lint.yml
     with:
       context: api
-      test: false
 
   test-with-database:
     runs-on: ubuntu-latest
@@ -62,9 +61,9 @@ jobs:
       LIBRETIME_DATABASE_HOST: postgres
 
     steps:
-      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: ~/.cache/pip
           key: ${{ matrix.release }}-pip-api-${{ hashFiles('api/**/setup.py') }}
@@ -76,7 +75,7 @@ jobs:
         working-directory: api
 
       - name: Report coverage
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
           files: api/coverage.xml
           flags: api
